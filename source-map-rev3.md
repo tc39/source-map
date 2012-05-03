@@ -16,10 +16,15 @@ April 12, 2011 | John Lenz | Initial Revision
 April 15, 2011 | John Lenz | Updates to reflect prototype
 July 20, 2011 | John Lenz | Removed “lineCount” field, remove “Combined Map” section
 August 18, 2011 | John Lenz | Draft
+May 2, 2012 | John Lenz | HTTP header and CC-BY-SA license
+
+## License
+
+This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
 
 ## Background
 
-Even with the changes made with the v2 version of the format, the source map file size was limiting it usefulness.  The v3 format is based on suggestions made by podivilov
+The original source map format (v1) was created by Joseph Schorr for use by Closure Inspector to enable source level debugging of optimized JavaScript code (although the format itself is language agnostic).  However, as the size of the projects using the source maps expanded the verbosity of the format started to be become a problem. The v2 was created trading some simplicity and flexibility to reduce to overall size of the source map. Even with the changes made with the v2 version of the format, the source map file size was limiting its usefulness.  The v3 format is based on suggestions made by podivilov.
 
 Related documents:
 
@@ -85,11 +90,11 @@ The fields in each segment are:
 
 
 
-1. The starting column of the line in the generated code that the segment represents. If this is the first field of the first segment, or the first segment following a new generated line (“;”), then this field holds the whole base 64 VLQ. Otherwise, this field contains a base 64 VLQ that is relative to the previous occurrence of this field. _Note that this is different than the fields below because the previous value is reset after every generated line._
-2. If present, an index into the “sources” list. This field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the first occurrence of this field, in which case the whole value is represented.
-3. If present, the starting line in the original source represented. This field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the first occurrence of this field, in which case the whole value is represented. Always present if there is a source field.
-4. If present, the starting column of the line in the source represented. This field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the first occurrence of this field, in which case the whole value is represented. Always present if there is a source field.
-5. If present, the index into the “names” list associated with this segment. This field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the first occurrence of this field, in which case the whole value is represented.
+1. The zero-based starting column of the line in the generated code that the segment represents. If this is the first field of the first segment, or the first segment following a new generated line (“;”), then this field holds the whole base 64 VLQ. Otherwise, this field contains a base 64 VLQ that is relative to the previous occurrence of this field. _Note that this is different than the fields below because the previous value is reset after every generated line._
+2. If present, an zero-based index into the “sources” list. This field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the first occurrence of this field, in which case the whole value is represented.
+3. If present, the zero-based starting line in the original source represented. This field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the first occurrence of this field, in which case the whole value is represented. Always present if there is a source field.
+4. If present, the zero-based starting column of the line in the source represented. This field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the first occurrence of this field, in which case the whole value is represented. Always present if there is a source field.
+5. If present, the zero-based index into the “names” list associated with this segment. This field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the first occurrence of this field, in which case the whole value is represented.
 
 Note: This encoding reduces the source map size 50% relative to the V2 format in tests performed using Google Calendar.
 
@@ -169,17 +174,28 @@ Optionally, a source map will have the same name as the generated file but with 
 
 #### Linking generated code to source maps
 
-While the source map format is intended to be language agnostic, it is useful to have a few language specific notes.
+While the source map format is intended to be language and platform agnostic, it is useful to have a some conventions for the expected use-case of web server hosted javascript.
+
+There are two suggested ways to link source maps to the output.  The first requires server support to add a HTTP header and the second requires an annotation in the source.
+
+The HTTP header should supply the source map URL reference as:
+
+
+
+
+    X-SourceMap
 
 The generated code may include a line at the end of the source, with the following form:
 
 
 ```
-    //@sourceMappingURL=<url>
+    //@ sourceMappingURL=<url>
 ```
 
 
-When the source mapping URL is not absolute, then it is relative to the generated code’s “source origin”. The source origin is determined by one of the following cases:
+Regardless of the method used to retrieve the source mapping URL the same process is used to resolve it, which is as follows:
+
+ When the source mapping URL is not absolute, then it is relative to the generated code’s “source origin”. The source origin is determined by one of the following cases:
 
 
 
@@ -189,15 +205,9 @@ When the source mapping URL is not absolute, then it is relative to the generate
 * If the generated code is being evaluated as a string with the `eval()` function or via `new Function()`, then the source origin will be the page’s origin.
 
 
-```
-TODO: Using a HTTP header?
-```
-
-
-
 #### Linking eval’d code to named generate code
 
-There is an existing convention that should be support to all the use of source maps with eval’d code, it has the following form:
+There is an existing convention that should be supported for the use of source maps with eval’d code, it has the following form:
 
 
 ```
@@ -219,4 +229,11 @@ Stack tracing mapping without knowledge of the source language is not covered by
 
 It is getting more common to have tools generate source from some [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) (templates) or to compile CoffeeScript -> JavaScript -> minified JavaScript, resulting in multiple translations before the final source map is created.  This problem can be handled in one of two ways.  The easy but lossy way is to ignore the intermediate steps in the process for the purposes of debugging, the source location information from the translation is either ignored (the intermediate translation is considered the “Original Source”) or the source location information is carried through (the intermediate translation hidden).  The more complete way is to support multiple levels of mapping: if the Original Source also has a source map reference, the user is given the choice of using the that as well.
 
-However, It is unclear what a “source map reference” looks like in anything other than JavaScript.  More specifically, what a source map reference looks like in a language that doesn’t support JavaScript style single line comments.  An HTTP header would address this, but is not yet aggreed upon.
+However, It is unclear what a “source map reference” looks like in anything other than JavaScript.  More specifically, what a source map reference looks like in a language that doesn’t support JavaScript style single line comments.  An HTTP header would address this, but is not yet agreed upon.
+
+
+### JSON over HTTP Transport
+
+[XSSI](http://googleonlinesecurity.blogspot.com/2011/05/website-security-for-webmasters.html) attacks <span style="text-decoration:underline;">(https://wiki.corp.google.com/twiki/bin/view/Main/ISETeamScriptInclusion)</span> could potentially make source maps available to attackers by doing a direct script src to a source map after overriding the Array constructor. This can be effectively prevented by preprending a JavaScript syntax error to the start of the response.
+
+Thus when delivering source maps over HTTP, servers may prepend a line starting with the string “)]}'” to the sourcemap. If the response starts with this string clients must ignore the first line.
