@@ -17,6 +17,7 @@ April 15, 2011 | John Lenz | Updates to reflect prototype
 July 20, 2011 | John Lenz | Removed “lineCount” field, remove “Combined Map” section
 August 18, 2011 | John Lenz | Draft
 May 2, 2012 | John Lenz | HTTP header and CC-BY-SA license
+July 30, 2012 | John Lenz | Modified recommended HTTP header name.
 
 ## License
 
@@ -183,7 +184,10 @@ The HTTP header should supply the source map URL reference as:
 
 
 
-    X-SourceMap
+```
+    SourceMap: <url>
+```
+
 
 The generated code may include a line at the end of the source, with the following form:
 
@@ -192,6 +196,8 @@ The generated code may include a line at the end of the source, with the followi
     //@ sourceMappingURL=<url>
 ```
 
+
+Note: previous revisions of this document recommended a header name of “X-SourceMap”. This is now deprecated; “SourceMap” is now expected.
 
 Regardless of the method used to retrieve the source mapping URL the same process is used to resolve it, which is as follows:
 
