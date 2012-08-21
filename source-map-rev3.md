@@ -18,6 +18,7 @@ July 20, 2011 | John Lenz | Removed “lineCount” field, remove “Combined Ma
 August 18, 2011 | John Lenz | Draft
 May 2, 2012 | John Lenz | HTTP header and CC-BY-SA license
 July 30, 2012 | John Lenz | Modified recommended HTTP header name.
+August 20, 2012 | John Lenz | Add CSS linkage recommendation
 
 ## License
 
@@ -189,6 +190,8 @@ The HTTP header should supply the source map URL reference as:
 ```
 
 
+Note: previous revisions of this document recommended a header name of “X-SourceMap”. This is now deprecated; “SourceMap” is now expected.
+
 The generated code may include a line at the end of the source, with the following form:
 
 
@@ -197,7 +200,20 @@ The generated code may include a line at the end of the source, with the followi
 ```
 
 
-Note: previous revisions of this document recommended a header name of “X-SourceMap”. This is now deprecated; “SourceMap” is now expected.
+This recommendation works well for JavaScript, it is expected that other source files will have other conventions:
+
+
+<table>
+  <tr>
+   <td>CSS
+   </td>
+   <td>/*@ sourceMappingURL=&lt;url> */
+   </td>
+  </tr>
+</table>
+
+
+Note: &lt;url> is a URL as defined in RFC3986; in particular, characters outside the set permitted to appear in URIs must be percent-encoded.
 
 Regardless of the method used to retrieve the source mapping URL the same process is used to resolve it, which is as follows:
 
