@@ -19,10 +19,12 @@ August 18, 2011 | John Lenz | Draft
 May 2, 2012 | John Lenz | HTTP header and CC-BY-SA license
 July 30, 2012 | John Lenz | Modified recommended HTTP header name.
 August 20, 2012 | John Lenz | Add CSS linkage recommendation
+October 24, 2012 | John Lenz | Add clarifying section on source locations.
 
 ## License
 
 This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
+
 
 ## Background
 
@@ -31,6 +33,7 @@ The original source map format (v1) was created by Joseph Schorr for use by Clos
 Related documents:
 
 [Revision 2 proposal](https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US)
+
 
 ## Terminology
 
@@ -41,7 +44,7 @@ Original Source | The source code which has not been passed through the compiler
 Base 64 VLQ | The <a href="http://en.wikipedia.org/wiki/Variable-length_quantity">VLQ</a> is a<a href="http://en.wikipedia.org/wiki/Base64"> Base64</a> value, where the most significant bit (the 6th bit) is used as the continuation bit, and the “digits” are encoded into the string least significant first, and where the least significant bit of the first digit is used as the sign bit.<p>Note: The values that can be represent by the VLQ Base64 encoded are limited to 32 bit quantities until some use case for larger values is presented.
 Source Mapping URL | The URL referencing the location of a source map from the generated code.
 
-## Revision 3 format
+## Revision 3 Format
 
 
 ### General Goals
@@ -53,7 +56,7 @@ Source Mapping URL | The URL referencing the location of a source map from the g
 * Support server side stack trace deobfuscation
 
 
-### Proposed format
+### Proposed Format
 
 
 
@@ -76,11 +79,11 @@ Line 4: An optional source root, useful for relocating source files on a server 
 
 Line 5: A list of original sources used by the “mappings” entry.
 
-Line 6: A list of symbol names used by the “mapping” entry.
+Line 6: A list of symbol names used by the “mappings” entry.
 
 Line 7: A string with the encoded mapping data.
 
-The “mapping” data is broken down as follows:
+The “mappings” data is broken down as follows:
 
 
 
@@ -99,6 +102,11 @@ The fields in each segment are:
 5. If present, the zero-based index into the “names” list associated with this segment. This field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the first occurrence of this field, in which case the whole value is represented.
 
 Note: This encoding reduces the source map size 50% relative to the V2 format in tests performed using Google Calendar.
+
+
+#### Resolving Sources
+
+If the sources are not absolute URLs after prepending of the “sourceRoot”, the sources are resolved relative to the SourceMap (like resolving script src in a html document).
 
 
 #### Encoding
@@ -143,7 +151,7 @@ To support concatenating generated code and other common post processing, an alt
 9. `     file: "section.js",`
 10. `     sources: ["foo.js", "bar.js"],`
 11. `     names: ["src", "maps", "are", "fun"],`
-12. `     mappings: "AA,AB;;ABCDE;"`
+12. `     mappings: "AAAA,E;;ABCDE;"`
 13. `   }`
 14. ` }`
 15. `],`
