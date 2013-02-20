@@ -20,6 +20,7 @@ May 2, 2012 | John Lenz | HTTP header and CC-BY-SA license
 July 30, 2012 | John Lenz | Modified recommended HTTP header name.
 August 20, 2012 | John Lenz | Add CSS linkage recommendation
 October 24, 2012 | John Lenz | Add clarifying section on source locations.
+February 19, 2013 | John Lenz | Add “sourcesContent” line to support self contained source maps.<p>Added note regarding using data uri to load source maps.
 
 ## License
 
@@ -65,9 +66,10 @@ Source Mapping URL | The URL referencing the location of a source map from the g
 3. `file: "out.js",`
 4. `sourceRoot : "",`
 5. `sources: ["foo.js", "bar.js"],`
-6. `names: ["src", "maps", "are", "fun"],`
-7. `mappings: "AA,AB;;ABCDE;"`
-8. `}`
+6. `sourcesContent: [null, null],`
+7. `names: ["src", "maps", "are", "fun"],`
+8. `mappings: "AA,AB;;ABCDE;"`
+9. `}`
 
 Line 1: The entire file is a single JSON object
 
@@ -79,9 +81,11 @@ Line 4: An optional source root, useful for relocating source files on a server 
 
 Line 5: A list of original sources used by the “mappings” entry.
 
-Line 6: A list of symbol names used by the “mappings” entry.
+Line 6: An optional list of source content, useful when the “source” can’t be hosted. The contents are listed in the same order as the sources in line 5. “null” may be used of some original sources should be retrieved by name.
 
-Line 7: A string with the encoded mapping data.
+Line 7: A list of symbol names used by the “mappings” entry.
+
+Line 8: A string with the encoded mapping data.
 
 The “mappings” data is broken down as follows:
 
@@ -223,6 +227,8 @@ This recommendation works well for JavaScript, it is expected that other source 
 
 Note: &lt;url> is a URL as defined in RFC3986; in particular, characters outside the set permitted to appear in URIs must be percent-encoded.
 
+Note: &lt;url> maybe a data URI.  Using a data URI along with “sourcesContent” allow for a completely self-contained source-map.
+
 Regardless of the method used to retrieve the source mapping URL the same process is used to resolve it, which is as follows:
 
  When the source mapping URL is not absolute, then it is relative to the generated code’s “source origin”. The source origin is determined by one of the following cases:
@@ -264,6 +270,6 @@ However, It is unclear what a “source map reference” looks like in anything 
 
 ### JSON over HTTP Transport
 
-[XSSI](http://googleonlinesecurity.blogspot.com/2011/05/website-security-for-webmasters.html) attacks <span style="text-decoration:underline;">(https://wiki.corp.google.com/twiki/bin/view/Main/ISETeamScriptInclusion)</span> could potentially make source maps available to attackers by doing a direct script src to a source map after overriding the Array constructor. This can be effectively prevented by preprending a JavaScript syntax error to the start of the response.
+[XSSI](http://googleonlinesecurity.blogspot.com/2011/05/website-security-for-webmasters.html) attacks could potentially make source maps available to attackers by doing a direct script src to a source map after overriding the Array constructor. This can be effectively prevented by preprending a JavaScript syntax error to the start of the response.
 
 Thus when delivering source maps over HTTP, servers may prepend a line starting with the string “)]}'” to the sourcemap. If the response starts with this string clients must ignore the first line.
