@@ -21,10 +21,16 @@ July 30, 2012 | John Lenz | Modified recommended HTTP header name.
 August 20, 2012 | John Lenz | Add CSS linkage recommendation
 October 24, 2012 | John Lenz | Add clarifying section on source locations.
 February 19, 2013 | John Lenz | Add “sourcesContent” line to support self contained source maps.<p>Added note regarding using data uri to load source maps.
+May 16, 2013 | John Lenz | Updated linking convention to use # instead of @. @ conflicts with internet explorer’s conditional code
 
 ## License
 
 This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
+
+
+## Discussion
+
+To discuss or propose changes to this specification, please use the dev-js-sourcemap mailing list: [https://lists.mozilla.org/listinfo/dev-js-sourcemap](https://lists.mozilla.org/listinfo/dev-js-sourcemap)
 
 
 ## Background
@@ -208,9 +214,11 @@ The generated code may include a line at the end of the source, with the followi
 
 
 ```
-    //@ sourceMappingURL=<url>
+    //# sourceMappingURL=<url>
 ```
 
+
+Note: The prefix for this annotation was initially “//@” however this conflicts with Internet Explorer’s conditional comments and was changed to “//#”.  It is reasonable for tools to also accept “//@” but “//#” is preferred.
 
 This recommendation works well for JavaScript, it is expected that other source files will have other conventions:
 
@@ -219,7 +227,7 @@ This recommendation works well for JavaScript, it is expected that other source 
   <tr>
    <td>CSS
    </td>
-   <td>/*@ sourceMappingURL=&lt;url> */
+   <td>/*# sourceMappingURL=&lt;url> */
    </td>
   </tr>
 </table>
