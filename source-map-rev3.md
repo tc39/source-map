@@ -22,6 +22,7 @@ August 20, 2012 | John Lenz | Add CSS linkage recommendation
 October 24, 2012 | John Lenz | Add clarifying section on source locations.
 February 19, 2013 | John Lenz | Add “sourcesContent” line to support self contained source maps.<p>Added note regarding using data uri to load source maps.
 May 16, 2013 | John Lenz | Updated linking convention to use # instead of @. @ conflicts with internet explorer’s conditional code
+November 18, 2013 | John Lenz | Noted that “file” is an optional field.<p>Minor typographical corrections
 
 ## License
 
@@ -68,26 +69,26 @@ Source Mapping URL | The URL referencing the location of a source map from the g
 
 
 1. `{`
-2. `version : 3,`
-3. `file: "out.js",`
-4. `sourceRoot : "",`
-5. `sources: ["foo.js", "bar.js"],`
-6. `sourcesContent: [null, null],`
-7. `names: ["src", "maps", "are", "fun"],`
-8. `mappings: "AA,AB;;ABCDE;"`
+2. `"version" : 3,`
+3. `"file": "out.js",`
+4. `"sourceRoot": "",`
+5. `"sources": ["foo.js", "bar.js"],`
+6. `"sourcesContent": [null, null],`
+7. `"names": ["src", "maps", "are", "fun"],`
+8. `"mappings": "A,AAAB;;ABCDE;"`
 9. `}`
 
 Line 1: The entire file is a single JSON object
 
 Line 2: File version (always the first entry in the object) and must be a positive integer.
 
-Line 3: The name of the generated code that this source map is associated with.
+Line 3: An optional name of the generated code that this source map is associated with.
 
 Line 4: An optional source root, useful for relocating source files on a server or removing repeated values in the “sources” entry.  This value is prepended to the individual entries in the “source” field.
 
 Line 5: A list of original sources used by the “mappings” entry.
 
-Line 6: An optional list of source content, useful when the “source” can’t be hosted. The contents are listed in the same order as the sources in line 5. “null” may be used of some original sources should be retrieved by name.
+Line 6: An optional list of source content, useful when the “source” can’t be hosted. The contents are listed in the same order as the sources in line 5. “null” may be used if some original sources should be retrieved by name.
 
 Line 7: A list of symbol names used by the “mappings” entry.
 
@@ -218,7 +219,7 @@ The generated code may include a line at the end of the source, with the followi
 ```
 
 
-Note: The prefix for this annotation was initially “//@” however this conflicts with Internet Explorer’s conditional comments and was changed to “//#”.  It is reasonable for tools to also accept “//@” but “//#” is preferred.
+Note: The prefix for this annotation was initially “//@” however this conflicts with Internet Explorer’s Conditional Compilation and was changed to “//#”.  It is reasonable for tools to also accept “//@” but “//#” is preferred.
 
 This recommendation works well for JavaScript, it is expected that other source files will have other conventions:
 
@@ -243,7 +244,7 @@ Regardless of the method used to retrieve the source mapping URL the same proces
 
 
 
-* If the generated source is not associated with a script element that has a “src” attribute and there exists a `//@sourceURL` comment in the generated code, that comment should be used to determine the source origin.
+* If the generated source is not associated with a script element that has a “src” attribute and there exists a `//# sourceURL` comment in the generated code, that comment should be used to determine the source origin. Note: Previously, this was “//@ sourceURL”, as with “//@ sourceMappingURL”, it is reasonable to accept both but //# is preferred.
 * If the generated code is associated with a script element and the script element has a “src” attribute, the “src” attribute of the script element will be the source origin.
 * If the generated code is associated with a script element and the script element does not have a “src” attribute, then the source origin will be the page’s origin.
 * If the generated code is being evaluated as a string with the `eval()` function or via `new Function()`, then the source origin will be the page’s origin.
