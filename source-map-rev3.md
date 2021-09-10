@@ -36,7 +36,7 @@ To discuss or propose changes to this specification, please use the dev-js-sourc
 
 ## Background
 
-The original source map format (v1) was created by Joseph Schorr for use by Closure Inspector to enable source level debugging of optimized JavaScript code (although the format itself is language agnostic).  However, as the size of the projects using the source maps expanded the verbosity of the format started to be become a problem. The v2 was created trading some simplicity and flexibility to reduce to overall size of the source map. Even with the changes made with the v2 version of the format, the source map file size was limiting its usefulness.  The v3 format is based on suggestions made by podivilov.
+The original source map format (v1) was created by Joseph Schorr for use by Closure Inspector to enable source level debugging of optimized JavaScript code (although the format itself is language agnostic).  However, as the size of the projects using the source maps expanded the verbosity of the format started to be become a problem. The v2 was created trading some simplicity and flexibility to reduce to overall size of the source map. Even with the changes made with the v2 version of the format, the source map file size was limiting its usefulness.  The v3 format is based on suggestions made by podivilov@.
 
 Related documents:
 
@@ -44,6 +44,7 @@ Related documents:
 
 
 ## Terminology
+
 
 Term | Definition
 --- | ---
@@ -137,7 +138,7 @@ Additional fields may be added to the top level source map provided the fields b
 
 ##### Known Extensions
 
-“x_google_linecount” - the number of line represented by this source map.
+“x_google_linecount” - the number of lines represented by this source map.
 
 
 #### Notes
@@ -152,17 +153,17 @@ To support concatenating generated code and other common post processing, an alt
 
 
 1. `{`
-2. `version : 3,`
-3. `file: "app.js",`
-4. `sections: [`
-5. ` { offset: {line:0, column:0}, url: "url_for_part1.map" }`
-6. ` { offset: {line:100, column:10}, map: `
+2. `"version" : 3,`
+3. `"file": "app.js",`
+4. `"sections": [`
+5. ` { "offset": {"line":0, "column":0}, "url": "url_for_part1.map" }`
+6. ` { "offset": {"line":100, "column":10}, "map": `
 7. `   {`
-8. `     version : 3,`
-9. `     file: "section.js",`
-10. `     sources: ["foo.js", "bar.js"],`
-11. `     names: ["src", "maps", "are", "fun"],`
-12. `     mappings: "AAAA,E;;ABCDE;"`
+8. `     "version" : 3,`
+9. `     "file": "section.js",`
+10. `     "sources": ["foo.js", "bar.js"],`
+11. `     "names": ["src", "maps", "are", "fun"],`
+12. `     "mappings": "AAAA,E;;ABCDE;"`
 13. `   }`
 14. ` }`
 15. `],`
@@ -256,13 +257,13 @@ There is an existing convention that should be supported for the use of source m
 
 
 ```
-    //@ sourceURL=foo.js
+    //# sourceURL=foo.js
 ```
 
 
 It is described here:
 
-[http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/](http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/)
+[https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/](https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/)
 
 
 ### Language Neutral Stack Mapping Notes
