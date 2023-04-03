@@ -131,8 +131,8 @@ to enable mapping of JavaScript file URLs to Debug IDs.
 
 The strawman proposal is to add the Debug ID in two locations:
 
-* `import.meta.debugId`: a new property that should return the debug ID as UUID
-  of the current module if has one
+* `import.meta.debugId`: a new property that should return the debug ID as a string
+  of the current module if it has one, in the canonical UUID format
 * `System.getDebugIdForUrl(url)` looks up the debug ID for a given script file by
   URL that has already been loaded by the browser in the current context.
 
