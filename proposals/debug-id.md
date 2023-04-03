@@ -166,8 +166,8 @@ build artifacts keyed by debug id.
 
 The structure itself is inspired by [debuginfod](https://sourceware.org/elfutils/Debuginfod.html):
 
-* transpiled JavaScript artifact: `<DebugIdFirstTwo>/<DebugIdRest>/js`
-* source map: `<DebugIdFirstTwo>/<DebugIdRest>/sourcemap`
+* transpiled JavaScript artifact: `<DebugIdFirstTwo>/<DebugIdRest>/source.js`
+* source map: `<DebugIdFirstTwo>/<DebugIdRest>/sourcemap.json`
 
 with the following variables:
 
