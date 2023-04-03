@@ -123,6 +123,13 @@ compatibility with existing tools.  Because the last line already has meaning in
 the existing specification for the `sourceMappingURL` comment, tools are
 required to examine the last 5 lines to discover the Debug ID.
 
+**Note on the end of file:** for all intends and purposes having the Debug ID at
+the top of the file would be preferrable.  However this has the disadvantage that
+a tool could not add a Debug ID to a file without having to adjust all the tokens
+in the source map by the offset that this line adds.  Having it at the end of the
+file means it's after all tokens which would allow a separate tool to add Debug IDs
+to minified files and source maps.
+
 ## JavaScript API for Debug ID Resolution
 
 Today `error.stack` in most runtimes only returns the URLs of the files referenced
@@ -173,6 +180,9 @@ with the following variables:
 
 * `DebugIdFirstTwo`: the first two characters in lowercase of the hexadecimal Debug ID
 * `DebugIdRest`: the remaining characters in lowercase of the hexadecimal Debug ID without dashes
+
+Note that debuginfod usually does not use extensions on the path lookup syntax so the
+more natural filenames woudl just be `source` and `sourcemap`.
 
 ## Appendix C: Emulating Debug IDs
 
