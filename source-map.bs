@@ -78,10 +78,10 @@ by the compiler or transpiler.
 <dfn>Original Source</dfn> is the source code which has not
 been passed through the compiler.
 
-<dfn>Base64 VLQ</dfn> refers to the [[VLQ]] is a [[base64]] value,
-where the most significant bit (the 6th bit) is used as the continuation bit, and
-the "digits" are encoded into the string least significant first, and where the
-least significant bit of the first digit is used as the sign bit.
+<dfn>Base64 VLQ</dfn>: [[VLQ]] is a [[base64]] value, where the most significant
+bit (the 6th bit) is used as the continuation bit, and the "digits" are encoded
+into the string least significant first, and where the least significant bit of
+the first digit is used as the sign bit.
 
 Note: The values that can be represented by the VLQ Base64 encoded are limited to
 32 bit quantities until some use case for larger values is presented.
