@@ -12,6 +12,7 @@ Former Editor: Nick Fitzgerald, Mozilla
 Previous Version: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#
 Repository: source-map/source-map-rfc
 Abstract: A specification for mapping transpiled source code (primarily JavaScript) back to the original sources.  This specification is a living document and describes a hardened version of the Source Map v3 specification.
+Markup Shorthands: markdown yes
 </pre>
 
 <pre class=link-defaults>
@@ -202,10 +203,10 @@ Extensions {#extensions}
 ------------------------
 
 Additional fields may be added to the top level source map provided the fields begin with the
-<code>x_</code> naming convention.  It is expected that the extensions would be classified by the
-organization providing the extension, such as <code>x_google_linecount</code>.    Field names outside
-the <code>x_</code> namespace are reserved for future revisions.  It is recommended that fields be
-namespaced by domain, i.e. <code>x_com_google_gwt_linecount</code>.
+`x_` naming convention.  It is expected that the extensions would be classified by the
+organization providing the extension, such as `x_google_linecount`.    Field names outside
+the `x_` namespace are reserved for future revisions.  It is recommended that fields be
+namespaced by domain, i.e. `x_com_google_gwt_linecount`.
 
 Known Extensions
 ----------------
@@ -255,9 +256,9 @@ fields [=offset=] and a source map reference.
 
 ## Section
 
-<dfn><code>offset</dfn></code> is an object with two fields, <code>line</code>
-and <code>column</code>, that represent the offset into generated code that the
-referenced source map represents.
+<dfn><code>offset</dfn></code> is an object with two fields, `line` and `column`,
+that represent the offset into generated code that the referenced source map
+represents.
 
 <dfn><code>url</code></dfn> is an entry that must be a [[URL]] where a source
 map can be found for this section and the [=url=] is resolved in the same way as
@@ -311,9 +312,9 @@ Explorer's Conditional Compilation and was changed to `//#`.  It is reasonable f
 also accept `//@` but `//#` is preferred.
 
 This recommendation works well for JavaScript, it is expected that other source files will
-have other conventions.
+have other conventions.  For instance for CSS `/*# sourceMappingURL=<url> */` is proposed.
 
-<code>&lt;url&gt;</code> is a URL as defined in [[URL]]; in particular,
+`<url>` is a URL as defined in [[URL]]; in particular,
 characters outside the set permitted to appear in URIs must be percent-encoded
 and it maybe a data URI.  Using a data URI along with [=sourcesContent=] allow
 for a completely self-contained source-map.
