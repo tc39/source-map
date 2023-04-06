@@ -5,10 +5,11 @@ Shortname: source-map
 Level: 1
 Status: LS
 URL: https://source-map.github.io/source-map-rfc/
-Editor: John Lenz, Google
-Editor: Victor Porof, Google
-Editor: Nick Fitzgerald, Mozilla
 Editor: Armin Ronacher, Sentry
+Former Editor: Victor Porof, Google
+Former Editor: John Lenz, Google
+Former Editor: Nick Fitzgerald, Mozilla
+Previous Version: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#
 Repository: source-map/source-map-rfc
 Abstract: A specification for mapping transpiled source code (primarily JavaScript) back to the original sources.  This specification is a living document and describes a hardened version of the Source Map v3 specification.
 </pre>
