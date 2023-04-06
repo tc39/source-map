@@ -12,11 +12,11 @@ Abstract: A specification for mapping transpiled source code (primarily JavaScri
 
 <pre class=link-defaults>
 spec:html; type:element;
-	text:a
-	text:script
-	text:style
-	text:title
-	text:link
+    text:a
+    text:script
+    text:style
+    text:title
+    text:link
 spec:bikeshed-1; type:dfn; for:railroad; text:optional
 </pre>
 
@@ -25,27 +25,27 @@ spec:bikeshed-1; type:dfn; for:railroad; text:optional
   "VLQ": {
     "href": "https://en.wikipedia.org/wiki/Variable-length_quantity",
     "title": "Variable-length quantity",
-	"publisher": "Wikipedia",
-	"status": "reference article"
+    "publisher": "Wikipedia",
+    "status": "reference article"
   },
   "base64": {
-	"href": "https://www.ietf.org/rfc/rfc4648.txt",
-	"id": "rfc4648",
-	"publisher": "IETF",
-	"status": "Standards Track",
-	"title": "The Base16, Base32, and Base64 Data Encodings"
+    "href": "https://www.ietf.org/rfc/rfc4648.txt",
+    "id": "rfc4648",
+    "publisher": "IETF",
+    "status": "Standards Track",
+    "title": "The Base16, Base32, and Base64 Data Encodings"
   },
   "URL": {
-	"href": "https://url.spec.whatwg.org/",
-	"publisher": "WhatWG",
-	"status": "Living Standard",
-	"title": "URL Standard"
+    "href": "https://url.spec.whatwg.org/",
+    "publisher": "WhatWG",
+    "status": "Living Standard",
+    "title": "URL Standard"
   },
   "EvalSourceURL": {
-	"href": "https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/",
-	"publisher": "Firebug",
-	"status": "archive",
-	"title": "Give your eval a name with //@ sourceURL"
+    "href": "https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/",
+    "publisher": "Firebug",
+    "status": "archive",
+    "title": "Give your eval a name with //@ sourceURL"
   }
 }
 </pre>
@@ -74,7 +74,7 @@ by the compiler or transpiler.
 <dfn>Original Source</dfn> is the source code which has not
 been passed through the compiler.
 
-<dfn>Base 64 VLQ</dfn> refers to the [[VLQ]] is a [[base64]] value,
+<dfn>Base64 VLQ</dfn> refers to the [[VLQ]] is a [[base64]] value,
 where the most significant bit (the 6th bit) is used as the continuation bit, and
 the "digits" are encoded into the string least significant first, and where the
 least significant bit of the first digit is used as the sign bit.
@@ -83,7 +83,7 @@ Note: The values that can be represented by the VLQ Base64 encoded are limited t
 32 bit quantities until some use case for larger values is presented.
 
 <dfn>Source Mapping URL</dfn> refers to the URL referencing
-the location of a source map from the generated code.
+the location of a source map from the [=Generated code=].
 
 <dfn>Column</dfn> is the 0 (zero) indexed offsets within a line of the
 generated code measured in UTF-16 offsets.
@@ -96,13 +96,13 @@ following structure:
 
 ```json
 {
-    "version" : 3,
-    "file": "out.js",
-    "sourceRoot": "",
-    "sources": ["foo.js", "bar.js"],
-    "sourcesContent": [null, null],
-    "names": ["src", "maps", "are", "fun"],
-    "mappings": "A,AAAB;;ABCDE;"
+  "version" : 3,
+  "file": "out.js",
+  "sourceRoot": "",
+  "sources": ["foo.js", "bar.js"],
+  "sourcesContent": [null, null],
+  "names": ["src", "maps", "are", "fun"],
+  "mappings": "A,AAAB;;ABCDE;"
 }
 ```
 
@@ -149,29 +149,29 @@ The [=mappings=] data is broken down as follows:
 
 The fields in each segment are:
 
-1. The zero-based starting column of the line in the generated code that the segment represents.
-   If this is the first field of the first segment, or the first segment following a new generated
-   line (`;`), then this field holds the whole [[base64]] [[VLQ]].  Otherwise, this field contains
-   a [[base64]] [[VLQ]] that is relative to the previous occurrence of this field.  Note that this
-   is different than the fields below because the previous value is reset after every generated line.
+1. The zero-based starting [=column=] of the line in the generated code that the segment represents.
+    If this is the first field of the first segment, or the first segment following a new generated
+    line (`;`), then this field holds the whole [=Base64 VLQ=].  Otherwise, this field contains
+    a [=Base64 VLQ=] that is relative to the previous occurrence of this field.  Note that this
+    is different than the fields below because the previous value is reset after every generated line.
 
-2. If present, an zero-based index into the [=sources=] list. This field is a [[base64]] [[VLQ]]
-   relative to the previous occurrence of this field, unless this is the first occurrence of this
-   field, in which case the whole value is represented.
+2. If present, an zero-based index into the [=sources=] list. This field is a [=Base64 VLQ=]
+    relative to the previous occurrence of this field, unless this is the first occurrence of this
+    field, in which case the whole value is represented.
 
 3. If present, the zero-based starting line in the original source represented.  This field is a
-   [[base64]] [[VLQ]] relative to the previous occurrence of this field, unless this is the first
-   occurrence of this field, in which case the whole value is represented.  Always present if there
-   is a source field.
+    [=Base64 VLQ=] relative to the previous occurrence of this field, unless this is the first
+    occurrence of this field, in which case the whole value is represented.  Always present if there
+    is a source field.
 
 4. If present, the zero-based starting [=column=] of the line in the source represented.  This
-   field is a [[base64]] [[VLQ]] relative to the previous occurrence of this field, unless this
-   is the first occurrence of this field, in which case the whole value is represented.  Always
-   present if there is a source field.
+    field is a [=Base64 VLQ=] relative to the previous occurrence of this field, unless this
+    is the first occurrence of this field, in which case the whole value is represented.  Always
+    present if there is a source field.
 
 5. If present, the zero-based index into the [=names=] list associated with this segment.  This
-   field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the
-   first occurrence of this field, in which case the whole value is represented.
+    field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the
+    first occurrence of this field, in which case the whole value is represented.
 
 Resolving Sources {#resolving-sources}
 --------------------------------------
@@ -198,20 +198,17 @@ Extensions {#extensions}
 ------------------------
 
 Additional fields may be added to the top level source map provided the fields begin with the
-`x_` naming convention.  It is expected that the extensions would be classified by the
-organization providing the extension, such as `x_google_linecount`.    Field names outside
-the `x_` namespace are reserved for future revisions.  It is recommended that fields be
-namespaced by domain, i.e. `x_com_google_gwt_linecount`.
-
-Note: HTTP no longer recommends `x-` prefixes, the future of `x_` prefixes in this specification
-should be reconsidered.
+<code>x_</code> naming convention.  It is expected that the extensions would be classified by the
+organization providing the extension, such as <code>x_google_linecount</code>.    Field names outside
+the <code>x_</code> namespace are reserved for future revisions.  It is recommended that fields be
+namespaced by domain, i.e. <code>x_com_google_gwt_linecount</code>.
 
 Known Extensions
 ----------------
 
-<dfn><code>x_google_linecount</code></dfn> The number of lines represented by this source map. 
+<dfn export><code>x_google_linecount</code></dfn> The number of lines represented by this source map. 
 
-<dfn><code>x_google_ignoreList</code></dfn> Identifies third-party sources (such as framework
+<dfn export><code>x_google_ignoreList</code></dfn> Identifies third-party sources (such as framework
 code or bundler-generated code), allowing developers to avoid code that they don't want to see
 or step through, without having to configure this beforehand.
 
@@ -222,10 +219,58 @@ sections of the code that the browser loads and runs that could be automatically
 Index Map
 =========
 
-TODO: add index map
+To support concatenating generated code and other common post processing, an
+alternate representation of a map is supported:
+
+```json
+{
+  "version" : 3,
+  "file": "app.js",
+  "sections": [
+    {"offset": {"line": 0, "column": 0}, "url": "url_for_part1.map"}
+    {
+      "offset": {"line": 100, "column": 10},
+      "map": {
+        "version" : 3,
+        "file": "section.js",
+        "sources": ["foo.js", "bar.js"],
+        "names": ["src", "maps", "are", "fun"],
+        "mappings": "AAAA,E;;ABCDE;"
+      }
+    }
+  ],
+}
+```
+
+The index map follow the form of the standard map.  Like the regular source map
+the file format is JSON with a top-level object.  It shares the [=version=] and
+[=file=] field from the regular source map, but gains a new [=sections=] field.
+
+<dfn><code>sections</code></dfn> is an array of JSON objects that itself has two
+fields [=offset=] and a source map reference.
+
+## Section
+
+<dfn><code>offset</dfn></code> is an object with two fields, <code>line</code>
+and <code>column</code>, that represent the offset into generated code that the
+referenced source map represents.
+
+<dfn><code>url</code></dfn> is an entry that must be a [[URL]] where a source
+map can be found for this section and the [=url=] is resolved in the same way as
+the [=sources=] fields in the standard map.
+
+<dfn><code>map</code></dfn> is an alternative entry to [=url=] that must be an
+embedded complete source map object.  An embedded map does not inherit any
+values from the containing index map.
+
+The sections must be sorted by starting position and the represented sections
+may not overlap and each section must either use [=map=] or [=url=] but not mboth.
 
 Conventions {#conventions}
 ==========================
+
+The following conventions should be followed when working with source maps or
+when generating them.
 
 Source Map Naming {#source-map-naming}
 --------------------------------------
@@ -269,29 +314,29 @@ characters outside the set permitted to appear in URIs must be percent-encoded
 and it maybe a data URI.  Using a data URI along with [=sourcesContent=] allow
 for a completely self-contained source-map.
 
-Regardless of the method used to retrieve the source mapping URL the same process is used to
-resolve it, which is as follows:
+Regardless of the method used to retrieve the [=Source Mapping URL=] the same
+process is used to resolve it, which is as follows:
 
-When the source mapping URL is not absolute, then it is relative to the generated code's
-<dfn>source origin</dfn>. The source origin is determined by one of the following cases:
+When the [=Source Mapping URL=] is not absolute, then it is relative to the generated code's
+<dfn>source origin</dfn>. The [=source origin=] is determined by one of the following cases:
 
 - If the generated source is not associated with a script element that has a `src`
-  attribute and there exists a `//# sourceURL` comment in the generated code, that
-  comment should be used to determine the source origin. Note: Previously, this was
-  `//@ sourceURL`, as with `//@ sourceMappingURL`, it is reasonable to accept both
-  but `//#` is preferred.
+    attribute and there exists a `//# sourceURL` comment in the generated code, that
+    comment should be used to determine the [=source origin=]. Note: Previously, this was
+    `//@ sourceURL`, as with `//@ sourceMappingURL`, it is reasonable to accept both
+    but `//#` is preferred.
 
 - If the generated code is associated with a script element and the script element has
-  a `src` attribute, the `src` attribute of the script element will be the source origin.
+    a `src` attribute, the `src` attribute of the script element will be the [=source origin=].
 
 - If the generated code is associated with a script element and the script element does
-  not have a `src` attribute, then the source origin will be the page's origin.
+    not have a `src` attribute, then the [=source origin=] will be the page's origin.
 
 - If the generated code is being evaluated as a string with the `eval()` function or
-  via `new Function()`, then the source origin will be the page's origin.
+    via `new Function()`, then the [=source origin=] will be the page's origin.
 
-Linking eval’d code to named generate code
-------------------------------------------
+Linking eval'd code to named generated code
+-------------------------------------------
 
 There is an existing convention that should be supported for the use of source maps with
 eval'd code, it has the following form:
