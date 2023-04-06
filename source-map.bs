@@ -1,0 +1,23 @@
+<pre class='metadata'>
+Title: Source Map
+H1: Source Map
+Shortname: source-map
+Level: 1
+Status: LS
+URL: https://source-map.github.io/source-map-rfc/
+Editor: TBD
+Repository: source-map/source-map-rfc
+Abstract: A specification for mapping transpiled source code to back to the original sources.
+</pre>
+
+<pre class=link-defaults>
+spec:html; type:element;
+	text:a
+	text:script
+	text:style
+	text:title
+	text:link
+spec:bikeshed-1; type:dfn; for:railroad; text:optional
+</pre>
+
+Hello World
