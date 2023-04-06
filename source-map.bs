@@ -64,7 +64,7 @@ projects using the source maps expanded the verbosity of the format started to
 be become a problem.  The v2 was created trading some simplicity and flexibility
 to reduce to overall size of the source map. Even with the changes made with the
 v2 version of the format, the source map file size was limiting its usefulness.
-The v3 format is based on suggestions made by podivilov.
+The v3 format is based on suggestions made by Pavel Podivilov (Google).
 
 This document codifies the prior art that is Source Map v3 but is more specific
 about the precise meanings of the specification.
