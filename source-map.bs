@@ -3,14 +3,14 @@ Title: Source Map
 H1: Source Map
 Shortname: source-map
 Level: 1
-Status: LS
-URL: https://source-map.github.io/source-map-rfc/
+Status: STAGE0
+URL: https://source-map.github.io/source-map-spec/
 Editor: Armin Ronacher, Sentry
 Former Editor: Victor Porof, Google
 Former Editor: John Lenz, Google
 Former Editor: Nick Fitzgerald, Mozilla
 Previous Version: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#
-Repository: source-map/source-map-rfc
+Repository: source-map/source-map-spec
 Abstract: A specification for mapping transpiled source code (primarily JavaScript) back to the original sources.  This specification is a living document and describes a hardened version of the Source Map v3 specification.
 Markup Shorthands: markdown yes
 Group: tc39
@@ -65,7 +65,17 @@ spec:bikeshed-1; type:dfn; for:railroad; text:optional
 
 This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
 
-Note: **Spec Editorial Modification:** the sections "discussion" was removed from the regular text.
+## Introduction
+
+This document is a draft version of a hardened version of the Source Map v3
+specification.  It the current form it's not a defined standard and subject to
+modifications.  If you want to get involved you will find more information under
+the following GitHub repositories:
+
+* [Spec Repository](github.com/source-map/source-map-spec/): holds the different
+  specifications (v1, v2, v3 and the hardened v3 draft you are looking at)
+* [RFC Repository](github.com/source-map/source-map-rfc/): meta
+  repository for change suggestions to the specification.
 
 Background {#background}
 ========================
