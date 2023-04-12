@@ -13,6 +13,7 @@ Previous Version: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFz
 Repository: source-map/source-map-rfc
 Abstract: A specification for mapping transpiled source code (primarily JavaScript) back to the original sources.  This specification is a living document and describes a hardened version of the Source Map v3 specification.
 Markup Shorthands: markdown yes
+Group: tc39
 </pre>
 
 <pre class=link-defaults>
@@ -60,8 +61,11 @@ spec:bikeshed-1; type:dfn; for:railroad; text:optional
 }
 </pre>
 
-Note: **Spec Editorial Modification:** the sections "license" and "discussion"
-were remove from the regular text.
+## License
+
+This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
+
+Note: **Spec Editorial Modification:** the sections "discussion" was removed from the regular text.
 
 Background {#background}
 ========================
