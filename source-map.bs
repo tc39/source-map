@@ -72,9 +72,9 @@ specification.  It the current form it's not a defined standard and subject to
 modifications.  If you want to get involved you will find more information under
 the following GitHub repositories:
 
-* [Spec Repository](github.com/source-map/source-map-spec/): holds the different
+* [Spec Repository](https://github.com/source-map/source-map-spec/): holds the different
     specifications (v1, v2, v3 and the hardened v3 draft you are looking at)
-* [RFC Repository](github.com/source-map/source-map-rfc/): meta
+* [RFC Repository](https://github.com/source-map/source-map-rfc/): meta
     repository for change suggestions to the specification.
 
 Background {#background}
