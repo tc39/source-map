@@ -114,7 +114,13 @@ Note: The values that can be represented by the VLQ Base64 encoded are limited t
 the location of a source map from the [=Generated code=].
 
 <ins><dfn>Column</dfn> is the 0 (zero) indexed offsets within a line of the
-generated code measured in UTF-16 offsets.</ins>
+generated code measured.  The definition for columns in source maps can depend on
+the format.  For JavaScript and CSS based source maps are defined to be in
+UTF-16 code units analogous to JavaScript string indexes.  That means that
+"A" (`LATIN CAPITAL LETTER A`) measures 1 code unit, and "🔥" (`FIRE`) measures
+2 code units. Source maps for other formats (for instance web assembly) might
+diverge from this.
+</ins>
 
 General Goals {#general-goals}
 ==============================
