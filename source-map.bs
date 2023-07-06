@@ -147,10 +147,8 @@ Note: Previous specification suggested an order to the keys in this file, but
 for practical reasons the order cannot be defined in many JSON generators and
 has never been enforced.
 
-<dfn><code>version</code></dfn> is the version field.  <mark>The
-original specification referred to this as "file version field" but it has been
-used in practice to version the source map specification.  `3` refers to this
-specification of the source map.</mark>
+<dfn><code>version</code></dfn> is the version field which is always the number
+`3` as integer.
 
 <dfn><code>file</code></dfn> an optional name of the generated code
 that this source map is associated with.  <mark>It's not specified if this can
