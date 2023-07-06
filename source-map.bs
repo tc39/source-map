@@ -268,9 +268,8 @@ alternate representation of a map is supported:
   "version" : 3,
   "file": "app.js",
   "sections": [
-    {"offset": {"line": 0, "column": 0}, "url": "url_for_part1.map"}
     {
-      "offset": {"line": 100, "column": 10},
+      "offset": {"line": 0, "column": 0},
       "map": {
         "version" : 3,
         "file": "section.js",
@@ -278,17 +277,27 @@ alternate representation of a map is supported:
         "names": ["src", "maps", "are", "fun"],
         "mappings": "AAAA,E;;ABCDE;"
       }
+    },
+    {
+      "offset": {"line": 100, "column": 10},
+      "map": {
+        "version" : 3,
+        "file": "another_section.js",
+        "sources": ["more.js"],
+        "names": ["more", "is", "better"],
+        "mappings": "AAAA,E;AACA,C;ABCDE;"
+      }
     }
-  ],
+  ]
 }
 ```
 
-The index map follow the form of the standard map.  Like the regular source map
+The index map follows the form of the standard map.  Like the regular source map
 the file format is JSON with a top-level object.  It shares the [=version=] and
 [=file=] field from the regular source map, but gains a new [=sections=] field.
 
 <dfn><code>sections</code></dfn> is an array of JSON objects that itself has two
-fields [=offset=] and a source map reference.
+fields [=offset=] and [=map=].
 
 ## Section
 
@@ -296,16 +305,11 @@ fields [=offset=] and a source map reference.
 that represent the offset into generated code that the referenced source map
 represents.
 
-<dfn><code>url</code></dfn> is an entry that must be a [[URL]] where a source
-map can be found for this section and the [=url=] is resolved in the same way as
-the [=sources=] fields in the standard map.
-
-<dfn><code>map</code></dfn> is an alternative entry to [=url=] that must be an
-embedded complete source map object.  An embedded map does not inherit any
-values from the containing index map.
+<dfn><code>map</code></dfn> is an embedded complete source map object.
+An embedded map does not inherit any values from the containing index map.
 
 The sections must be sorted by starting position and the represented sections
-may not overlap and each section must either use [=map=] or [=url=] but not mboth.
+may not overlap.
 
 Conventions {#conventions}
 ==========================
