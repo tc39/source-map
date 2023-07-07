@@ -359,6 +359,9 @@ characters outside the set permitted to appear in URIs must be percent-encoded
 and it maybe a data URI.  Using a data URI along with [=sourcesContent=] allow
 for a completely self-contained source-map.
 
+<ins>The HTTP `SourceMap` header has precedence over source annotation, and if both are present,
+header URL should be used to resolve the source map file.</ins>
+
 Regardless of the method used to retrieve the [=Source Mapping URL=] the same
 process is used to resolve it, which is as follows:
 
