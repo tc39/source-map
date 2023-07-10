@@ -417,6 +417,18 @@ JavaScript style single line comments.
 JSON over HTTP Transport
 ========================
 
-<mark>For historic security reasons, when delivering source maps over HTTP, servers may prepend a
-line starting with the string `)]}'` to the source map.  If the response starts with this
-string clients must ignore the first line.</mark>
+For historic reasons, when delivering source maps over HTTP, servers may prepend a line
+starting with the string `)]}'` to the source map.  A client fetching a source map via
+HTTP thus should check if the response starts with this string and then ignore the
+first line.
+
+```
+)]}'garbage here
+{"version": 3, ...}
+```
+
+Is to be interpreted as
+
+```
+{"version": 3, ...}
+```
