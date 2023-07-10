@@ -152,7 +152,7 @@ has never been enforced.
 
 <dfn><code>file</code></dfn> an optional name of the generated code
 that this source map is associated with.  <mark>It's not specified if this can
-be a URL, relative path name, or just a base name, and as such has a mostly informal
+be a URL, relative path name, or just a base name. As such has a mostly informal
 character.</mark>
 
 <dfn><code>sourceRoot</code></dfn> an optional source root,
@@ -205,8 +205,8 @@ The fields in each segment are:
     present if there is a source field.
 
 5. If present, the zero-based index into the [=names=] list associated with this segment.  This
-    field is a base 64 VLQ relative to the previous occurrence of this field unless this is the
-    the first occurrence of this field, in which case the whole value is represented.
+    field is a base 64 VLQ relative to the previous occurrence of this field unless this
+    is the first occurrence of this field, in which case the whole value is represented.
 
 Note: This encoding reduces the source map size by 50% relative to the V2 format in tests performed
 using Google Calendar.
@@ -302,7 +302,7 @@ fields [=offset=] and [=map=].
 ## Section
 
 <dfn><code>offset</dfn></code> is an object with two fields, `line` and `column`,
-that represents the offset into generated code that the referenced source map
+that represent the offset into generated code that the referenced source map
 represents.
 
 <dfn><code>map</code></dfn> is an embedded complete source map object.
@@ -365,7 +365,7 @@ process is used to resolve it, which is as follows:
 When the [=Source Mapping URL=] is not absolute, then it is relative to the generated code's
 <dfn>source origin</dfn>. The [=source origin=] is determined by one of the following cases:
 
-- If the generated source is not associated with a script element that has an `src`
+- If the generated source is not associated with a script element that has a `src`
     attribute and there exists a `//# sourceURL` comment in the generated code, that
     comment should be used to determine the [=source origin=]. Note: Previously, this was
     `//@ sourceURL`, as with `//@ sourceMappingURL`, it is reasonable to accept both
