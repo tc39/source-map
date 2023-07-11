@@ -68,7 +68,7 @@ This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unpor
 ## Introduction
 
 This document is a draft version of a hardened version of the Source Map v3
-specification.  It the current form it's not a defined standard and subject to
+specification.  In its current form, it's not a defined standard and is subject to
 modifications.  If you want to get involved you will find more information under
 the following GitHub repositories:
 
@@ -81,11 +81,11 @@ Background {#background}
 ========================
 
 The original source map format (v1) was created by Joseph Schorr for use by
-Closure Inspector to enable source level debugging of optimized JavaScript code
+Closure Inspector to enable source-level debugging of optimized JavaScript code
 (although the format itself is language agnostic).  However, as the size of the
 projects using the source maps expanded the verbosity of the format started to
-be become a problem.  The v2 ([[V2Format]]) was created trading some simplicity
-and flexibility to reduce to overall size of the source map. Even with the
+become a problem.  The v2 ([[V2Format]]) was created by trading some simplicity
+and flexibility to reduce the overall size of the source map. Even with the
 changes made with the v2 version of the format, the source map file size was
 limiting its usefulness.  The v3 format is based on suggestions made by
 Pavel Podivilov (Google).
@@ -108,7 +108,7 @@ into the string least significant first, and where the least significant bit of
 the first digit is used as the sign bit.
 
 Note: The values that can be represented by the VLQ Base64 encoded are limited to
-32 bit quantities until some use case for larger values is presented.
+32-bit quantities until some use case for larger values is presented.
 
 <dfn>Source Mapping URL</dfn> refers to the URL referencing
 the location of a source map from the [=Generated code=].
@@ -122,8 +122,8 @@ General Goals {#general-goals}
 <mark>The goals for the v3 format of Source Maps</mark>
 
 * Reduce the overall size to improve parse time, memory consumption, and download time.
-* Support source level debugging allowing bidirectional mapping
-* Support server side stack trace deobfuscation
+* Support source-level debugging allowing bidirectional mapping
+* Support server-side stack trace deobfuscation
 
 Source Map Format {#source-map-format}
 ======================================
@@ -143,16 +143,16 @@ following structure:
 }
 ```
 
-Note: Previous specification suggested an order to the keys in this file, but
-for practical reasons the order cannot be defined in many JSON generators and
+Note: The previous specification suggested an order to the keys in this file, but
+for practical reasons, the order cannot be defined in many JSON generators and
 has never been enforced.
 
 <dfn><code>version</code></dfn> is the version field which is always the number
-`3` as integer.
+`3` as an integer.
 
 <dfn><code>file</code></dfn> an optional name of the generated code
 that this source map is associated with.  <mark>It's not specified if this can
-be a URL, relative path name or just a base name and as such has mostly informal
+be a URL, relative path name, or just a base name. As such has a mostly informal
 character.</mark>
 
 <dfn><code>sourceRoot</code></dfn> an optional source root,
@@ -190,32 +190,32 @@ The fields in each segment are:
     a [=Base64 VLQ=] that is relative to the previous occurrence of this field.  _Note that this
     is different than the fields below because the previous value is reset after every generated line._
 
-2. If present, an zero-based index into the [=sources=] list. This field is a [=Base64 VLQ=]
+2. If present, a zero-based index into the [=sources=] list. This field is a [=Base64 VLQ=]
     relative to the previous occurrence of this field, unless this is the first occurrence of this
     field, in which case the whole value is represented.
 
-3. If present, the zero-based starting line in the original source represented.  This field is a
+3. If present, the zero-based starting line in the original source is represented.  This field is a
     [=Base64 VLQ=] relative to the previous occurrence of this field, unless this is the first
     occurrence of this field, in which case the whole value is represented.  Always present if there
     is a source field.
 
 4. If present, the zero-based starting [=column=] of the line in the source represented.  This
-    field is a [=Base64 VLQ=] relative to the previous occurrence of this field, unless this
+    field is a [=Base64 VLQ=] relative to the previous occurrence of this field unless this
     is the first occurrence of this field, in which case the whole value is represented.  Always
     present if there is a source field.
 
 5. If present, the zero-based index into the [=names=] list associated with this segment.  This
-    field is a base 64 VLQ relative to the previous occurrence of this field, unless this is the
-    first occurrence of this field, in which case the whole value is represented.
+    field is a base 64 VLQ relative to the previous occurrence of this field unless this
+    is the first occurrence of this field, in which case the whole value is represented.
 
-Note: This encoding reduces the source map size 50% relative to the V2 format in tests performed using
-Google Calendar.
+Note: This encoding reduces the source map size by 50% relative to the V2 format in tests performed
+using Google Calendar.
 
 Resolving Sources {#resolving-sources}
 --------------------------------------
 
-If the sources are not absolute URLs after prepending of the [=sourceRoot=], the sources are
-resolved relative to the SourceMap (like resolving script src in a html document).
+If the sources are not absolute URLs after prepending the [=sourceRoot=], the sources are
+resolved relative to the SourceMap (like resolving the script `src` attribute in an HTML document).
 
 Encoding {#encoding}
 --------------------
@@ -226,13 +226,13 @@ Compression {#compression}
 --------------------------
 
 The file is allowed to be GZIP compressed.   It is not expected that in-browser consumers of
-the the source map will support GZIP compression directly but that they will consume an
+the source map will support GZIP compression directly but that they will consume an
 uncompressed map that may be GZIP'd for transport.
 
 Extensions {#extensions}
 ------------------------
 
-Additional fields may be added to the top level source map provided the fields begin with the
+Additional fields may be added to the top-level source map provided the fields begin with the
 `x_` naming convention.  It is expected that the extensions would be classified by the
 organization providing the extension, such as `x_google_linecount`.    Field names outside
 the `x_` namespace are reserved for future revisions.  It is recommended that fields be
@@ -247,21 +247,21 @@ Known Extensions
 code or bundler-generated code), allowing developers to avoid code that they don't want to see
 or step through, without having to configure this beforehand.
 
-It refers to the [=sources=] array, and lists the indices of all the known third-party sources
+It refers to the [=sources=] array and lists the indices of all the known third-party sources
 in that source map.  When parsing the source map, developer tools can use this to determine
 sections of the code that the browser loads and runs that could be automatically ignore-listed.
 
 Notes on File Offsets
 ---------------------
 
-Using file offsets were considered but rejected in favor of using line/column data to avoid becoming
-misaligned with the original due to platform specific line endings. 
+Using file offsets was considered but rejected in favor of using line/column data to avoid becoming
+misaligned with the original due to platform-specific line endings. 
 
 Index Map
 =========
 
-To support concatenating generated code and other common post processing, an
-alternate representation of a map is supported:
+To support concatenating generated code and other common post-processing,
+an alternate representation of a map is supported:
 
 ```json
 {
@@ -292,7 +292,7 @@ alternate representation of a map is supported:
 }
 ```
 
-The index map follows the form of the standard map.  Like the regular source map
+The index map follows the form of the standard map.  Like the regular source map,
 the file format is JSON with a top-level object.  It shares the [=version=] and
 [=file=] field from the regular source map, but gains a new [=sections=] field.
 
@@ -327,9 +327,9 @@ Linking generated code to source maps {#linking-generated-code}
 ---------------------------------------------------------------
 
 While the source map format is intended to be language and platform agnostic, it is useful
-to have a some conventions for the expected use-case of web server hosted javascript.
+to have some conventions for the expected use-case of web server-hosted javascript.
 
-There are two suggested ways to link source maps to the output.  The first requires server
+There are two suggested ways to link source maps to the output.  The first requires a server
 support to add a HTTP header and the second requires an annotation in the source.
 
 The HTTP header should supply the source map URL reference as:
@@ -352,12 +352,12 @@ Explorer's Conditional Compilation and was changed to `//#`.  It is reasonable f
 also accept `//@` but `//#` is preferred.
 
 This recommendation works well for JavaScript, it is expected that other source files will
-have other conventions.  For instance for CSS `/*# sourceMappingURL=<url> */` is proposed.
+have different conventions.  For instance, for CSS `/*# sourceMappingURL=<url> */` is proposed.
 
 `<url>` is a URL as defined in [[URL]]; in particular,
 characters outside the set permitted to appear in URIs must be percent-encoded
-and it maybe a data URI.  Using a data URI along with [=sourcesContent=] allow
-for a completely self-contained source-map.
+and it may be a data URI.  Using a data URI along with [=sourcesContent=] allows
+for a completely self-contained source map.
 
 <ins>The HTTP `SourceMap` header has precedence over source annotation, and if both are present,
 header URL should be used to resolve the source map file.</ins>
@@ -403,7 +403,7 @@ Stack tracing mapping without knowledge of the source language is not covered by
 Multi-level Mapping Notes
 =========================
 
-It is getting more common to have tools generate source from some DSL (templates) or to compile
+It is getting more common to have tools generate sources from some DSL (templates) or compile
 TypeScript -> JavaScript -> minified JavaScript, resulting in multiple translations before the
 final source map is created.  This problem can be handled in one of two ways.  The easy but
 lossy way is to ignore the intermediate steps in the process for the purposes of debugging,
@@ -411,11 +411,11 @@ the source location information from the translation is either ignored (the inte
 translation is considered the “Original Source”) or the source location information is carried
 through (the intermediate translation hidden).  The more complete way is to support multiple
 levels of mapping: if the Original Source also has a source map reference, the user is given
-the choice of using the that as well.
+the choice of using that as well.
 
 However, It is unclear what a "source map reference" looks like in anything other than JavaScript.
 More specifically, what a source map reference looks like in a language that doesn't support
-JavaScript style single line comments.
+JavaScript-style single-line comments.
 
 JSON over HTTP Transport
 ========================
