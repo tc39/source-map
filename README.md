@@ -18,7 +18,7 @@ There is an ongoing initiative to harden the specification, clarify it and to
 convert it into a stronger standard.  The draft of this initiative can be found here:
 
 * [Draft Source](source-map.bs)
-* [Rendered Draft](https://source-map.github.io/source-map-spec/)
+* [Rendered Draft](https://tc39.es/source-map-spec/)
 * [RFC and Discussions](https://github.com/source-map/source-map-rfc/)
 
 Older revisions:
