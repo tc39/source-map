@@ -119,7 +119,7 @@ the format.  For JavaScript and CSS based source maps are defined to be in
 UTF-16 code units analogous to JavaScript string indexes.  That means that
 "A" (`LATIN CAPITAL LETTER A`) measures 1 code unit, and "🔥" (`FIRE`) measures
 2 code units. For WebAssembly, columns are defined as byte offsets from the start 
-of the binary content (the line number is always defined as 1). Source maps for 
+of the binary content (and there is only one group representing a line). Source maps for 
 other formats might diverge from this.
 </ins>
 
