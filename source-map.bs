@@ -115,12 +115,12 @@ the location of a source map from the [=Generated code=].
 
 <ins><dfn>Column</dfn> is the 0 (zero) indexed offsets within a line of the
 generated code measured.  The definition for columns in source maps can depend on
-the format.  For JavaScript and CSS based source maps are defined to be in
+the source type.  For JavaScript and CSS based source maps are defined to be in
 UTF-16 code units analogous to JavaScript string indexes.  That means that
 "A" (`LATIN CAPITAL LETTER A`) measures 1 code unit, and "🔥" (`FIRE`) measures
-2 code units. For WebAssembly, columns are defined as byte offsets from the start 
-of the binary content (and there is only one group representing a line). Source maps for 
-other formats might diverge from this.
+2 code units.  For WebAssembly, columns are defined as byte offsets from the beginning 
+of the binary content (and there is only one group representing a line).  Source maps
+for other source types might diverge from this.
 </ins>
 
 General Goals {#general-goals}
