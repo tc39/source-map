@@ -360,6 +360,8 @@ also accept `//@` but `//#` is preferred.
 
 This recommendation works well for JavaScript, it is expected that other source files will
 have different conventions.  For instance, for CSS `/*# sourceMappingURL=<url> */` is proposed.
+On the WebAssembly side, such URL should be placed in a custom section with the name `sourceMappingURL`. 
+That section contains the length (`varuint32`) of the URL in bytes and the URL string (`bytes`).
 
 `<url>` is a URL as defined in [[URL]]; in particular,
 characters outside the set permitted to appear in URIs must be percent-encoded
