@@ -63,7 +63,7 @@ spec:bikeshed-1; type:dfn; for:railroad; text:optional
     "publisher": "W3C",
     "status": "Living Standard",
     "title": "WebAssembly custom section"
-  },
+  }
 }
 </pre>
 
