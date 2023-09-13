@@ -58,7 +58,7 @@ spec:bikeshed-1; type:dfn; for:railroad; text:optional
     "publisher": "Google",
     "title": "Source Map Revision 2 Proposal"
   },
-  "wasm custom section": {
+  "WasmCustomSection": {
     "href": "https://www.w3.org/TR/wasm-core-2/binary/modules.html#custom-section",
     "publisher": "W3C",
     "status": "Living Standard",
@@ -366,7 +366,7 @@ also accept `//@` but `//#` is preferred.
 
 This recommendation works well for JavaScript, it is expected that other source files will
 have different conventions.  For instance, for CSS `/*# sourceMappingURL=<url> */` is proposed.
-On the WebAssembly side, such URL should be placed as a UTF-8 encoded string in the [[wasm custom section]] named `sourceMappingURL`. 
+On the WebAssembly side, such URL should be placed as a UTF-8 encoded string in the custom section ([[WasmCustomSection]]) named `sourceMappingURL`. 
 
 `<url>` is a URL as defined in [[URL]]; in particular,
 characters outside the set permitted to appear in URIs must be percent-encoded
