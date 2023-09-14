@@ -24,14 +24,10 @@ if (!key) {
 
 const sheetData = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/Sheet1!A2:A?key=${key}`;
 
-const [,, slug, branch, all] = process.argv;
+const [,, slug, branch] = process.argv;
 
 if (!slug || !branch) {
 	throw 'args required: slug, branch';
-}
-if (typeof all !== 'undefined' && all !== '--all') {
-  console.log(all)
-	throw '`all` arg, if provided, must be `--all`'
 }
 
 const sha = String(execSync(`git rev-parse --short ${branch}`)).trim();
