@@ -259,7 +259,9 @@ Known Extensions
 
 <dfn export><code>x_google_linecount</code></dfn> The number of lines represented by this source map. 
 
-<dfn export><code>x_google_ignoreList</code></dfn> Deprecated name for [=ignoreList=].
+<dfn export><code>x_google_ignoreList</code></dfn> Deprecated name for [=ignoreList=]. Consumers may
+still use this field if [=ignoreList=] is not present. Producers currently using this field should
+migrate starting in 2024.
 
 Notes on File Offsets
 ---------------------
