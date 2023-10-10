@@ -183,11 +183,11 @@ can't be hosted.  The contents are listed in the same order as the [=sources=].
 
 <dfn><code>ignoreList</code></dfn> an optional list of indices of files that
 should be considered third party code, such as framework code or bundler-generated code. This 
-allows developers to avoid code that they don't want to see
-or step through, without having to configure this beforehand.
+allows developer tools to avoid code that developers likely don't want to see
+or step through, without requiring developers to configure this beforehand.
 It refers to the [=sources=] array and lists the indices of all the known third-party sources
-in the source map.  When parsing the source map, developer tools can use this to determine
-sections of the code that the browser loads and runs that could be automatically ignore-listed.
+in the source map. Some browsers may also use the deprecated <code>x_google_ignoreList</code>
+field if <code>ignoreList</code> is not present.
 
 Mappings Structure {#mappings-structure}
 ----------------------------------------
@@ -253,15 +253,6 @@ Additional fields may be added to the top-level source map provided the fields b
 organization providing the extension, such as `x_google_linecount`.    Field names outside
 the `x_` namespace are reserved for future revisions.  It is recommended that fields be
 namespaced by domain, i.e. `x_com_google_gwt_linecount`.
-
-Known Extensions
-----------------
-
-<dfn export><code>x_google_linecount</code></dfn> The number of lines represented by this source map. 
-
-<dfn export><code>x_google_ignoreList</code></dfn> Deprecated name for [=ignoreList=]. Consumers may
-still use this field if [=ignoreList=] is not present. Producers currently using this field should
-migrate starting in 2024.
 
 Notes on File Offsets
 ---------------------
