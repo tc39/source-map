@@ -32,8 +32,8 @@ The proposed solution offers the following benefits:
    corresponding source map.
 
 2. Self-Identifying Files: This specification changes both, source maps and
-   generated code so that it becomes become self-identifying, eliminating the
-   need for external information to work with the files.
+   generated code so that they become self-identifying, eliminating the
+   need for external information to reference them.
 
 3. Streamlined Debugging Process: The implementation of Debug IDs will simplify
    and streamline the debugging process by reducing the likelihood of errors
