@@ -204,7 +204,7 @@ Debug ID:
 
 ```javascript
 function getDebugIdForUrl(url) {
-  return __DEBUG_IDS__ && _DEBUG_IDS__[url];
+  return globalThis.__DEBUG_IDS__ && globalThis.__DEBUG_IDS__[url];
 }
 ```
 
