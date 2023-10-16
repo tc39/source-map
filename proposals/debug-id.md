@@ -6,7 +6,7 @@ source maps and generated code, making build artifacts self-identifying.
 ## Background
 
 Source maps play a crucial role in debugging by
-providing a mapping between the minified code and the original source code.
+providing a mapping between generated code and the original source code.
 However, the current source map specification lacks important properties such as
 self-describing and self-identifying capabilities for both the generated code
 as well as the source map. This results in a subpar user experience and numerous
@@ -41,7 +41,7 @@ The proposed solution offers the following benefits:
 
 4. Standardization: The adoption of this proposal as a web standard will
    encourage a consistent and unified approach to handling source maps and
-   minified JavaScript files across the industry.
+   generated code across the industry.
 
 5. Guaranteed bidirectionality: Today source maps do not provide the ability to
    reliably resolve back to the generated file they are from. However in
@@ -127,7 +127,7 @@ the top of the file would be preferrable. However this has the disadvantage that
 a tool could not add a Debug ID to a file without having to adjust all the tokens
 in the source map by the offset that this line adds. Having it at the end of the
 file means it's after all tokens which would allow a separate tool to add Debug IDs
-to minified files and source maps.
+to generated files and source maps.
 
 ## JavaScript API for Debug ID Resolution
 
