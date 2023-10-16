@@ -193,7 +193,7 @@ Debug ID:
 
 ```javascript
 (function () {
-  var stack = new Error().stack; // stack is non-standard an may be undefined
+  var stack = new Error().stack; // stack is non-standard and may be undefined
   var match = stack && stack.match(/(?:\bat |@)(.*?):\d+:\d+$/m);
   if (match) {
     var ids = (globalThis.__DEBUG_IDS__ = globalThis.__DEBUG_IDS__ || {});
