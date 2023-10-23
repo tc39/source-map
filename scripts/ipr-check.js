@@ -149,6 +149,7 @@ const usernames = request(sheetData).then((json) => JSON.parse(json)).then(data 
 });
 
 const exceptions = new Set([
+  'EricSL', // Google employee
   'jaro-sevcik', // Google empolyee
   'jkrems', // Google employee
   'josephschorr', // former Google empolyee
