@@ -152,7 +152,7 @@ following structure:
   "sources": ["foo.js", "bar.js"],
   "sourcesContent": [null, null],
   "names": ["src", "maps", "are", "fun"],
-  "mappings": "A,AAAB;;ABCDE;",
+  "mappings": "A,AAAB;;ABCDE"
   "ignoreList": [0]
 }
 ```
@@ -284,7 +284,7 @@ an alternate representation of a map is supported:
         "file": "section.js",
         "sources": ["foo.js", "bar.js"],
         "names": ["src", "maps", "are", "fun"],
-        "mappings": "AAAA,E;;ABCDE;"
+        "mappings": "AAAA,E;;ABCDE"
       }
     },
     {
@@ -294,7 +294,7 @@ an alternate representation of a map is supported:
         "file": "another_section.js",
         "sources": ["more.js"],
         "names": ["more", "is", "better"],
-        "mappings": "AAAA,E;AACA,C;ABCDE;"
+        "mappings": "AAAA,E;AACA,C;ABCDE"
       }
     }
   ]
