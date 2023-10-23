@@ -24,13 +24,18 @@ if (!key) {
 
 const sheetData = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/Sheet1!A2:A?key=${key}`;
 
-const [,, slug, branch] = process.argv;
+const [,, slug, branchOrSha] = process.argv;
 
-if (!slug || !branch) {
-	throw 'args required: slug, branch';
+if (!slug || !branchOrSha) {
+	throw 'args required: slug, branchOrSha';
 }
 
-const sha = String(execSync(`git rev-parse --short ${branch}`)).trim();
+let sha = branchOrSha;
+try {
+  sha = String(execSync(`git rev-parse --short ${branchOrSha}`)).trim();
+} catch {}
+
+console.log("Getting data for", sha);
 
 const request = async (url, method = 'GET', postData) => {
 	// adapted from https://medium.com/@gevorggalstyan/how-to-promisify-node-js-http-https-requests-76a5a58ed90c
@@ -149,6 +154,7 @@ const usernames = request(sheetData).then((json) => JSON.parse(json)).then(data 
 });
 
 const exceptions = new Set([
+  'EricSL', // Google employee
   'jaro-sevcik', // Google empolyee
   'jkrems', // Google employee
   'josephschorr', // former Google empolyee
