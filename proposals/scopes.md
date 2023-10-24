@@ -1,23 +1,27 @@
-# Scopes
+# Proposal for adding information about scopes and their bindings to source maps
 
 * **Author**: Holger Benl
 * **Date**: September, 2023
 * **Prototype**: https://github.com/hbenl/tc39-proposal-scope-mapping/
-* **Related**: https://github.com/tc39/source-map-rfc/blob/main/proposals/env.md, 
+* **Related**: https://github.com/tc39/source-map-rfc/blob/main/proposals/env.md
 
 Discussion of this proposal is placed at [#37](https://github.com/tc39/source-map-rfc/issues/37)
 
 ## Abstract
 
 This document describes an extension to the [source map format](https://tc39.es/source-map-spec/) for encoding scopes and bindings information to improve the debugging experience.
-There is [another proposal](https://github.com/tc39/source-map-rfc/blob/main/proposals/env.md) that also trying to solve the same problem, but the proposal doesn't support variable shadowing.
+There is [another proposal](https://github.com/tc39/source-map-rfc/blob/main/proposals/env.md) that is also trying to solve the same problem, but it includes less information about the scopes and hence doesn't support all scenarios that this proposal supports, like dealing with inlined functions or variable shadowing that was introduced by minification.
 
 ## Motivation/use cases
 
-During a debugging process, developers work a lot with source code and runtime values of different variables, properties, globals, constants, and function parameters.
-Right now, source maps solve the exploring of the original sources' issue but not the exploring of the values around the original source code.
-
-One of the solutions for this issue is to encode the source language's environment, scopes, and variables into the SourceMap file to provide debuggers with extra information about the environment.
+Currently source maps enable a debugger to map locations in the generated source to corresponding locations in the original source. This allows the debugger to let the user work with original sources when adding breakpoints and stepping through the code. However, this information is generally insufficient to reconstruct the original frames, scopes and bindings:
+- when the debugger is paused in a function the was inlined, the stack doesn't contain a frame for the inlined function but the debugger should be able to reconstruct that frame
+- the debugger should be able to reconstruct scopes that were removed by the compiler
+- the debugger should be able to hide scopes that were added by the compiler
+- when a variable was renamed in the generated source, the debugger should be able to get its original name; this is possible with the current source maps format by looking for mappings that map the declaration of a generated variable to one of an original variable and optionally using the `names` array, but this approach requires parsing the sources, is hard to implement and experience shows that it doesn't work in all situations
+- the debugger should be able to reconstruct original bindings that have no corresponding variables in the generated source
+- the debugger should be able to hide generated bindings that have no corresponding variables in the original source
+- it should be possible to find the original function names for frames in a stack trace
 
 #### Use cases:
 
@@ -87,6 +91,25 @@ It's possible to encode the `a` binding and put as a value an expression that co
 Also, such post-processing could include hiding unnecessary properties from objects.
 
 ## Detailed design
+
+The sourcemap should include information for every scope in the generated source and every scope in the original sources that contains code which appears in the generated source.
+More precisely, for every location `loc_gen` in the generated code that is mapped to `loc_orig` in the original code:
+- the generated scopes described in the sourcemap which contain `loc_gen` should be exactly the scopes in the generated source which contain `loc_gen`
+- the original scopes described in the sourcemap which contain `loc_gen` should be exactly
+  - the scopes in the original source which contain `loc_orig` and
+  - if `loc_gen` is in an inlined function, the scopes in the original source which contain the function call that was inlined
+
+The following information describes a scope in the source map:
+- the type of the scope (e.g. block, function or module scope)
+- whether this scope appears in the original and/or the generated source
+- the start and end locations of the scope in the generated source
+- only for scopes that appear in the original source: the start and end locations of the scope in the original source
+- only for function scopes that appear in the original source: the original name of the function
+- only for scopes that appear in the original source: the scope's bindings, for each binding we add
+  - the original variable name
+  - a javascript expression that can be evaluated by the debugger in the corresponding generated scope to get the binding's value
+
+### Encoding
 
 WORK IN PROGRESS
 
