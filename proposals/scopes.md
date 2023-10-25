@@ -109,6 +109,23 @@ The following information describes a scope in the source map:
   - the original variable name
   - a javascript expression that can be evaluated by the debugger in the corresponding generated scope to get the binding's value
 
+Example of such information for a single scope in row JSON (without encoding): 
+```js
+{
+    type: 0, /* ScopeType.NAMED_FUNCTION */
+    name: "outer",
+    start: { line: 1, column: 1 },
+    end: { line: 8, column: 2 },
+    isInOriginalSource: true,
+    isInGeneratedSource: true,
+    bindings: [
+      { varname: "inner", expression: "g" },
+      { varname: "num", expression: "a" },
+      { varname: "num_plus_one", expression: "b" },
+    ]
+}
+```
+
 ### Encoding
 
 WORK IN PROGRESS
