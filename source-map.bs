@@ -63,6 +63,12 @@ spec:bikeshed-1; type:dfn; for:railroad; text:optional
     "publisher": "W3C",
     "status": "Living Standard",
     "title": "WebAssembly custom section"
+  },
+  "varuint32": {
+    "href": "https://github.com/WebAssembly/design/blob/main/BinaryEncoding.md#varuintn",
+    "publisher": "WebAssembly GitHub",
+    "status": "design notes",
+    "title": "varuint32 binary encoding"
   }
 }
 </pre>
@@ -362,7 +368,7 @@ also accept `//@` but `//#` is preferred.
 
 This recommendation works well for JavaScript, it is expected that other source files will
 have different conventions.  For instance, for CSS `/*# sourceMappingURL=<url> */` is proposed.
-On the WebAssembly side, such URL should be placed as a UTF-8 encoded string in the custom section ([[WasmCustomSection]]) named `sourceMappingURL`. 
+On the WebAssembly side, such a URL is placed in the custom section ([[WasmCustomSection]]) named `sourceMappingURL` and represented as `url_name_len` + `url_name_str` where `url_name_len` is length [[varuint32]] of `url_name_str` and `url_name_str` is bytes of the UTF-8 encoded URL string.
 
 `<url>` is a URL as defined in [[URL]]; in particular,
 characters outside the set permitted to appear in URIs must be percent-encoded
