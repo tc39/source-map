@@ -1,4 +1,4 @@
-# Process to introduce new source maps features
+# Process to introduce new source map features
 
 ## Stage 1
 
@@ -8,7 +8,7 @@
 
 - There's a concrete set of details written out for the precise format and what it does. The details are not final and further iteration is expected.
 
-When a proposal reaches Stage 2, experiemntal implementation in all areas is encouraged. There is a very high risk of incompatible changes, so they should not be exposed to production users.
+When a proposal reaches Stage 2, experimental implementation in all areas is encouraged. There is a very high risk of incompatible changes, so they should not be exposed to production users.
 
 ## Stage 3
 
@@ -16,7 +16,7 @@ When a proposal reaches Stage 2, experiemntal implementation in all areas is enc
 - There's at least 1 implementation (in generating tools, ideally also at other levels)
 - A test suite has been started (but it might not be complete)
 
-When a proposal reaches Stage 3, no further improvements are possible withuot implementing the solution and testing it in real-world scenarios. All the other types of research have already been done in the previous stages.
+When a proposal reaches Stage 3, no further improvements are possible without implementing the solution and testing it in real-world scenarios. All the other types of research have already been done in the previous stages.
 
 ## Stage 4 (complete)
 
