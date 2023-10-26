@@ -102,27 +102,29 @@ More precisely, for every location `loc_gen` in the generated code that is mappe
 The following information describes a scope in the source map:
 - the type of the scope (e.g. block, function or module scope)
 - whether this scope appears in the original and/or the generated source
+- whether this scope is the outermost scope representing an inlined function
 - the start and end locations of the scope in the generated source
-- only for scopes that appear in the original source: the start and end locations of the scope in the original source
+- only for scopes representing an inlined function: the location of the function call (the callsite)
 - only for function scopes that appear in the original source: the original name of the function
 - only for scopes that appear in the original source: the scope's bindings, for each binding we add
   - the original variable name
-  - a javascript expression that can be evaluated by the debugger in the corresponding generated scope to get the binding's value
+  - a javascript expression that can be evaluated by the debugger in the corresponding generated scope to get the binding's value (if such an expression is available)
 
-Example of such information for a single scope in raw JSON (without encoding): 
+Here's a scope representing an inlined function taken from [this example](https://github.com/hbenl/tc39-proposal-scope-mapping/blob/master/test/inline-across-modules.test.ts), encoded as JSON:
 ```js
 {
-    type: 0, /* ScopeType.NAMED_FUNCTION */
-    name: "outer",
-    start: { line: 1, column: 1 },
-    end: { line: 8, column: 2 },
-    isInOriginalSource: true,
-    isInGeneratedSource: true,
-    bindings: [
-      { varname: "inner", expression: "g" },
-      { varname: "num", expression: "a" },
-      { varname: "num_plus_one", expression: "b" },
-    ]
+  type: 2, /* ScopeType.OTHER */
+  name: null,
+  start: { line: 3, column: 1 },
+  end: { line: 5, column: 22 },
+  callsite: { sourceIndex: 0, line: 3, column: 1 },
+  isInOriginalSource: true,
+  isInGeneratedSource: false,
+  isOutermostInlinedScope: true,
+  bindings: [
+    { varname: "increment", expression: "l" },
+    { varname: "f", expression: null },
+  ]
 }
 ```
 
