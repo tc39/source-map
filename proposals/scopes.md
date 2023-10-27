@@ -100,37 +100,156 @@ More precisely, for every location `loc_gen` in the generated code that is mappe
   - if `loc_gen` is in an inlined function, the scopes in the original source which contain the function call that was inlined
 
 The following information describes a scope in the source map:
-- the type of the scope (e.g. block, function or module scope)
-- whether this scope appears in the original and/or the generated source
-- whether this scope is the outermost scope representing an inlined function
+- whether this is a function scope
+- whether bindings from outer scopes are accessible within this scope
+- whether the debugger should step over this scope
+- whether this scope should be shown among the original scopes
 - the start and end locations of the scope in the generated source
+- an optional name (the original name of the function for function scopes)
+- optionally the start and end locations of the scope in the original source
 - only for scopes representing an inlined function: the location of the function call (the callsite)
-- only for function scopes that appear in the original source: the original name of the function
-- only for scopes that appear in the original source: the scope's bindings, for each binding we add
+- the scope's bindings, for each binding we add
   - the original variable name
   - a javascript expression that can be evaluated by the debugger in the corresponding generated scope to get the binding's value (if such an expression is available)
 
-Here's a scope representing an inlined function taken from [this example](https://github.com/hbenl/tc39-proposal-scope-mapping/blob/master/test/inline-across-modules.test.ts), encoded as JSON:
-```js
-{
-  type: 2, /* ScopeType.OTHER */
-  name: null,
-  start: { line: 3, column: 1 },
-  end: { line: 5, column: 22 },
-  callsite: { sourceIndex: 0, line: 3, column: 1 },
-  isInOriginalSource: true,
-  isInGeneratedSource: false,
-  isOutermostInlinedScope: true,
-  bindings: [
-    { varname: "increment", expression: "l" },
-    { varname: "f", expression: null },
-  ]
-}
-```
-
 ### Encoding
 
-WORK IN PROGRESS
+Like the "mappings" field, the data in the "scopes" field is grouped by line and lines are separated by `;`. Within a line, items are separated by `,`. There are two different kinds of items that will appear in the "scopes" field: "Start Scope" and "End Scope". The kind of an item can be determined by looking at how many VLQ-encoded numbers it contains: "End Scope" items contain one number, "Start Scope" items contain two or more numbers.
+
+Note: Each DATA represents one VLQ number.
+
+#### Start scope
+
+* DATA column in the generated code
+  * Note: This is the point in generated code where the scope starts. The line is the number of `;` preceding this item plus one.
+  * Note: The column is relative to the column of the previous item on the same line or absolute if there is no such item.
+* DATA field flags
+  * Note: binary flags that specify if a field is used for this scope.
+  * Note: Unknown flags would skip the whole scope.
+  * 0x1 has name
+  * 0x2 has definition
+  * 0x4 has callsite
+* DATA info flags
+  * Note: binary flags that specify behavior of the scope.
+  * Note: Unknown flags can be ignored.
+  * 0x1 function
+    * Note: This is a function scope.
+  * 0x2 inherit parent bindings
+    * Note: Bindings for parent scope are still accessible in this scope.
+  * 0x4 skip when stepping
+    * Note: Debuggers are encouraged to step over this scope.
+  * 0x8 collapse
+    * Note: doesn't show the scope in the stack trace.
+* name: (only existing if `has name` flag is set)
+  * DATA offset into `names` field
+    * Note: This offset is relative to the offset of the last scope name or absolute if this is the first name
+  * Note: This name should be shown as function name in the stack trace
+* definition: (only existing if `has definition` flag is set)
+  * DATA offset into `sources`
+    * Note: This offset is relative to the offset of the last definition or absolute if this is the first definition
+  * DATA start line
+    * Note: This is relative to the start line of the last definition if it had the same offset into `sources` or absolute otherwise
+  * DATA start column
+    * Note: This is relative to the start column of the last definition if it had the same offset into `sources` and the same line or absolute otherwise
+  * DATA end line
+    * Note: This is relative to the start line
+  * DATA end column
+    * Note: This is relative to the start column if the end line is the same as the start line or absolute otherwise
+  * Note: Range in the original code that forms this scope.
+* callsite: (only existing if `has callsite` flag is set)
+  * DATA relative offset into `sources`
+  * DATA line
+    * Note: This is relative to the line of the last callsite if it had the same offset into `sources` or absolute otherwise
+  * DATA column
+    * Note: This is relative to the start column of the last callsite if it had the same offset into `sources` and the same line or absolute otherwise
+  * Note: When this field is set, it's an inlined function, called from that expression.
+* bindings:
+  * DATA number of bindings (N)
+  * N times
+    * DATA relative offset into `names` field for the original variable name
+    * DATA relative offset into `names` field for an expression for the binding's value or -1 if the value is unavailable
+    * Note: identifiers mentioned in the expression are resolved at the start of the scope
+  * Note: Bindings available when inside of that scope.
+
+#### End scope
+
+* DATA column in the generated code `**`
+  * Note: This is the point in generated code where the scope ends. The line is the number of `;` preceding this item plus one.
+  * Note: The column is relative to the column of the previous item on the same line or absolute if there is no such item.
+
+### Example
+
+Original Code (file.js):
+
+``` js
+var x = 1;
+function z(message) {
+  let y = 2;
+  console.log(message + y);
+}
+z("Hello World");
+```
+
+Generated Code:
+
+``` js
+var _x = 1;
+function _z(_m) {
+  let _y = 2;
+  console.log(_m + _y);
+}
+console.log("Hello World2"); // <- Inlined
+```
+
+Scopes:
+
+```
+A|    var _x = 1;
+ | B| function _z(_m) {
+ |  |   let _y = 2;
+ |  |   console.log(_m + _y);
+ |  | }
+ | C| console.log("Hello World2");
+```
+
+`LX CY`: Line X Column Y
+
+```
+Start Scope C0 { // A
+  field flags: has definition
+  info flags:
+  definition: file.js L1 C0 - L6 C17
+  bindings: x -> _x, z -> _z
+}
+;
+Start Scope C16 { // B
+  field flags: has name, has definition
+  info flags: function, inherit parent bindings
+  name: z
+  definition: file.js L2 C20 - L5 C1
+  bindings: message -> _m, y -> _y
+}
+;
+;
+;
+End Scope C1 // B
+;
+Start Scope C0 { // C
+  field flags: has name, has definition, has callsite
+  info flags: function, inherit parent bindings
+  name: z
+  definition: file.js L2 C0 - L5 C1
+  callsite: file.js L6 C0
+  bindings: message -> "Hello World", y -> 2
+}
+End Scope C28 // C
+End Scope C28 // A
+```
+
+`XXXX` stands for a "Start Scope" item, `X` for an "End Scope" item
+```
+XXXX;XXXX;;;X;XXXX,X,X
+```
 
 ## Questions
 
