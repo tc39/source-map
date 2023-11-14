@@ -112,13 +112,113 @@ The following information describes a scope in the source map:
   - the original variable name
   - a javascript expression that can be evaluated by the debugger in the corresponding generated scope to get the binding's value (if such an expression is available)
 
+The following code snippet specifies the scope information **conceptually** in TypeScript notation. See the [Encoding](#encoding) section
+on how this information is actually VLQ encoded.
+
+```ts
+interface SourceMap {
+  // ...
+  originalScopes?: OriginalScope[];
+  generatedScopes?: GeneratedScope;
+}
+
+interface OriginalScope {
+  start: OriginalPosition;
+  end: OriginalPosition;
+  kind: ScopeKind;
+  /** Class/module/function name. Can be used for stack traces or naming scopes in a debugger's scope view */
+  name?: string;
+  /** Symbols defined in this scope and where they are found in the generated code (plus how to get their values). */
+  bindings: Map<string, BindingRange[]>;
+  children?: OriginalScope[];
+}
+
+interface GeneratedScope {
+  start: GeneratedPosition;
+  end: GeneratedPosition;
+  originalScope?: OriginalScope;
+  /** If this scope corresponds to an inlined function body, record the callsite of the inlined function in the original code */
+  callsite?: OriginalPosition;
+  children?: GeneratedScope[];
+}
+
+type ScopeKind = 'global' | 'class' | 'function' | 'block';
+
+interface BindingRange {
+  from: GeneratedPosition;
+  to: GeneratedPosition;
+  expression: string;
+}
+
+interface GeneratedPosition {
+  line: number;
+  column: number;
+}
+
+interface OriginalPosition {
+  sourceIndex: number;
+  line: number;
+  column: number;
+}
+```
+
 ### Encoding
 
-Like the "mappings" field, the data in the "scopes" field is grouped by line and lines are separated by `;`. Within a line, items are separated by `,`. There are two different kinds of items that will appear in the "scopes" field: "Start Scope" and "End Scope". The kind of an item can be determined by looking at how many VLQ-encoded numbers it contains: "End Scope" items contain one number, "Start Scope" items contain two or more numbers.
+We introduce two new fields "originalScopes" and "generatedScopes" respectively:
+
+  * "originalScopes" is an array of original scope tree descriptors (a string). Each element in the array describes the scope tree of the corresponding "sources" entry.
+  * "generatedScpoes" is a single generated scope tree descriptor (a string) of the generated file.
+
+Like the "mappings" field, the data in a "generated scope tree descriptor" is grouped by line and lines are separated by `;`. Within a line, items are separated by `,`. A "original scope tree descriptor" is NOT grouped by line, but itmes are separated by `,`.
+
+There are two different kinds of items that will appear in a "original scope descriptor": "Start Original Scope" and "End Original Scope".
+There are two different kinds of items that will appear in the "generated scope descriptor": "Start Generated Scope" and "End Generated Scope".
+
+The kind of an item can be determined by looking at how many VLQ-encoded numbers it contains: "End Scope" items contain one number, "Start Scope" items contain two or more numbers.
 
 Note: Each DATA represents one VLQ number.
 
-#### Start scope
+#### Start Original Scope
+
+* DATA line in the original code
+  * Note: this is the point in the original code where the scope starts. `line` is relative to the `line` of the preceeding "start/end original scope" item.
+* DATA column in the original code
+  * Note: Column is always absolute.
+* DATA kind
+  * Note: This is type of the scope.
+  * 0x1 toplevel
+  * 0x2 function
+  * 0x3 class
+  * 0x4 block
+* DATA field flags
+  * Note: binary flags that specify if a field is used for this scope.
+  * Note: Unknown flags would skip the whole scope.
+  * 0x1 has name
+  * 0x2 has bindings
+* name: (only exists if `has name` flag is set)
+  * DATA offset into `names` field
+    * Note: This offset is relative to the offset of the last scope name or absolute if this is the first name
+  * Note: This name should be shown as function name in the stack trace for function scopes.
+* bindings: (only exists if `has bindings` flag is set)
+  * DATA number of bindings (N)
+  * N times
+    * DATA relative offset into `names` field for the original variable name defined in this scope
+    * DATA number of ranges (M)
+    * M times
+      * DATA relative offset into `names` field for the expression for the bindings value in this range
+      * DATA start line (absolute)
+      * DATA start column (absolute)
+      * DATA end line (relative to `start line`)
+      * DATA end column (absolute)
+
+#### End Original Scope
+
+* DATA line in the original code
+  * Note: `line` is relative to the `line` of the preceeding "start/end original scope" item.
+* DATA column in the original code
+  * Note: Column is always absolute.
+
+#### Start Generated Scope
 
 * DATA column in the generated code
   * Note: This is the point in generated code where the scope starts. The line is the number of `;` preceding this item plus one.
@@ -126,36 +226,13 @@ Note: Each DATA represents one VLQ number.
 * DATA field flags
   * Note: binary flags that specify if a field is used for this scope.
   * Note: Unknown flags would skip the whole scope.
-  * 0x1 has name
-  * 0x2 has definition
-  * 0x4 has callsite
-* DATA info flags
-  * Note: binary flags that specify behavior of the scope.
-  * Note: Unknown flags can be ignored.
-  * 0x1 function
-    * Note: This is a function scope.
-  * 0x2 inherit parent bindings
-    * Note: Bindings for parent scope are still accessible in this scope.
-  * 0x4 skip when stepping
-    * Note: Debuggers are encouraged to step over this scope.
-  * 0x8 collapse
-    * Note: doesn't show the scope in the stack trace.
-* name: (only existing if `has name` flag is set)
-  * DATA offset into `names` field
-    * Note: This offset is relative to the offset of the last scope name or absolute if this is the first name
-  * Note: This name should be shown as function name in the stack trace
+  * 0x1 has definition
+  * 0x2 has callsite
 * definition: (only existing if `has definition` flag is set)
   * DATA offset into `sources`
     * Note: This offset is relative to the offset of the last definition or absolute if this is the first definition
-  * DATA start line
-    * Note: This is relative to the start line of the last definition if it had the same offset into `sources` or absolute otherwise
-  * DATA start column
-    * Note: This is relative to the start column of the last definition if it had the same offset into `sources` and the same line or absolute otherwise
-  * DATA end line
-    * Note: This is relative to the start line
-  * DATA end column
-    * Note: This is relative to the start column if the end line is the same as the start line or absolute otherwise
-  * Note: Range in the original code that forms this scope.
+  * DATA scope offset into `originalScopes[offset]`
+    * Note: This is an offset to the "Start Original Scope" item of the corresponding original scope tree. This offset is relative to the last `scope offset` of the same source `offset` or absolute if this is the first `scope offset`.
 * callsite: (only existing if `has callsite` flag is set)
   * DATA relative offset into `sources`
   * DATA line
@@ -163,15 +240,8 @@ Note: Each DATA represents one VLQ number.
   * DATA column
     * Note: This is relative to the start column of the last callsite if it had the same offset into `sources` and the same line or absolute otherwise
   * Note: When this field is set, it's an inlined function, called from that expression.
-* bindings:
-  * DATA number of bindings (N)
-  * N times
-    * DATA relative offset into `names` field for the original variable name
-    * DATA relative offset into `names` field for an expression for the binding's value or -1 if the value is unavailable
-    * Note: identifiers mentioned in the expression are resolved at the start of the scope
-  * Note: Bindings available when inside of that scope.
 
-#### End scope
+#### End Generated Scope
 
 * DATA column in the generated code `**`
   * Note: This is the point in generated code where the scope ends. The line is the number of `;` preceding this item plus one.
