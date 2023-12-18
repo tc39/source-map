@@ -1,5 +1,6 @@
 # Range Mappings
 
+* Stage: 2
 * Author: Tobias Koppers
 * Date: November, 2023
 
@@ -12,6 +13,21 @@ So we are either loosing information or we need many mappings in the SourceMap t
 
 These information problem is especially problematic when applying a SourceMap to another SourceMap.
 Here we can only use locations that are specified in both SourceMaps. We have to be lucky that locations match up.
+
+### Practical example
+
+As an example let's look at a build process when a TypeScript file is converted to JavaScript first and that is minified afterwards.
+
+The TypeScript to JavaScript transformation is mostly keeping code identical, but removing type annotations.
+Theoretically only a few SourceMap mappings are needs, as most code stays identical.
+
+Minifying is a bigger transformation of the code, which one it's own would result in a lot of SourceMap mappings to be generated.
+
+When both build steps are applied in a pipeline, this would result in a SourceMap with a coarse granularity since it could only map points that are defined in the TypeScript and the minifier SourceMap.
+
+With this proposal the TypeScript SourceMap could use range mappings to describe code that is kept identical in the TypeScript transformation. This would result in a fine granularity of the final SourceMap as described in the SourceMap produced from the minifier.
+
+The TypeScript SourceMap would behave identical to a SourceMap mapping every single char of the generated code, but without the need for more mappings in the SourceMap.
 
 ## Proposal
 
