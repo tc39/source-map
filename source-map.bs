@@ -172,16 +172,16 @@ has never been enforced.
 
 <dfn><code>file</code></dfn> an optional name of the generated code
 that this source map is associated with.  <mark>It's not specified if this can
-be a URL, relative path name, or just a base name. As such has a mostly informal
+be a URL, relative path name, or just a base name. As such it has a mostly informal
 character.</mark>
 
 <dfn><code>sourceRoot</code></dfn> an optional source root,
 useful for relocating source files on a server or removing repeated values in
-the "sources" entry.  This value is prepended to the individual entries in the
+the [=sources=] entry.  This value is prepended to the individual entries in the
 "source" field.
 
 <dfn><code>sources</code></dfn> is a list of original sources
-used by the "mappings" entry.  Each entry is either a string that is a
+used by the [=mappings=] entry.  Each entry is either a string that is a
 (potentially relative) URL or `null` if the source name is not known.
 
 <dfn><code>sourcesContent</code></dfn> an optional list
@@ -215,8 +215,8 @@ The fields in each segment are:
 1. The zero-based starting [=column=] of the line in the generated code that the segment represents.
     If this is the first field of the first segment, or the first segment following a new generated
     line (`;`), then this field holds the whole [=Base64 VLQ=].  Otherwise, this field contains
-    a [=Base64 VLQ=] that is relative to the previous occurrence of this field.  _Note that this
-    is different than the fields below because the previous value is reset after every generated line._
+    a [=Base64 VLQ=] that is relative to the previous occurrence of this field.  <em>Note that this
+    is different than the fields below because the previous value is reset after every generated line.</em>
 
 2. If present, a zero-based index into the [=sources=] list. This field is a [=Base64 VLQ=]
     relative to the previous occurrence of this field, unless this is the first occurrence of this
@@ -342,10 +342,10 @@ Linking generated code to source maps {#linking-generated-code}
 ---------------------------------------------------------------
 
 While the source map format is intended to be language and platform agnostic, it is useful
-to have some conventions for the expected use-case of web server-hosted javascript.
+to have some conventions for the expected use-case of web server-hosted JavaScript.
 
-There are two suggested ways to link source maps to the output.  The first requires a server
-support to add a HTTP header and the second requires an annotation in the source.
+There are two suggested ways to link source maps to the output.  The first requires server
+support in order to add an HTTP header and the second requires an annotation in the source.
 
 The HTTP header should supply the source map URL reference as:
  
@@ -353,7 +353,7 @@ The HTTP header should supply the source map URL reference as:
 SourceMap: <url>
 ```
 
-Note: previous revisions of this document recommended a header name of `X-SourceMap`.  This
+Note: Previous revisions of this document recommended a header name of `X-SourceMap`.  This
 is now deprecated; `SourceMap` is now expected.
 
 The generated code should include a line at the end of the source, with the following form:
@@ -369,7 +369,7 @@ while source map consumers must accept both `//@` and `//#`.
 Note: `//@` is needed for compatibility with some existing legacy source maps.
 
 
-This recommendation works well for JavaScript, it is expected that other source files will
+This recommendation works well for JavaScript, but it is expected that other source files will
 have different conventions.  For instance, for CSS `/*# sourceMappingURL=<url> */` is proposed.
 On the WebAssembly side, such a URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the custom section ([[WasmCustomSection]]) named `sourceMappingURL`.
 
@@ -378,8 +378,8 @@ characters outside the set permitted to appear in URIs must be percent-encoded
 and it may be a data URI.  Using a data URI along with [=sourcesContent=] allows
 for a completely self-contained source map.
 
-<ins>The HTTP `SourceMap` header has precedence over source annotation, and if both are present,
-header URL should be used to resolve the source map file.</ins>
+<ins>The HTTP `SourceMap` header has precedence over a source annotation, and if both are present,
+the header URL should be used to resolve the source map file.</ins>
 
 Regardless of the method used to retrieve the [=Source Mapping URL=] the same
 process is used to resolve it, which is as follows:
