@@ -363,8 +363,11 @@ The generated code should include a line at the end of the source, with the foll
 ```
 
 Note: The prefix for this annotation was initially `//@` however this conflicts with Internet
-Explorer's Conditional Compilation and was changed to `//#`.  It is reasonable for tools to
-also accept `//@` but `//#` is preferred.
+Explorer's Conditional Compilation and was changed to `//#`. Source map generators must only emit `//#` 
+while source map consumers must accept both `//@` and `//#`.
+
+Note: `//@` is needed for compatibility with some existing legacy source maps.
+
 
 This recommendation works well for JavaScript, it is expected that other source files will
 have different conventions.  For instance, for CSS `/*# sourceMappingURL=<url> */` is proposed.
