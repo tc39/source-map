@@ -260,11 +260,9 @@ uncompressed map that may be GZIP'd for transport.
 Extensions {#extensions}
 ------------------------
 
-Additional fields may be added to the top-level source map provided the fields begin with the
-`x_` naming convention.  It is expected that the extensions would be classified by the
-organization providing the extension, such as `x_google_linecount`.    Field names outside
-the `x_` namespace are reserved for future revisions.  It is recommended that fields be
-namespaced by domain, i.e. `x_com_google_gwt_linecount`.
+Source map consumers must ignore any additional unrecognized properties, rather than causing the
+source map to be rejected, so that additional features can be added to this format without
+breaking existing users.
 
 Notes on File Offsets
 ---------------------
