@@ -23,7 +23,13 @@ spec:html; type:element;
     text:style
     text:title
     text:link
+
 spec:bikeshed-1; type:dfn; for:railroad; text:optional
+
+spec:fetch; type:dfn; for:/; text:request
+spec:fetch; type:dfn; for:/; text:response
+
+spec:url; type:dfn; for:/; text:url
 </pre>
 
 <pre class="biblio">
@@ -245,18 +251,6 @@ Resolving Sources {#resolving-sources}
 If the sources are not absolute URLs after prepending the [=sourceRoot=], the sources are
 resolved relative to the SourceMap (like resolving the script `src` attribute in an HTML document).
 
-Encoding {#encoding}
---------------------
-
-For simplicity, the character set encoding is always UTF-8.
-
-Compression {#compression}
---------------------------
-
-The file is allowed to be GZIP compressed.   It is not expected that in-browser consumers of
-the source map will support GZIP compression directly but that they will consume an
-uncompressed map that may be GZIP'd for transport.
-
 Extensions {#extensions}
 ------------------------
 
@@ -434,21 +428,35 @@ However, It is unclear what a "source map reference" looks like in anything othe
 More specifically, what a source map reference looks like in a language that doesn't support
 JavaScript-style single-line comments.
 
-JSON over HTTP Transport
-========================
+Fetching Source Maps {#fetching-source-maps}
+============================================
 
-For historic reasons, when delivering source maps over HTTP, servers may prepend a line
-starting with the string `)]}'` to the source map.  A client fetching a source map via
-HTTP thus should check if the response starts with this string and then ignore the
-first line.
+To fetch a source map given a [=URL=] |url|, run the following steps:
 
-```
-)]}'garbage here
-{"version": 3, ...}
-```
+1. Let |promise| be [=a new promise=].
+1. Let |request| be a new [=request=] whose [=request/URL=] is |url|.
+1. [=Fetch=] |request| with [=processResponseConsumeBody=] set to the following steps given [=response=] <var ignore>response</var> and null, failure, or a [=byte sequence=] |bodyBytes|:
+    1. If |bodyBytes| is null or failure, [=reject=] |promise| with a {{TypeError}} and abort these steps.
+    1. If |url|'s [=url/scheme=] is an [=HTTP(S) scheme=] and |bodyBytes| [=byte sequence/starts with=] \`<code>)]}'</code>\`, then:
+        1. [=While=] |bodyBytes|'s [=byte sequence/length=] is not 0 and |bodyBytes|'s 0th byte is not an [=HTTP newline byte=]:
+            1. remove the 0th byte from |bodyBytes|.
 
-Is to be interpreted as
+            <div class="note">
+            <span class="marker">Note:</span> For historic reasons, when delivering source maps over HTTP(S), servers may prepend a line
+            starting with the string `)]}'` to the source map.
 
-```
-{"version": 3, ...}
-```
+            ```
+            )]}'garbage here
+            {"version": 3, ...}
+            ```
+
+            is interpreted as
+
+            ```
+            {"version": 3, ...}
+            ```
+            </div>
+    1. Let |sourceMap| be the result of [=parsing JSON bytes to a JavaScript value=] given |bodyBytes|.
+    1. If the previous step threw an error, [=reject=] |promise| with that error.
+    1. Otherwise, [=resolve=] |promise| with |sourceMap|.
+1. Return |promise|.
