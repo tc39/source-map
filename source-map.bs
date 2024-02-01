@@ -342,11 +342,11 @@ support in order to add an HTTP header and the second requires an annotation in 
 The HTTP header should supply the source map URL reference as:
  
 ```
-SourceMap: <url>
+sourcemap: <url>
 ```
 
-Note: Previous revisions of this document recommended a header name of `X-SourceMap`.  This
-is now deprecated; `SourceMap` is now expected.
+Note: Previous revisions of this document recommended a header name of `x-sourcemap`.  This
+is now deprecated; `sourcemap` is now expected.
 
 The generated code should include a line at the end of the source, with the following form:
 
