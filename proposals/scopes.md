@@ -113,13 +113,13 @@ The following information describes a scope in the source map:
   - a javascript expression that can be evaluated by the debugger in the corresponding generated scope to get the binding's value (if such an expression is available)
 
 The following code snippet specifies the scope information **conceptually** in TypeScript notation. See the [Encoding](#encoding) section
-on how this information is actually VLQ encoded.
+on how this information is actually VLQ encoded. We chose the name `GeneratedRange` instead of `GeneratedScope` to make it explicit that a `GeneratedRange` does not necessarily correspond to a lexical ECMAScript scope (e.g. in the case of an inlined function body).
 
 ```ts
 interface SourceMap {
   // ...
   originalScopes?: OriginalScope[];
-  generatedScopes?: GeneratedScope;
+  generatedRanges?: GeneratedRange;
 }
 
 interface OriginalScope {
@@ -133,13 +133,13 @@ interface OriginalScope {
   children?: OriginalScope[];
 }
 
-interface GeneratedScope {
+interface GeneratedRange {
   start: GeneratedPosition;
   end: GeneratedPosition;
   originalScope?: OriginalScope;
   /** If this scope corresponds to an inlined function body, record the callsite of the inlined function in the original code */
   callsite?: OriginalPosition;
-  children?: GeneratedScope[];
+  children?: GeneratedRange[];
 }
 
 type ScopeKind = 'global' | 'class' | 'function' | 'block';
@@ -164,24 +164,24 @@ interface OriginalPosition {
 
 ### Encoding
 
-We introduce two new fields "originalScopes" and "generatedScopes" respectively:
+We introduce two new fields "originalScopes" and "generatedRanges" respectively:
 
   * "originalScopes" is an array of original scope tree descriptors (a string). Each element in the array describes the scope tree of the corresponding "sources" entry.
-  * "generatedScpoes" is a single generated scope tree descriptor (a string) of the generated file.
+  * "generatedRanges" is a single generated range tree descriptor (a string) of the generated file.
 
-Like the "mappings" field, the data in a "generated scope tree descriptor" is grouped by line and lines are separated by `;`. Within a line, items are separated by `,`. A "original scope tree descriptor" is NOT grouped by line, but itmes are separated by `,`.
+Like the "mappings" field, the data in a "generated range tree descriptor" is grouped by line and lines are separated by `;`. Within a line, items are separated by `,`. A "original scope tree descriptor" is NOT grouped by line, but items are separated by `,`.
 
 There are two different kinds of items that will appear in a "original scope descriptor": "Start Original Scope" and "End Original Scope".
-There are two different kinds of items that will appear in the "generated scope descriptor": "Start Generated Scope" and "End Generated Scope".
+There are two different kinds of items that will appear in the "generated range descriptor": "Start Generated Range" and "End Generated Range".
 
-The kind of an item can be determined by looking at how many VLQ-encoded numbers it contains: "End Scope" items contain one number, "Start Scope" items contain two or more numbers.
+The kind of an item can be determined by looking at how many VLQ-encoded numbers it contains: "End" items contain one number, "Start" items contain two or more numbers.
 
 Note: Each DATA represents one VLQ number.
 
 #### Start Original Scope
 
 * DATA line in the original code
-  * Note: this is the point in the original code where the scope starts. `line` is relative to the `line` of the preceeding "start/end original scope" item.
+  * Note: this is the point in the original code where the scope starts. `line` is relative to the `line` of the preceding "start/end original scope" item.
 * DATA column in the original code
   * Note: Column is always absolute.
 * DATA kind
@@ -214,17 +214,17 @@ Note: Each DATA represents one VLQ number.
 #### End Original Scope
 
 * DATA line in the original code
-  * Note: `line` is relative to the `line` of the preceeding "start/end original scope" item.
+  * Note: `line` is relative to the `line` of the preceding "start/end original scope" item.
 * DATA column in the original code
   * Note: Column is always absolute.
 
-#### Start Generated Scope
+#### Start Generated Range
 
 * DATA column in the generated code
-  * Note: This is the point in generated code where the scope starts. The line is the number of `;` preceding this item plus one.
+  * Note: This is the point in generated code where the range starts. The line is the number of `;` preceding this item plus one.
   * Note: The column is relative to the column of the previous item on the same line or absolute if there is no such item.
 * DATA field flags
-  * Note: binary flags that specify if a field is used for this scope.
+  * Note: binary flags that specify if a field is used for this range.
   * Note: Unknown flags would skip the whole scope.
   * 0x1 has definition
   * 0x2 has callsite
@@ -241,10 +241,10 @@ Note: Each DATA represents one VLQ number.
     * Note: This is relative to the start column of the last callsite if it had the same offset into `sources` and the same line or absolute otherwise
   * Note: When this field is set, it's an inlined function, called from that expression.
 
-#### End Generated Scope
+#### End Generated Range
 
 * DATA column in the generated code `**`
-  * Note: This is the point in generated code where the scope ends. The line is the number of `;` preceding this item plus one.
+  * Note: This is the point in generated code where the range ends. The line is the number of `;` preceding this item plus one.
   * Note: The column is relative to the column of the previous item on the same line or absolute if there is no such item.
 
 ### Example
