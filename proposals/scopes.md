@@ -128,8 +128,8 @@ interface OriginalScope {
   kind: ScopeKind;
   /** Class/module/function name. Can be used for stack traces or naming scopes in a debugger's scope view */
   name?: string;
-  /** Symbols defined in this scope and where they are found in the generated code (plus how to get their values). */
-  bindings: Map<string, BindingRange[]>;
+  /** Symbols defined in this scope */
+  variables?: string[];
   children?: OriginalScope[];
 }
 
@@ -139,6 +139,15 @@ interface GeneratedRange {
   originalScope?: OriginalScope;
   /** If this scope corresponds to an inlined function body, record the callsite of the inlined function in the original code */
   callsite?: OriginalPosition;
+  /**
+   * Expressions that compute the values of the variables of this OriginalScope. The length
+   * of `values` must match the length of `originalScope.variables`.
+   *
+   * For each variable this can either be a single expression (valid for the full `GeneratedRange`),
+   * or an array of `BindingRange`s, e.g. if computing the value requires different expressions
+   * throughout the range or if the variable is only available in parts of the `GeneratedRange`.
+   */
+  bindings?: (string | undefined | BindingRange[])[];
   children?: GeneratedRange[];
 }
 
@@ -147,7 +156,7 @@ type ScopeKind = 'global' | 'class' | 'function' | 'block';
 interface BindingRange {
   from: GeneratedPosition;
   to: GeneratedPosition;
-  expression: string;
+  expression?: string;
 }
 
 interface GeneratedPosition {
@@ -194,22 +203,15 @@ Note: Each DATA represents one VLQ number.
   * Note: binary flags that specify if a field is used for this scope.
   * Note: Unknown flags would skip the whole scope.
   * 0x1 has name
-  * 0x2 has bindings
+  * 0x2 has variables
 * name: (only exists if `has name` flag is set)
   * DATA offset into `names` field
     * Note: This offset is relative to the offset of the last scope name or absolute if this is the first name
   * Note: This name should be shown as function name in the stack trace for function scopes.
-* bindings: (only exists if `has bindings` flag is set)
-  * DATA number of bindings (N)
+* variables: (only exists if `has variables` flag is set)
+  * DATA number of variables (N)
   * N times
-    * DATA relative offset into `names` field for the original variable name defined in this scope
-    * DATA number of ranges (M)
-    * M times
-      * DATA relative offset into `names` field for the expression for the bindings value in this range
-      * DATA start line (absolute)
-      * DATA start column (absolute)
-      * DATA end line (relative to `start line`)
-      * DATA end column (absolute)
+    * DATA relative offset into `names` field for the original symbol name defined in this scope
 
 #### End Original Scope
 
@@ -228,6 +230,7 @@ Note: Each DATA represents one VLQ number.
   * Note: Unknown flags would skip the whole scope.
   * 0x1 has definition
   * 0x2 has callsite
+  * 0x4 has bindings
 * definition: (only existing if `has definition` flag is set)
   * DATA offset into `sources`
     * Note: This offset is relative to the offset of the last definition or absolute if this is the first definition
@@ -240,6 +243,24 @@ Note: Each DATA represents one VLQ number.
   * DATA column
     * Note: This is relative to the start column of the last callsite if it had the same offset into `sources` and the same line or absolute otherwise
   * Note: When this field is set, it's an inlined function, called from that expression.
+* bindings: (only existing if `has bindings` flag is set)
+  * DATA number of bindings (N)
+    * Note: N must match the number of variables in the definition scope
+    * N times
+      * Let M be the number of sub-ranges for the current variable in this generated range (where the expression differs on how to obtain the current variable’s value)
+      * DATA relative offset into `names` field
+        * Note: The value expression for the current variable either for the whole generated range (if M == 1), or for the sub-range that starts at the beginning of this generated range.
+      * If M > 1, then
+        * DATA negative number of sub-ranges (-M)
+        * (M - 1) times
+          * DATA line in the generated code
+          * DATA column in the generated code
+            * Note: This is the point (exclusive) in the generated code until the previous expression must be used to obtain the current variable’s value.
+            * Note: The line is relative to the previous sub-range line or the start of the current generated range item if it’s the first.
+            * Note: The column is relative to the column of the previous sub-range if it’s on the same line or absolute if it’s on a new line.
+          * DATA relative offset into `names` field
+            * Note: The expression to obtain the current variable’s value in the sub-range that starts at line/column and ends at either the next sub-range start or this generated range’s end.
+            * Note: Use -1 to indicate that the current variable is unavailable (e.g. due to shadowing) in this sub-range.
 
 #### End Generated Range
 
