@@ -203,14 +203,12 @@ Note: Each DATA represents one VLQ number.
   * Note: binary flags that specify if a field is used for this scope.
   * Note: Unknown flags would skip the whole scope.
   * 0x1 has name
-  * 0x2 has variables
 * name: (only exists if `has name` flag is set)
   * DATA offset into `names` field
     * Note: This offset is relative to the offset of the last scope name or absolute if this is the first name
   * Note: This name should be shown as function name in the stack trace for function scopes.
-* variables: (only exists if `has variables` flag is set)
-  * DATA number of variables (N)
-  * N times
+* variables:
+  * for each variable:
     * DATA relative offset into `names` field for the original symbol name defined in this scope
 
 #### End Original Scope
@@ -230,7 +228,6 @@ Note: Each DATA represents one VLQ number.
   * Note: Unknown flags would skip the whole scope.
   * 0x1 has definition
   * 0x2 has callsite
-  * 0x4 has bindings
 * definition: (only existing if `has definition` flag is set)
   * DATA offset into `sources`
     * Note: This offset is relative to the offset of the last definition or absolute if this is the first definition
@@ -243,24 +240,23 @@ Note: Each DATA represents one VLQ number.
   * DATA column
     * Note: This is relative to the start column of the last callsite if it had the same offset into `sources` and the same line or absolute otherwise
   * Note: When this field is set, it's an inlined function, called from that expression.
-* bindings: (only existing if `has bindings` flag is set)
-  * DATA number of bindings (N)
-    * Note: N must match the number of variables in the definition scope
-    * N times
-      * Let M be the number of sub-ranges for the current variable in this generated range (where the expression differs on how to obtain the current variable’s value)
-      * DATA relative offset into `names` field
-        * Note: The value expression for the current variable either for the whole generated range (if M == 1), or for the sub-range that starts at the beginning of this generated range.
-      * If M > 1, then
-        * DATA negative number of sub-ranges (-M)
-        * (M - 1) times
-          * DATA line in the generated code
-          * DATA column in the generated code
-            * Note: This is the point (exclusive) in the generated code until the previous expression must be used to obtain the current variable’s value.
-            * Note: The line is relative to the previous sub-range line or the start of the current generated range item if it’s the first.
-            * Note: The column is relative to the column of the previous sub-range if it’s on the same line or absolute if it’s on a new line.
-          * DATA relative offset into `names` field
-            * Note: The expression to obtain the current variable’s value in the sub-range that starts at line/column and ends at either the next sub-range start or this generated range’s end.
-            * Note: Use -1 to indicate that the current variable is unavailable (e.g. due to shadowing) in this sub-range.
+* bindings:
+  * Note: the number of bindings must match the number of variables in the definition scope
+  * for each binding:
+    * Let M be the number of sub-ranges for the current variable in this generated range (where the expression differs on how to obtain the current variable’s value)
+    * DATA relative offset into `names` field
+      * Note: The value expression for the current variable either for the whole generated range (if M == 1), or for the sub-range that starts at the beginning of this generated range.
+    * If M > 1, then
+      * DATA negative number of sub-ranges (-M)
+      * (M - 1) times
+        * DATA line in the generated code
+        * DATA column in the generated code
+          * Note: This is the point (exclusive) in the generated code until the previous expression must be used to obtain the current variable’s value.
+          * Note: The line is relative to the previous sub-range line or the start of the current generated range item if it’s the first.
+          * Note: The column is relative to the column of the previous sub-range if it’s on the same line or absolute if it’s on a new line.
+        * DATA relative offset into `names` field
+          * Note: The expression to obtain the current variable’s value in the sub-range that starts at line/column and ends at either the next sub-range start or this generated range’s end.
+          * Note: Use -1 to indicate that the current variable is unavailable (e.g. due to shadowing) in this sub-range.
 
 #### End Generated Range
 
