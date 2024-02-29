@@ -168,7 +168,7 @@ for practical reasons, the order cannot be defined in many JSON generators and
 has never been enforced.
 
 <dfn><code>version</code></dfn> is the version field which is always the number
-`3` as an integer. Source map can be rejected in case of a value different from `3`.
+`3` as an integer. A source map may be rejected in case of a value different from `3`.
 
 <dfn><code>file</code></dfn> an optional name of the generated code
 that this source map is associated with.  <mark>It's not specified if this can
