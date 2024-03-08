@@ -136,6 +136,7 @@ interface OriginalScope {
 interface GeneratedRange {
   start: GeneratedPosition;
   end: GeneratedPosition;
+  isScope: boolean;
   originalScope?: OriginalScope;
   /** If this scope corresponds to an inlined function body, record the callsite of the inlined function in the original code */
   callsite?: OriginalPosition;
@@ -224,10 +225,11 @@ Note: Each DATA represents one VLQ number.
   * Note: This is the point in generated code where the range starts. The line is the number of `;` preceding this item plus one.
   * Note: The column is relative to the column of the previous item on the same line or absolute if there is no such item.
 * DATA field flags
-  * Note: binary flags that specify if a field is used for this range.
+  * Note: binary flags that specify if a field is used for this range and if the range is a scope in the generated source.
   * Note: Unknown flags would skip the whole scope.
   * 0x1 has definition
   * 0x2 has callsite
+  * 0x4 is scope
 * definition: (only existing if `has definition` flag is set)
   * DATA offset into `sources`
     * Note: This offset is relative to the offset of the last definition or absolute if this is the first definition
