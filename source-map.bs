@@ -1,0 +1,462 @@
+<pre class='metadata'>
+Title: Source Map
+H1: Source Map
+Shortname: source-map
+Level: 1
+Status: STAGE0
+URL: https://source-map.github.io/source-map-spec/
+Editor: Armin Ronacher, Sentry
+Former Editor: Victor Porof, Google
+Former Editor: John Lenz, Google
+Former Editor: Nick Fitzgerald, Mozilla
+Previous Version: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#
+Repository: source-map/source-map-spec
+Abstract: A specification for mapping transpiled source code (primarily JavaScript) back to the original sources.  This specification is a living document and describes a hardened version of the Source Map v3 specification.
+Markup Shorthands: markdown yes
+Group: tc39
+</pre>
+
+<pre class=link-defaults>
+spec:html; type:element;
+    text:a
+    text:script
+    text:style
+    text:title
+    text:link
+
+spec:bikeshed-1; type:dfn; for:railroad; text:optional
+
+spec:fetch; type:dfn; for:/; text:request
+spec:fetch; type:dfn; for:/; text:response
+
+spec:url; type:dfn; for:/; text:url
+</pre>
+
+<pre class="biblio">
+{
+  "VLQ": {
+    "href": "https://en.wikipedia.org/wiki/Variable-length_quantity",
+    "title": "Variable-length quantity",
+    "publisher": "Wikipedia",
+    "status": "reference article"
+  },
+  "base64": {
+    "href": "https://www.ietf.org/rfc/rfc4648.txt",
+    "id": "rfc4648",
+    "publisher": "IETF",
+    "status": "Standards Track",
+    "title": "The Base16, Base32, and Base64 Data Encodings"
+  },
+  "URL": {
+    "href": "https://url.spec.whatwg.org/",
+    "publisher": "WhatWG",
+    "status": "Living Standard",
+    "title": "URL Standard"
+  },
+  "EvalSourceURL": {
+    "href": "https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/",
+    "publisher": "Firebug",
+    "status": "archive",
+    "title": "Give your eval a name with //@ sourceURL"
+  },
+  "V2Format": {
+    "href": "https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US",
+    "publisher": "Google",
+    "title": "Source Map Revision 2 Proposal"
+  },
+  "WasmCustomSection": {
+    "href": "https://www.w3.org/TR/wasm-core-2/binary/modules.html#custom-section",
+    "publisher": "W3C",
+    "status": "Living Standard",
+    "title": "WebAssembly custom section"
+  },
+  "WasmNamesBinaryFormat": {
+    "href": "https://www.w3.org/TR/wasm-core-2/binary/values.html#names",
+    "publisher": "W3C",
+    "status": "Living Standard",
+    "title": "WebAssembly Names binary format"
+  }
+}
+</pre>
+
+## License
+
+This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
+
+## Introduction
+
+This document is a draft version of a hardened version of the Source Map v3
+specification.  In its current form, it's not a defined standard and is subject to
+modifications.  If you want to get involved you will find more information under
+the following GitHub repositories:
+
+* [Spec Repository](https://github.com/source-map/source-map-spec/): holds the different
+    specifications (v1, v2, v3 and the hardened v3 draft you are looking at)
+* [RFC Repository](https://github.com/source-map/source-map-rfc/): meta
+    repository for change suggestions to the specification.
+
+Background {#background}
+========================
+
+The original source map format (v1) was created by Joseph Schorr for use by
+Closure Inspector to enable source-level debugging of optimized JavaScript code
+(although the format itself is language agnostic).  However, as the size of the
+projects using the source maps expanded the verbosity of the format started to
+become a problem.  The v2 ([[V2Format]]) was created by trading some simplicity
+and flexibility to reduce the overall size of the source map. Even with the
+changes made with the v2 version of the format, the source map file size was
+limiting its usefulness.  The v3 format is based on suggestions made by
+Pavel Podivilov (Google).
+
+<mark>This document codifies the prior art that is Source Map v3 but is more specific
+about the precise meanings of the specification.</mark>
+
+Terminology {#terminology}
+==========================
+
+<dfn>Generated Code</dfn> is the code which is generated
+by the compiler or transpiler.
+
+<dfn>Original Source</dfn> is the source code which has not
+been passed through the compiler.
+
+<dfn>Base64 VLQ</dfn>: [[VLQ]] is a [[base64]] value, where the most significant
+bit (the 6th bit) is used as the continuation bit, and the "digits" are encoded
+into the string least significant first, and where the least significant bit of
+the first digit is used as the sign bit.
+
+Note: The values that can be represented by the VLQ Base64 encoded are limited to
+32-bit quantities until some use case for larger values is presented.
+
+<dfn>Source Mapping URL</dfn> refers to the URL referencing
+the location of a source map from the [=Generated code=].
+
+<ins><dfn>Column</dfn> is the 0 (zero) indexed offsets within a line of the
+generated code measured.  The definition for columns in source maps can depend on
+the content type.  For JavaScript and CSS based source maps are defined to be in
+UTF-16 code units analogous to JavaScript string indexes.  That means that
+"A" (`LATIN CAPITAL LETTER A`) measures 1 code unit, and "🔥" (`FIRE`) measures
+2 code units.  For WebAssembly, columns are defined as byte offsets from the beginning 
+of the binary content (and there is only one group representing a line).  Source maps
+for other content types might diverge from this.
+</ins>
+
+General Goals {#general-goals}
+==============================
+
+<mark>The goals for the v3 format of Source Maps</mark>
+
+* Reduce the overall size to improve parse time, memory consumption, and download time.
+* Support source-level debugging allowing bidirectional mapping
+* Support server-side stack trace deobfuscation
+
+Source Map Format {#source-map-format}
+======================================
+
+The source map is a JSON document containing a top-level JSON object with the
+following structure:
+
+```json
+{
+  "version" : 3,
+  "file": "out.js",
+  "sourceRoot": "",
+  "sources": ["foo.js", "bar.js"],
+  "sourcesContent": [null, null],
+  "names": ["src", "maps", "are", "fun"],
+  "mappings": "A,AAAB;;ABCDE"
+  "ignoreList": [0]
+}
+```
+
+Note: The previous specification suggested an order to the keys in this file, but
+for practical reasons, the order cannot be defined in many JSON generators and
+has never been enforced.
+
+<dfn><code>version</code></dfn> is the version field which must always be the number
+`3` as an integer. The source map may be rejected in case of a value different from `3`.
+
+<dfn><code>file</code></dfn> an optional name of the generated code
+that this source map is associated with.  <mark>It's not specified if this can
+be a URL, relative path name, or just a base name. As such it has a mostly informal
+character.</mark>
+
+<dfn><code>sourceRoot</code></dfn> an optional source root,
+useful for relocating source files on a server or removing repeated values in
+the [=sources=] entry.  This value is prepended to the individual entries in the
+"source" field.
+
+<dfn><code>sources</code></dfn> is a list of original sources
+used by the [=mappings=] entry.  Each entry is either a string that is a
+(potentially relative) URL or `null` if the source name is not known.
+
+<dfn><code>sourcesContent</code></dfn> an optional list
+of source content (that is the [=Original Source=]), useful when the "source"
+can't be hosted.  The contents are listed in the same order as the [=sources=].
+`null` may be used if some original sources should be retrieved by name.
+
+<dfn><code>names</code></dfn> a list of symbol names used by the [=mappings=] entry.
+
+<dfn><code>mappings</code></dfn> a string with the encoded mapping data (see [[#mappings-structure]]).
+
+<dfn><code>ignoreList</code></dfn> an optional list of indices of files that
+should be considered third party code, such as framework code or bundler-generated code. This 
+allows developer tools to avoid code that developers likely don't want to see
+or step through, without requiring developers to configure this beforehand.
+It refers to the [=sources=] array and lists the indices of all the known third-party sources
+in the source map. Some browsers may also use the deprecated <code>x_google_ignoreList</code>
+field if <code>ignoreList</code> is not present.
+
+Mappings Structure {#mappings-structure}
+----------------------------------------
+
+The [=mappings=] data is broken down as follows:
+
+- each group representing a line in the generated file is separated by a semicolon (`;`)
+- each segment is separated by a comma (`,`)
+- each segment is made up of 1, 4, or 5 variable length fields.
+
+The fields in each segment are:
+
+1. The zero-based starting [=column=] of the line in the generated code that the segment represents.
+    If this is the first field of the first segment, or the first segment following a new generated
+    line (`;`), then this field holds the whole [=Base64 VLQ=].  Otherwise, this field contains
+    a [=Base64 VLQ=] that is relative to the previous occurrence of this field.  <em>Note that this
+    is different than the fields below because the previous value is reset after every generated line.</em>
+
+2. If present, a zero-based index into the [=sources=] list. This field is a [=Base64 VLQ=]
+    relative to the previous occurrence of this field, unless this is the first occurrence of this
+    field, in which case the whole value is represented.
+
+3. If present, the zero-based starting line in the original source is represented.  This field is a
+    [=Base64 VLQ=] relative to the previous occurrence of this field, unless this is the first
+    occurrence of this field, in which case the whole value is represented.  Always present if there
+    is a source field.
+
+4. If present, the zero-based starting [=column=] of the line in the source represented.  This
+    field is a [=Base64 VLQ=] relative to the previous occurrence of this field unless this
+    is the first occurrence of this field, in which case the whole value is represented.  Always
+    present if there is a source field.
+
+5. If present, the zero-based index into the [=names=] list associated with this segment.  This
+    field is a base 64 VLQ relative to the previous occurrence of this field unless this
+    is the first occurrence of this field, in which case the whole value is represented.
+
+Note: This encoding reduces the source map size by 50% relative to the V2 format in tests performed
+using Google Calendar.
+
+Resolving Sources {#resolving-sources}
+--------------------------------------
+
+If the sources are not absolute URLs after prepending the [=sourceRoot=], the sources are
+resolved relative to the SourceMap (like resolving the script `src` attribute in an HTML document).
+
+Extensions {#extensions}
+------------------------
+
+Source map consumers must ignore any additional unrecognized properties, rather than causing the
+source map to be rejected, so that additional features can be added to this format without
+breaking existing users.
+
+Notes on File Offsets
+---------------------
+
+Using file offsets was considered but rejected in favor of using line/column data to avoid becoming
+misaligned with the original due to platform-specific line endings. 
+
+Index Map
+=========
+
+To support concatenating generated code and other common post-processing,
+an alternate representation of a map is supported:
+
+```json
+{
+  "version" : 3,
+  "file": "app.js",
+  "sections": [
+    {
+      "offset": {"line": 0, "column": 0},
+      "map": {
+        "version" : 3,
+        "file": "section.js",
+        "sources": ["foo.js", "bar.js"],
+        "names": ["src", "maps", "are", "fun"],
+        "mappings": "AAAA,E;;ABCDE"
+      }
+    },
+    {
+      "offset": {"line": 100, "column": 10},
+      "map": {
+        "version" : 3,
+        "file": "another_section.js",
+        "sources": ["more.js"],
+        "names": ["more", "is", "better"],
+        "mappings": "AAAA,E;AACA,C;ABCDE"
+      }
+    }
+  ]
+}
+```
+
+The index map follows the form of the standard map.  Like the regular source map,
+the file format is JSON with a top-level object.  It shares the [=version=] and
+[=file=] field from the regular source map, but gains a new [=sections=] field.
+
+<dfn><code>sections</code></dfn> is an array of JSON objects that itself has two
+fields [=offset=] and [=map=].
+
+## Section
+
+<dfn><code>offset</dfn></code> is an object with two fields, `line` and `column`,
+that represent the offset into generated code that the referenced source map
+represents.
+
+<dfn><code>map</code></dfn> is an embedded complete source map object.
+An embedded map does not inherit any values from the containing index map.
+
+The sections must be sorted by starting position and the represented sections
+may not overlap.
+
+Conventions {#conventions}
+==========================
+
+The following conventions should be followed when working with source maps or
+when generating them.
+
+Source Map Naming {#source-map-naming}
+--------------------------------------
+
+Optionally, a source map will have the same name as the generated file but with a `.map`
+extension.  For example, for `page.js` a source map named `page.js.map` would be generated. 
+
+Linking generated code to source maps {#linking-generated-code}
+---------------------------------------------------------------
+
+While the source map format is intended to be language and platform agnostic, it is useful
+to have some conventions for the expected use-case of web server-hosted JavaScript.
+
+There are two suggested ways to link source maps to the output.  The first requires server
+support in order to add an HTTP header and the second requires an annotation in the source.
+
+The HTTP header should supply the source map URL reference as:
+ 
+```
+sourcemap: <url>
+```
+
+Note: Previous revisions of this document recommended a header name of `x-sourcemap`.  This
+is now deprecated; `sourcemap` is now expected.
+
+The generated code should include a line at the end of the source, with the following form:
+
+```
+//# sourceMappingURL=<url>
+```
+
+Note: The prefix for this annotation was initially `//@` however this conflicts with Internet
+Explorer's Conditional Compilation and was changed to `//#`. Source map generators must only emit `//#` 
+while source map consumers must accept both `//@` and `//#`.
+
+Note: `//@` is needed for compatibility with some existing legacy source maps.
+
+
+This recommendation works well for JavaScript, but it is expected that other source files will
+have different conventions.  For instance, for CSS `/*# sourceMappingURL=<url> */` is proposed.
+On the WebAssembly side, such a URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the custom section ([[WasmCustomSection]]) named `sourceMappingURL`.
+
+`<url>` is a URL as defined in [[URL]]; in particular,
+characters outside the set permitted to appear in URIs must be percent-encoded
+and it may be a data URI.  Using a data URI along with [=sourcesContent=] allows
+for a completely self-contained source map.
+
+<ins>The HTTP `SourceMap` header has precedence over a source annotation, and if both are present,
+the header URL should be used to resolve the source map file.</ins>
+
+Regardless of the method used to retrieve the [=Source Mapping URL=] the same
+process is used to resolve it, which is as follows:
+
+When the [=Source Mapping URL=] is not absolute, then it is relative to the generated code's
+<dfn>source origin</dfn>. The [=source origin=] is determined by one of the following cases:
+
+- If the generated source is not associated with a script element that has a `src`
+    attribute and there exists a `//# sourceURL` comment in the generated code, that
+    comment should be used to determine the [=source origin=]. Note: Previously, this was
+    `//@ sourceURL`, as with `//@ sourceMappingURL`, it is reasonable to accept both
+    but `//#` is preferred.
+
+- If the generated code is associated with a script element and the script element has
+    a `src` attribute, the `src` attribute of the script element will be the [=source origin=].
+
+- If the generated code is associated with a script element and the script element does
+    not have a `src` attribute, then the [=source origin=] will be the page's origin.
+
+- If the generated code is being evaluated as a string with the `eval()` function or
+    via `new Function()`, then the [=source origin=] will be the page's origin.
+
+Linking eval'd code to named generated code
+-------------------------------------------
+
+There is an existing convention that should be supported for the use of source maps with
+eval'd code, it has the following form:
+
+```
+//# sourceURL=foo.js
+```
+
+It is described in [[EvalSourceURL]].
+
+Language Neutral Stack Mapping Notes
+====================================
+
+Stack tracing mapping without knowledge of the source language is not covered by this document.
+
+Multi-level Mapping Notes
+=========================
+
+It is getting more common to have tools generate sources from some DSL (templates) or compile
+TypeScript -> JavaScript -> minified JavaScript, resulting in multiple translations before the
+final source map is created.  This problem can be handled in one of two ways.  The easy but
+lossy way is to ignore the intermediate steps in the process for the purposes of debugging,
+the source location information from the translation is either ignored (the intermediate
+translation is considered the “Original Source”) or the source location information is carried
+through (the intermediate translation hidden).  The more complete way is to support multiple
+levels of mapping: if the Original Source also has a source map reference, the user is given
+the choice of using that as well.
+
+However, It is unclear what a "source map reference" looks like in anything other than JavaScript.
+More specifically, what a source map reference looks like in a language that doesn't support
+JavaScript-style single-line comments.
+
+Fetching Source Maps {#fetching-source-maps}
+============================================
+
+To fetch a source map given a [=URL=] |url|, run the following steps:
+
+1. Let |promise| be [=a new promise=].
+1. Let |request| be a new [=request=] whose [=request/URL=] is |url|.
+1. [=Fetch=] |request| with [=processResponseConsumeBody=] set to the following steps given [=response=] <var ignore>response</var> and null, failure, or a [=byte sequence=] |bodyBytes|:
+    1. If |bodyBytes| is null or failure, [=reject=] |promise| with a {{TypeError}} and abort these steps.
+    1. If |url|'s [=url/scheme=] is an [=HTTP(S) scheme=] and |bodyBytes| [=byte sequence/starts with=] \`<code>)]}'</code>\`, then:
+        1. [=While=] |bodyBytes|'s [=byte sequence/length=] is not 0 and |bodyBytes|'s 0th byte is not an [=HTTP newline byte=]:
+            1. remove the 0th byte from |bodyBytes|.
+
+            <div class="note">
+            <span class="marker">Note:</span> For historic reasons, when delivering source maps over HTTP(S), servers may prepend a line
+            starting with the string `)]}'` to the source map.
+
+            ```
+            )]}'garbage here
+            {"version": 3, ...}
+            ```
+
+            is interpreted as
+
+            ```
+            {"version": 3, ...}
+            ```
+            </div>
+    1. Let |sourceMap| be the result of [=parsing JSON bytes to a JavaScript value=] given |bodyBytes|.
+    1. If the previous step threw an error, [=reject=] |promise| with that error.
+    1. Otherwise, [=resolve=] |promise| with |sourceMap|.
+1. Return |promise|.
