@@ -4,7 +4,7 @@ H1: Source Map
 Shortname: source-map
 Level: 1
 Status: STAGE0
-URL: https://source-map.github.io/source-map-spec/
+URL: https://tc39.github.io/source-map-spec/
 Editor: Armin Ronacher, Sentry
 Former Editor: Victor Porof, Google
 Former Editor: John Lenz, Google
