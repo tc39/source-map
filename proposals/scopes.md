@@ -206,11 +206,10 @@ Note: Each DATA represents one VLQ number.
   * 0x1 has name
 * name: (only exists if `has name` flag is set)
   * DATA offset into `names` field
-    * Note: This offset is relative to the offset of the last scope name or absolute if this is the first name
   * Note: This name should be shown as function name in the stack trace for function scopes.
 * variables:
   * for each variable:
-    * DATA relative offset into `names` field for the original symbol name defined in this scope
+    * DATA offset into `names` field for the original symbol name defined in this scope
 
 #### End Original Scope
 
@@ -246,8 +245,9 @@ Note: Each DATA represents one VLQ number.
   * Note: the number of bindings must match the number of variables in the definition scope
   * for each binding:
     * Let M be the number of sub-ranges for the current variable in this generated range (where the expression differs on how to obtain the current variable’s value)
-    * DATA relative offset into `names` field
+    * DATA offset into `names` field or -1
       * Note: The value expression for the current variable either for the whole generated range (if M == 1), or for the sub-range that starts at the beginning of this generated range.
+      * Note: Use -1 to indicate that the current variable is unavailable (e.g. due to shadowing) in this range.
     * If M > 1, then
       * DATA negative number of sub-ranges (-M)
       * (M - 1) times
@@ -256,7 +256,7 @@ Note: Each DATA represents one VLQ number.
           * Note: This is the point (exclusive) in the generated code until the previous expression must be used to obtain the current variable’s value.
           * Note: The line is relative to the previous sub-range line or the start of the current generated range item if it’s the first.
           * Note: The column is relative to the column of the previous sub-range if it’s on the same line or absolute if it’s on a new line.
-        * DATA relative offset into `names` field
+        * DATA offset into `names` field or -1
           * Note: The expression to obtain the current variable’s value in the sub-range that starts at line/column and ends at either the next sub-range start or this generated range’s end.
           * Note: Use -1 to indicate that the current variable is unavailable (e.g. due to shadowing) in this sub-range.
 
