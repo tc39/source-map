@@ -152,7 +152,7 @@ interface GeneratedRange {
   children?: GeneratedRange[];
 }
 
-type ScopeKind = 'global' | 'class' | 'function' | 'block';
+type ScopeKind = 'global' | 'script' | 'module' | 'class' | 'function' | 'block';
 
 interface BindingRange {
   from: GeneratedPosition;
@@ -196,10 +196,12 @@ Note: Each DATA represents one VLQ number.
   * Note: Column is always absolute.
 * DATA kind
   * Note: This is type of the scope.
-  * 0x1 toplevel
-  * 0x2 function
-  * 0x3 class
-  * 0x4 block
+  * 0x1 global
+  * 0x2 script
+  * 0x3 module
+  * 0x4 class
+  * 0x5 function
+  * 0x6 block
 * DATA field flags
   * Note: binary flags that specify if a field is used for this scope.
   * Note: Unknown flags would skip the whole scope.
