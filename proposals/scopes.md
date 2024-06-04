@@ -100,7 +100,7 @@ More precisely, for every location `loc_gen` in the generated code that is mappe
   - if `loc_gen` is in an inlined function, the scopes in the original source which contain the function call that was inlined
 
 The following information describes a scope in the source map:
-- whether this is a function scope
+- the type ("kind") of a scope. The "global" scope refers to anything hoisted to `globalThis`, whereas "file" refers to the top-level scope of individual script files or ES modules.
 - whether bindings from outer scopes are accessible within this scope
 - whether the debugger should step over this scope
 - whether this scope should be shown among the original scopes
@@ -152,7 +152,7 @@ interface GeneratedRange {
   children?: GeneratedRange[];
 }
 
-type ScopeKind = 'global' | 'script' | 'module' | 'class' | 'function' | 'block';
+type ScopeKind = 'global' | 'file' | 'class' | 'function' | 'block';
 
 interface BindingRange {
   from: GeneratedPosition;
@@ -197,11 +197,10 @@ Note: Each DATA represents one VLQ number.
 * DATA kind
   * Note: This is type of the scope.
   * 0x1 global
-  * 0x2 script
-  * 0x3 module
-  * 0x4 class
-  * 0x5 function
-  * 0x6 block
+  * 0x2 file
+  * 0x3 class
+  * 0x4 function
+  * 0x5 block
 * DATA field flags
   * Note: binary flags that specify if a field is used for this scope.
   * Note: Unknown flags would skip the whole scope.
