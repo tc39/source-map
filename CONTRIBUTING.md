@@ -28,7 +28,7 @@ We've been thinking about _source map constituencies_ in the following terms. Pl
 
 1. Generators. Bundlers, transpilers, compilers. Tools that have access to the source code and emit (among other things) source maps.
 2. Debuggers. Browsers and [stand alone debuggers](https://www.replay.io/). These are tools that have access to the source map and the generated code.
-3. Post-hoc debuggers. Tools like Sentry and New Relic. These tools have access to an error stack trace and a source map.
+3. Error monitoring tools. Tools like Sentry and New Relic. These tools have access to an error stack trace and a source map.
 
 ## Testing
 
