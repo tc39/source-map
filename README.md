@@ -26,6 +26,12 @@ Older revisions:
 * [Revision 2](source-map-rev2.md)
 * [Revision 1](source-map-rev1.md)
 
+## Generating the draft specification
+
+1. Install pipx ([installation instructions](https://github.com/pypa/pipx?tab=readme-ov-file#install-pipx))
+2. Run `pipx run bikeshed` from this repository's root folder
+3. Open source-map.html in your browser
+
 ## License
 
 The source map specifications are published under CC BY-SA 3.0.
