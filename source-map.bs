@@ -65,7 +65,7 @@ spec:url; type:dfn; for:/; text:url
     "title": "Source Map Revision 2 Proposal"
   },
   "WasmCustomSection": {
-    "href": "https://www.w3.org/TR/wasm-core-2/binary/modules.html#custom-section",
+    "href": "https://www.w3.org/TR/wasm-core-2/#custom-section%E2%91%A0",
     "publisher": "W3C",
     "status": "Living Standard",
     "title": "WebAssembly custom section"
