@@ -195,7 +195,7 @@ of source content (that is the [=Original Source=]), useful when the "source"
 can't be hosted.  The contents are listed in the same order as the [=sources=].
 `null` may be used if some original sources should be retrieved by name.
 
-<dfn><code>names</code></dfn> a list of symbol names used by the [=mappings=] entry.
+<dfn><code>names</code></dfn> an optional list of symbol names which may be used by the [=mappings=] entry.
 
 <dfn><code>mappings</code></dfn> a string with the encoded mapping data (see [[#mappings-structure]]).
 
