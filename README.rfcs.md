@@ -15,5 +15,5 @@ The process generally goes like this:
 * Positive consensus is reached, and the draft proposal is regarded up to snuff.
 * The proposal is incorporated into the specification.
 
-[spec]: https://tc39.es/source-map-spec/
+[spec]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#
 [issues]: https://github.com/source-map/source-map-rfc/issues
