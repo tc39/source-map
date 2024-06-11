@@ -65,13 +65,13 @@ spec:url; type:dfn; for:/; text:url
     "title": "Source Map Revision 2 Proposal"
   },
   "WasmCustomSection": {
-    "href": "https://www.w3.org/TR/wasm-core-2/#custom-section%E2%91%A0",
+    "href": "https://webassembly.github.io/spec/core/binary/modules.html#custom-section",
     "publisher": "W3C",
     "status": "Living Standard",
     "title": "WebAssembly custom section"
   },
   "WasmNamesBinaryFormat": {
-    "href": "https://www.w3.org/TR/wasm-core-2/binary/values.html#names",
+    "href": "https://webassembly.github.io/spec/core/binary/values.html#names",
     "publisher": "W3C",
     "status": "Living Standard",
     "title": "WebAssembly Names binary format"
