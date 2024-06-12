@@ -24,12 +24,29 @@ spec:html; type:element;
     text:title
     text:link
 
-spec:bikeshed-1; type:dfn; for:railroad; text:optional
-
-spec:fetch; type:dfn; for:/; text:request
-spec:fetch; type:dfn; for:/; text:response
+spec:fetch; type:dfn; for:/;
+    text:request
+    text:response
 
 spec:url; type:dfn; for:/; text:url
+
+spec:infra; type:dfn;
+    text:list
+    for:list; text:for each
+</pre>
+<pre class="anchors">
+urlPrefix:https://tc39.es/ecma262/#; type:dfn; spec:ecmascript
+    url:sec-lexical-and-regexp-grammars; text:tokens
+    url:table-line-terminator-code-points; text:line terminator code points
+    url:sec-white-space; text: white space code points
+    url:prod-SingleLineComment; text:single-line comment
+    url:prod-MultiLineComment; text:multi-line comment
+    url:prod-MultiLineComment; text:multi-line comment
+    url:sec-regexpbuiltinexec; text:RegExpBuiltinExec
+
+urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
+    url:binary/modules.html#binary-customsec; text:custom section
+    url:appendix/embedding.html#embed-module-decode; text:module_decode
 </pre>
 
 <pre class="biblio">
@@ -59,16 +76,17 @@ spec:url; type:dfn; for:/; text:url
     "status": "archive",
     "title": "Give your eval a name with //@ sourceURL"
   },
+  "ECMA-262": {
+    "href": "https://tc39.es/ecma262/",
+    "id": "esma262",
+    "publisher": "ECMA",
+    "status": "Standards Track",
+    "title": "ECMAScript® Language Specification"
+  },
   "V2Format": {
     "href": "https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US",
     "publisher": "Google",
     "title": "Source Map Revision 2 Proposal"
-  },
-  "WasmCustomSection": {
-    "href": "https://www.w3.org/TR/wasm-core-2/#custom-section",
-    "publisher": "W3C",
-    "status": "Living Standard",
-    "title": "WebAssembly custom section"
   },
   "WasmNamesBinaryFormat": {
     "href": "https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2",
@@ -339,38 +357,12 @@ to have some conventions for the expected use-case of web server-hosted JavaScri
 There are two suggested ways to link source maps to the output.  The first requires server
 support in order to add an HTTP header and the second requires an annotation in the source.
 
-The HTTP header should supply the source map URL reference as:
- 
-```
-sourcemap: <url>
-```
-
-Note: Previous revisions of this document recommended a header name of `x-sourcemap`.  This
-is now deprecated; `sourcemap` is now expected.
-
-The generated code should include a line at the end of the source, with the following form:
-
-```
-//# sourceMappingURL=<url>
-```
-
-Note: The prefix for this annotation was initially `//@` however this conflicts with Internet
-Explorer's Conditional Compilation and was changed to `//#`. Source map generators must only emit `//#` 
-while source map consumers must accept both `//@` and `//#`.
-
-Note: `//@` is needed for compatibility with some existing legacy source maps.
-
-
-This recommendation works well for JavaScript, but it is expected that other source files will
-have different conventions.  For instance, for CSS `/*# sourceMappingURL=<url> */` is proposed.
-On the WebAssembly side, such a URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the custom section ([[WasmCustomSection]]) named `sourceMappingURL`.
-
-`<url>` is a URL as defined in [[URL]]; in particular,
+Source maps are linked through URLs as defined in [[URL]]; in particular,
 characters outside the set permitted to appear in URIs must be percent-encoded
 and it may be a data URI.  Using a data URI along with [=sourcesContent=] allows
 for a completely self-contained source map.
 
-<ins>The HTTP `SourceMap` header has precedence over a source annotation, and if both are present,
+<ins>The HTTP `sourcemap` header has precedence over a source annotation, and if both are present,
 the header URL should be used to resolve the source map file.</ins>
 
 Regardless of the method used to retrieve the [=Source Mapping URL=] the same
@@ -393,6 +385,182 @@ When the [=Source Mapping URL=] is not absolute, then it is relative to the gene
 
 - If the generated code is being evaluated as a string with the `eval()` function or
     via `new Function()`, then the [=source origin=] will be the page's origin.
+
+### Linking through HTTP headers
+
+If a file is served through HTTP(S) with a `sourcemap` header, the value of the header is
+the URL of the linked source map.
+
+```
+sourcemap: <url>
+```
+
+Note: Previous revisions of this document recommended a header name of `x-sourcemap`.  This
+is now deprecated; `sourcemap` is now expected.
+
+### Linking through inline annotations
+
+The generated code should include a comment, or the equivalent construct depending on its
+language or format, named `sourceMappingURL` and that contains the URL of the source map. This
+specification defines how the comment should look like for JavaScript, CSS, and WebAssembly.
+Other languages should follow a similar convention.
+
+For a given language there can be multiple ways of detecting the `sourceMappingURL` comment,
+to allow for different implementations to choose what is less complex for them. The generated
+code <dfn>unambiguously links to a source map</dfn> if the result of all the extraction methods
+is the same.
+
+If a tool consumes one or more source files that [=unambiguously links to a source map=] and it
+produces an output file that links to a source map, it must do so [=unambiguously links to a
+source map|unambiguously=].
+
+<div class="example">
+The following JavaScript code links to a source map, but it does not do so [=unambiguously links
+to a source map|unambiguously=]:
+
+```js
+let a = `
+//# sourceMappingURL=foo.js.map
+//`;
+```
+
+Extracing a Source Map URL from it [=extract a Source Map URL from JavaScript through
+parsing|through parsing=] gives null, while [=extract a Source Map URL from JavaScript
+without parsing|without parsing=] gives `foo.js.map`.
+
+</div>
+
+#### Extraction methods for JavaScript sources
+
+To <dfn export>extract a Source Map URL from JavaScript through parsing</dfn> a [=string=] |source|,
+run the following steps:
+
+1. Let |tokens| be the [=list=] of [=tokens=]
+    obtained by parsing |source| according to [[ECMA-262]].
+1. [=For each=] |token| in |tokens|, in reverse order:
+    1. If |token| is not a [=single-line comment=] or a [=multi-line comment=], return null.
+    1. Let |comment| be the content of |token|.
+    1. If [=match a Source Map URL in a comment|matching a Source Map URL in=]
+        |comment| returns a [=string=], return it.
+
+To <dfn export>extract a Source Map URL from JavaScript without parsing</dfn> a [=string=] |source|,
+run the following steps:
+
+1. Let |lines| be the result of [=strictly split|strictly splitting=] |source| on [=line
+    terminator code points|ECMAScript line terminator code points=].
+1. Let |lastURL| be null.
+1. [=For each=] |line| in |lines|:
+    1. Let |position| be a [=position variable=] for |line|, initially pointing at the start of |line|.
+    1. [=While=] |position| doesn't point past the end of |line|:
+        1. [=Collect a sequence of code points=] that are [=white space code points|ECMAScript
+            white space code points=] from |line| given |position|.
+
+            NOTE: The collected code points are not used, but |position| is still updated.
+        1. If |position| points past the end of |line|, [=break=].
+        1. Let |first| be the [=code point=] of |line| at |position|.
+        1. Increment |position| by 1.
+        1. If |first| is U+002F (/) and |position| does not point past the end of |line|, then:
+            1. Let |second| be the [=code point=] of |line| at |position|.
+            1. Increment |position| by 1.
+            1. If |second| is U+002F (/), then:
+                1. Let |comment| be the [=code point substring=] from |position| to the end of |line|.
+                1. If [=match a Source Map URL in a comment|matching a Source Map URL in=]
+                    |comment| returns a [=string=], set |lastURL| to it.
+                1. [=Break=].
+            1. Else if |second| is U+002A (*), then:
+                1. Let |comment| be the empty [=string=].
+                1. While |position| + 1 doesn't point past the end of |line|:
+                    1. Let |c1| be the [=code point=] of |line| at |position|.
+                    1. Increment |position| by 1.
+                    1. Let |c2| be the [=code point=] of |line| at |position|.
+                    1. If |c1| is U+002A (*) and |c2| is U+002F (/), then:
+                        1. If [=match a Source Map URL in a comment|matching a Source Map URL in=]
+                            |comment| returns a [=string=], set |lastURL| to it.
+                        1. Increment |position| by 1.
+                    1. Append |c1| to |comment|.
+            1. Else, set |lastURL| to null.
+        1. Else, set |lastURL| to null.
+
+          Note: We reset |lastURL| to null whenever we find a non-comment code character.
+1. Return |lastURL|.
+
+NOTE: The algorithm above has been designed so that the source lines can be iterated in reverse order,
+returning early after scanning through a line that contains a `sourceMappingURL` comment.
+
+<div class="note">
+<span class="marker">Note:</span> The algorithm above is equivalent to the following JavaScript implementation:
+
+```js
+const JS_NEWLINE = /^/m;
+
+// This RegExp will always match one of the following:
+// - single-line comments
+// - "single-line" multi-line comments
+// - unclosed multi-line comments
+// - just trailing whitespaces
+// - a code character
+// The loop below differentiates between all these cases.
+const JS_COMMENT =
+  /\s*(?:\/\/(?<single>.*)|\/\*(?<multi>.*?)\*\/|\/\*.*|$|(?<code>[^\/]+))/uym;
+
+const PATTERN = /^[@#]\s*sourceMappingURL=(\S*?)\s*$/;
+
+let lastURL = null;
+for (const line of source.split(JS_NEWLINE)) {
+  JS_COMMENT.lastIndex = 0;
+  while (JS_COMMENT.lastIndex < line.length) {
+    let commentMatch = JS_COMMENT.exec(line).groups;
+    let comment = commentMatch.single ?? commentMatch.multi;
+    if (comment != null) {
+      let match = PATTERN.exec(comment);
+      if (match !== null) lastURL = match[1];
+    } else if (commentMatch.code != null) {
+      lastURL = null;
+    } else {
+      // We found either trailing whitespaces or an unclosed comment.
+      // Assert: JS_COMMENT.lastIndex === line.length
+    }
+  }
+}
+return lastURL;
+```
+
+</div>
+
+To <dfn>match a Source Map URL in a comment</dfn> |comment| (a [=string=]), run the following steps:
+
+1. Let |pattern| be the regular expression `/^[@#]\s*sourceMappingURL=(\S*?)\s*$/`.
+1. Let |match| be ! [=RegExpBuiltInExec=](|pattern|, |comment|).
+1. If |match| is not null, return |match|[1].
+1. Return null.
+
+
+Note: The prefix for this annotation was initially `//@` however this conflicts with Internet
+Explorer's Conditional Compilation and was changed to `//#`.
+
+Source map generators must only emit `//#` while source map consumers must accept both `//@` and `//#`.
+
+#### Extraction methods for CSS sources
+
+Extracting source mapping URLs from CSS is similar to JavaScript, with the exception that CSS only
+supports `/* ... */`-style comments.
+
+#### Extraction methods for WebAssembly binaries
+
+To <dfn export>extract a Source Map URL from a WebAssembly source</dfn> given
+a [=byte sequence=] |bytes|, run the following steps:
+
+1. Let |module| be [=module_decode=](|bytes|).
+1. If |module| is error, return null.
+1. [=For each=] [=custom section=] |customSection| of |module|,
+    1. Let |name| be the `name` of |customSection|, [=UTF-8 decode without BOM or fail|decoded as UTF-8=].
+    1. If |name| is "sourceMappingURL", then:
+        1. Let |value| be the `bytes` of |customSection|, [=UTF-8 decode without BOM or fail|decoded as UTF-8=].
+        1. If |value| is failure, return null.
+        1. Return |value|.
+
+Since WebAssembly is not a textual format and it does not support comments, it supports a single unambiguous extraction method.
+The URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=].
 
 Linking eval'd code to named generated code
 -------------------------------------------
