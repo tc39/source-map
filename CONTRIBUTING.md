@@ -27,8 +27,10 @@ Thanks for helping out in the [source map effort](https://ecma-international.org
 We've been thinking about _source map constituencies_ in the following terms. Please feel free to suggest better titles or categorization methods!
 
 1. Generators. Bundlers, transpilers, compilers. Tools that have access to the source code and emit (among other things) source maps.
-2. Debuggers. Browsers and [stand alone debuggers](https://www.replay.io/). These are tools that have access to the source map and the generated code.
+2. Debuggers. Browsers and [standalone debuggers](https://www.replay.io/). These are tools that have access to the source map and the generated code.
 3. Error monitoring tools. Tools like Sentry and New Relic. These tools have access to an error stack trace and a source map.
+
+When considering changes, this list of tools might be useful: https://github.com/jkup/source-map-users
 
 ## Testing
 
