@@ -442,6 +442,7 @@ run the following steps:
     1. Let |comment| be the content of |token|.
     1. If [=match a Source Map URL in a comment|matching a Source Map URL in=]
         |comment| returns a [=string=], return it.
+1. Return null.
 
 To <dfn export>extract a Source Map URL from JavaScript without parsing</dfn> a [=string=] |source|,
 run the following steps:
