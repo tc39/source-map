@@ -340,38 +340,7 @@ to have some conventions for the expected use-case of web server-hosted JavaScri
 There are two suggested ways to link source maps to the output.  The first requires server
 support in order to add an HTTP header and the second requires an annotation in the source.
 
-The HTTP header should supply the source map URL reference as:
- 
-```
-sourcemap: <url>
-```
-
-Note: Previous revisions of this document recommended a header name of `x-sourcemap`.  This
-is now deprecated; `sourcemap` is now expected.
-
-The generated code should include a line at the end of the source, with the following form:
-
-JavaScript:
-
-```
-//# sourceMappingURL=<url>
-```
-
-CSS:
-
-```
-/*# sourceMappingURL=<url> */
-```
-
-Note: The prefix for this annotation was initially `//@` however this conflicts with Internet
-Explorer's Conditional Compilation and was changed to `//#`. Source map generators must only emit `//#` 
-while source map consumers must accept both `//@` and `//#`.
-
-Note: `//@` is needed for compatibility with some existing legacy source maps.
-
-For WebAssembly, such a URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=] named `sourceMappingURL`.
-
-`<url>` is a URL as defined in [[URL]]; in particular,
+Source maps are linked through URLs as defined in [[URL]]; in particular,
 characters outside the set permitted to appear in URIs must be percent-encoded
 and it may be a data URI.  Using a data URI along with [=sourcesContent=] allows
 for a completely self-contained source map.
