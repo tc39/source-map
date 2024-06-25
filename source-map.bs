@@ -4,8 +4,8 @@ H1: Source Map
 Shortname: source-map
 Level: 1
 Status: STAGE0
-URL: https://source-map.github.io/source-map-spec/
-Editor: Armin Ronacher, Sentry
+URL: https://tc39.es/source-map/
+Editor: Asumu Takikawa, Igalia 
 Former Editor: Victor Porof, Google
 Former Editor: John Lenz, Google
 Former Editor: Nick Fitzgerald, Mozilla
@@ -106,12 +106,7 @@ This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unpor
 This document is a draft version of a hardened version of the Source Map v3
 specification.  In its current form, it's not a defined standard and is subject to
 modifications.  If you want to get involved you will find more information under
-the following GitHub repositories:
-
-* [Spec Repository](https://github.com/source-map/source-map-spec/): holds the different
-    specifications (v1, v2, v3 and the hardened v3 draft you are looking at)
-* [RFC Repository](https://github.com/source-map/source-map-rfc/): meta
-    repository for change suggestions to the specification.
+the following [Specification Repository](https://github.com/tc39/source-map).
 
 Background {#background}
 ========================
@@ -120,7 +115,7 @@ The original source map format (v1) was created by Joseph Schorr for use by
 Closure Inspector to enable source-level debugging of optimized JavaScript code
 (although the format itself is language agnostic).  However, as the size of the
 projects using the source maps expanded the verbosity of the format started to
-become a problem.  The v2 ([[V2Format]]) was created by trading some simplicity
+become a problem.  The v2 [[V2Format]] was created by trading some simplicity
 and flexibility to reduce the overall size of the source map. Even with the
 changes made with the v2 version of the format, the source map file size was
 limiting its usefulness.  The v3 format is based on suggestions made by
@@ -149,22 +144,23 @@ Note: The values that can be represented by the VLQ Base64 encoded are limited t
 <dfn>Source Mapping URL</dfn> refers to the URL referencing
 the location of a source map from the [=Generated code=].
 
-<ins><dfn>Column</dfn> is the 0 (zero) indexed offsets within a line of the
-generated code measured.  The definition for columns in source maps can depend on
-the content type.  For JavaScript and CSS based source maps are defined to be in
-UTF-16 code units analogous to JavaScript string indexes.  That means that
-"A" (`LATIN CAPITAL LETTER A`) measures 1 code unit, and "🔥" (`FIRE`) measures
-2 code units.  For WebAssembly, columns are defined as byte offsets from the beginning 
-of the binary content (and there is only one group representing a line).  Source maps
-for other content types might diverge from this.
-</ins>
+<dfn>Column</dfn> is the zero-based indexed offset within a line of the
+generated code.  The definition for columns in source maps can depend on
+the content type.
+
+  * For JavaScript and CSS based source maps are defined to be in
+    UTF-16 code units analogous to JavaScript string indexes.  That means that
+    "A" (`LATIN CAPITAL LETTER A`) measures 1 code unit, and "🔥" (`FIRE`) measures
+    2 code units.
+  * For WebAssembly, columns are defined as byte offsets from the beginning 
+    of the binary content (and there is only one group representing a line).  Source maps
+    for other content types might diverge from this.
 
 General Goals {#general-goals}
 ==============================
 
-<mark>The goals for the v3 format of Source Maps</mark>
+The goals for the v3 format of Source Maps:
 
-* Reduce the overall size to improve parse time, memory consumption, and download time.
 * Support source-level debugging allowing bidirectional mapping
 * Support server-side stack trace deobfuscation
 
@@ -187,43 +183,31 @@ following structure:
 }
 ```
 
-Note: The previous specification suggested an order to the keys in this file, but
-for practical reasons, the order cannot be defined in many JSON generators and
-has never been enforced.
-
-<dfn><code>version</code></dfn> is the version field which must always be the number
-`3` as an integer. The source map may be rejected in case of a value different from `3`.
-
-<dfn><code>file</code></dfn> an optional name of the generated code
-that this source map is associated with.  <mark>It's not specified if this can
-be a URL, relative path name, or just a base name. As such it has a mostly informal
-character.</mark>
-
-<dfn><code>sourceRoot</code></dfn> an optional source root,
-useful for relocating source files on a server or removing repeated values in
-the [=sources=] entry.  This value is prepended to the individual entries in the
-"source" field.
-
-<dfn><code>sources</code></dfn> is a list of original sources
-used by the [=mappings=] entry.  Each entry is either a string that is a
-(potentially relative) URL or `null` if the source name is not known.
-
-<dfn><code>sourcesContent</code></dfn> an optional list
-of source content (that is the [=Original Source=]), useful when the "source"
-can't be hosted.  The contents are listed in the same order as the [=sources=].
-`null` may be used if some original sources should be retrieved by name.
-
-<dfn><code>names</code></dfn> an optional list of symbol names which may be used by the [=mappings=] entry.
-
-<dfn><code>mappings</code></dfn> a string with the encoded mapping data (see [[#mappings-structure]]).
-
-<dfn><code>ignoreList</code></dfn> an optional list of indices of files that
-should be considered third party code, such as framework code or bundler-generated code. This 
-allows developer tools to avoid code that developers likely don't want to see
-or step through, without requiring developers to configure this beforehand.
-It refers to the [=sources=] array and lists the indices of all the known third-party sources
-in the source map. Some browsers may also use the deprecated <code>x_google_ignoreList</code>
-field if <code>ignoreList</code> is not present.
+* <dfn><code>version</code></dfn> is the version field which must always be the number `3` as an integer. The source map may be rejected in case of a value different from `3`.
+* <dfn><code>file</code></dfn> is an optional name of the generated code
+    that this source map is associated with. It's not specified if this can
+    be a URL, relative path name, or just a base name. As such it has a mostly informal
+    character.
+* <dfn><code>sourceRoot</code></dfn> is an optional source root,
+    useful for relocating source files on a server or removing repeated values in
+    the [=sources=] entry.  This value is prepended to the individual entries in the
+    "source" field.
+* <dfn><code>sources</code></dfn> is a list of original sources
+    used by the [=mappings=] entry.  Each entry is either a string that is a
+    (potentially relative) URL or `null` if the source name is not known.
+* <dfn><code>sourcesContent</code></dfn> is an optional list
+    of source content (that is the [=Original Source=]), useful when the "source"
+    can't be hosted.  The contents are listed in the same order as the [=sources=].
+    `null` may be used if some original sources should be retrieved by name.
+* <dfn><code>names</code></dfn> is an optional list of symbol names which may be used by the [=mappings=] entry.
+* <dfn><code>mappings</code></dfn> is a string with the encoded mapping data (see [[#mappings-structure]]).
+* <dfn><code>ignoreList</code></dfn> is an optional list of indices of files that
+    should be considered third party code, such as framework code or bundler-generated code. This 
+    allows developer tools to avoid code that developers likely don't want to see
+    or step through, without requiring developers to configure this beforehand.
+    It refers to the [=sources=] array and lists the indices of all the known third-party sources
+    in the source map. Some browsers may also use the deprecated <code>x_google_ignoreList</code>
+    field if <code>[=ignoreList=]</code> is not present.
 
 Mappings Structure {#mappings-structure}
 ----------------------------------------
@@ -260,8 +244,12 @@ The fields in each segment are:
     field is a base 64 VLQ relative to the previous occurrence of this field unless this
     is the first occurrence of this field, in which case the whole value is represented.
 
-Note: This encoding reduces the source map size by 50% relative to the V2 format in tests performed
+Note: The purpose of this encoding is to reduce the source map size. VLQ encoding reduced source maps by 50% relative to the [[V2Format]] in tests performed
 using Google Calendar.
+
+Note: Using file offsets was considered but rejected in favor of using line/column data to avoid becoming
+misaligned with the original due to platform-specific line endings. 
+
 
 Resolving Sources {#resolving-sources}
 --------------------------------------
@@ -275,12 +263,6 @@ Extensions {#extensions}
 Source map consumers must ignore any additional unrecognized properties, rather than causing the
 source map to be rejected, so that additional features can be added to this format without
 breaking existing users.
-
-Notes on File Offsets
----------------------
-
-Using file offsets was considered but rejected in favor of using line/column data to avoid becoming
-misaligned with the original due to platform-specific line endings. 
 
 Index Map
 =========
@@ -321,20 +303,21 @@ The index map follows the form of the standard map.  Like the regular source map
 the file format is JSON with a top-level object.  It shares the [=version=] and
 [=file=] field from the regular source map, but gains a new [=sections=] field.
 
-<dfn><code>sections</code></dfn> is an array of JSON objects that itself has two
-fields [=offset=] and [=map=].
+<dfn><code>sections</code></dfn> is an array of [=Section=] objects.
 
 ## Section
 
-<dfn><code>offset</dfn></code> is an object with two fields, `line` and `column`,
-that represent the offset into generated code that the referenced source map
-represents.
+Section objects have the following fields:
 
-<dfn><code>map</code></dfn> is an embedded complete source map object.
-An embedded map does not inherit any values from the containing index map.
+* <dfn><code>offset</dfn></code> is an object with two fields, `line` and `column`,
+    that represent the offset into generated code that the referenced source map
+    represents.
+
+* <dfn><code>map</code></dfn> is an embedded complete source map object.
+    An embedded map does not inherit any values from the containing index map.
 
 The sections must be sorted by starting position and the represented sections
-may not overlap.
+must not overlap.
 
 Conventions {#conventions}
 ==========================
@@ -345,7 +328,7 @@ when generating them.
 Source Map Naming {#source-map-naming}
 --------------------------------------
 
-Optionally, a source map will have the same name as the generated file but with a `.map`
+Commonly, a source map will have the same name as the generated file but with a `.map`
 extension.  For example, for `page.js` a source map named `page.js.map` would be generated. 
 
 Linking generated code to source maps {#linking-generated-code}
@@ -357,7 +340,39 @@ to have some conventions for the expected use-case of web server-hosted JavaScri
 There are two suggested ways to link source maps to the output.  The first requires server
 support in order to add an HTTP header and the second requires an annotation in the source.
 
-Source maps are linked through URLs as defined in [[URL]]; in particular,
+The HTTP header should supply the source map URL reference as:
+ 
+```
+sourcemap: <url>
+```
+
+Note: Previous revisions of this document recommended a header name of `x-sourcemap`.  This
+is now deprecated; `sourcemap` is now expected.
+
+The generated code should include a line at the end of the source, with the following form:
+
+JavaScript:
+
+```
+//# sourceMappingURL=<url>
+```
+
+CSS:
+
+```
+/*# sourceMappingURL=<url> */
+```
+
+Note: The prefix for this annotation was initially `//@` however this conflicts with Internet
+Explorer's Conditional Compilation and was changed to `//#`. Source map generators must only emit `//#` 
+while source map consumers must accept both `//@` and `//#`.
+
+Note: `//@` is needed for compatibility with some existing legacy source maps.
+
+
+For WebAssembly, such a URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=] named `sourceMappingURL`.
+
+`<url>` is a URL as defined in [[URL]]; in particular,
 characters outside the set permitted to appear in URIs must be percent-encoded
 and it may be a data URI.  Using a data URI along with [=sourcesContent=] allows
 for a completely self-contained source map.
