@@ -20,9 +20,9 @@ When a proposal reaches Stage 3, no further improvements are possible without im
 
 ## Stage 4 (complete)
 
-- 2 source map generators ready
-- 2 interactive debuggers
-- 2 stack trace decoder implementations
+- 2 generators
+- 2 debuggers
+- 1 complete end to end workflow
 - Test suite is complete
 
 When a proposal reaches Stage 4, it is ready to land in the editor draft. There might still be editorial changes, but all the semantics are final.
