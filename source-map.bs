@@ -559,6 +559,7 @@ a [=byte sequence=] |bytes|, run the following steps:
         1. Let |value| be the `bytes` of |customSection|, [=UTF-8 decode without BOM or fail|decoded as UTF-8=].
         1. If |value| is failure, return null.
         1. Return |value|.
+1. Return null.
 
 Since WebAssembly is not a textual format and it does not support comments, it supports a single unambiguous extraction method.
 The URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=].
