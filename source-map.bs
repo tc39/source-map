@@ -5,7 +5,7 @@ Shortname: source-map
 Level: 1
 Status: STAGE0
 URL: https://tc39.es/source-map/
-Editor: Asumu Takikawa, Igalia 
+Editor: Asumu Takikawa, Igalia
 Former Editor: Victor Porof, Google
 Former Editor: John Lenz, Google
 Former Editor: Nick Fitzgerald, Mozilla
@@ -368,7 +368,6 @@ Explorer's Conditional Compilation and was changed to `//#`. Source map generato
 while source map consumers must accept both `//@` and `//#`.
 
 Note: `//@` is needed for compatibility with some existing legacy source maps.
-
 
 For WebAssembly, such a URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=] named `sourceMappingURL`.
 
