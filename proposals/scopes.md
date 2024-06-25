@@ -250,7 +250,7 @@ Note: Each DATA represents one VLQ number.
     * If M == -1, then
         * Do nothing.
         * Note: The variable is not accessible within this generated range.
-    * Else if M > 0, then
+    * Else if M >= 0, then
         * M is used as an index into `names` field
         * Note: The variable is accessible by evaluating the value expression for the entirety of this generated range.
     * Else,
