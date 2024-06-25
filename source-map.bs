@@ -562,7 +562,8 @@ a [=byte sequence=] |bytes|, run the following steps:
 1. Return null.
 
 Since WebAssembly is not a textual format and it does not support comments, it supports a single unambiguous extraction method.
-The URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=].
+The URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=]. It is invalid for
+tools that generate WebAssembly code to generate two [=custom section=] with the "sourceMappingURL" name.
 
 Linking eval'd code to named generated code
 -------------------------------------------
