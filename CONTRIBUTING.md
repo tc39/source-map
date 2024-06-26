@@ -27,13 +27,13 @@ Thanks for helping out in the [source map effort](https://ecma-international.org
 We've been thinking about _source map constituencies_ in the following terms. Please feel free to suggest better titles or categorization methods!
 
 1. Generators. Bundlers, transpilers, compilers. Tools that have access to the source code and emit (among other things) source maps.
-2. Debuggers. Browsers and [stand alone debuggers](https://www.replay.io/). These are tools that have access to the source map and the generated code.
-3. Post-hoc debuggers. Tools like Sentry and New Relic. These tools have access to an error stack trace and a source map.
+2. Debuggers. Browsers, [standalone debuggers](https://www.replay.io/) and stack trace rewriters like [Node](https://nodejs.org/en) and [Sentry](https://sentry.io/).
+
+When considering changes, this list of tools might be useful: https://github.com/jkup/source-map-users
 
 ## Testing
 
 We've been categorizing our testing efforts into three groups, each matching with a [constituency](#constituencies).
 
 1. Validators. For testing generator tools, we'd like to have the ability to validate a source map on its own as well as a source map being a valid map between a source and a generated file. We did a mini hackathon day on what this might look like: https://github.com/jkup/source-map-validator
-2. Debuggers. For browsers, we'd like a suite of tests that can run wherever browsers apply source maps to their debug tools like Chrome DevTools. We'd like generic tests that browsers can use showing they apply source maps correctly. My assumption is they each already have their own suite of tests ([Chrome tests](https://github.com/ChromeDevTools/devtools-frontend/blob/main/test/e2e/sources/sourcemap_test.ts), [Firefox tests](https://github.com/mozilla/source-map/tree/master/test)) for this and we'll need to figure out how to integrate with their test harness and extract a shared base of tests we all could use.
-3. Stack trace validators. For tools like Sentry and New Relic, we'd like tests that ensure source maps are correctly applied to the stack trace and that new features like [Debug ID](https://github.com/tc39/source-map-rfc/blob/main/proposals/debug-id.md) are working correctly.
+2. Debuggers. For browsers, we'd like a suite of tests that can run wherever browsers apply source maps to their debug tools like Chrome DevTools. We'd like generic tests that browsers can use showing they apply source maps correctly. My assumption is they each already have their own suite of tests ([Chrome tests](https://github.com/ChromeDevTools/devtools-frontend/blob/main/test/e2e/sources/sourcemap_test.ts), [Firefox tests](https://github.com/mozilla/source-map/tree/master/test)) for this and we'll need to figure out how to integrate with their test harness and extract a shared base of tests we all could use. For stack trace rewriters, we'd like tests that can show source maps being correctly applied to error stacks.
