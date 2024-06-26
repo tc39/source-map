@@ -193,7 +193,7 @@ Note: Each DATA represents one VLQ number.
 * DATA line in the original code
   * Note: this is the point in the original code where the scope starts. `line` is relative to the `line` of the preceding "start/end original scope" item.
 * DATA column in the original code
-  * Note: Column is always absolute.
+  * Note: this is the point in the original code where the scope starts. `column` is relative to the `column` of the preceding "start/end original scope" item.
 * DATA kind
   * Note: This is type of the scope.
   * 0x1 toplevel
@@ -216,7 +216,7 @@ Note: Each DATA represents one VLQ number.
 * DATA line in the original code
   * Note: `line` is relative to the `line` of the preceding "start/end original scope" item.
 * DATA column in the original code
-  * Note: Column is always absolute.
+  * Note: `column` is relative to the `column` of the preceding "start/end original scope" item.
 
 #### Start Generated Range
 
