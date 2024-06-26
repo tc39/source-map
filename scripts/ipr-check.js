@@ -154,11 +154,12 @@ const usernames = request(sheetData).then((json) => JSON.parse(json)).then(data 
 });
 
 const exceptions = new Set([
-  'EricSL', // Google employee
+  'fitzgen', // former Mozilla employee
+  'lforst', // Sentry employee
   'jaro-sevcik', // Google empolyee
   'jkrems', // Google employee
   'josephschorr', // former Google empolyee
-	'sideshowbarker', // Mozilla employee
+  'sideshowbarker', // Mozilla employee
 ].map(x => x.toLowerCase()));
 
 Promise.all([usernames, authors, delegates, emeriti]).then(([usernames, authors, delegates, emeriti]) => {
