@@ -152,8 +152,6 @@ interface GeneratedRange {
   children?: GeneratedRange[];
 }
 
-type ScopeKind = 'global' | 'class' | 'function' | 'block';
-
 interface BindingRange {
   from: GeneratedPosition;
   to: GeneratedPosition;
@@ -196,6 +194,7 @@ Note: Each DATA represents one VLQ number.
   * Note: Column is always absolute.
 * DATA kind offset into `names` field
   * Note: This is type of the scope.
+  * Note: JavaScript implementations should use `'global'`, `'class'`, `'function'`, and `'block'`.
 * DATA field flags
   * Note: binary flags that specify if a field is used for this scope.
   * Note: Unknown flags would skip the whole scope.
