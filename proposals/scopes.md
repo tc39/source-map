@@ -233,7 +233,7 @@ Note: Each DATA represents one VLQ number.
   * DATA offset into `sources`
     * Note: This offset is relative to the offset of the last definition or absolute if this is the first definition
   * DATA scope offset into `originalScopes[offset]`
-    * Note: This is an offset to the "Start Original Scope" item of the corresponding original scope tree. This offset is relative to the last `scope offset` of the same source `offset` or absolute if this is the first `scope offset`.
+    * Note: This is an offset to the "Start Original Scope" item of the corresponding original scope tree. This offset is relative to the  `scope offset` of the previous definition if the definition is in the same source, otherwise it is absolute.
 * callsite: (only existing if `has callsite` flag is set)
   * DATA relative offset into `sources`
   * DATA line
