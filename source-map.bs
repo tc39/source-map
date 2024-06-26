@@ -144,7 +144,9 @@ into the string least significant first, and where the least significant bit of
 the first digit is used as the sign bit.
 
 Note: The values that can be represented by the VLQ Base64 encoded are limited to
-32-bit quantities until some use case for larger values is presented.
+32-bit quantities until some use case for larger values is presented.  This
+means that values exceeding 32-bits are invalid and implementations may reject
+them. The sign bit is counted towards the limit, but the continuation bits are not.
 
 <dfn>Source Mapping URL</dfn> refers to the URL referencing
 the location of a source map from the [=Generated code=].
