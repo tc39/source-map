@@ -244,17 +244,24 @@ Note: Each DATA represents one VLQ number.
 * bindings:
   * Note: the number of bindings must match the number of variables in the definition scope
   * for each binding:
-    * Let M be the number of sub-ranges for the current variable in this generated range (where the expression differs on how to obtain the current variable’s value)
-    * DATA offset into `names` field or -1
-      * Note: The value expression for the current variable either for the whole generated range (if M == 1), or for the sub-range that starts at the beginning of this generated range.
-      * Note: Use -1 to indicate that the current variable is unavailable (e.g. due to shadowing) in this range.
-    * If M > 1, then
-      * DATA negative number of sub-ranges (-M)
+    * Note: The value expression for the current variable either for the whole generated range (if M == 1), or for the sub-range that starts at the beginning of this generated range.
+    * Note: Use -1 to indicate that the current variable is unavailable (e.g. due to shadowing) in this range.
+    * DATA M either an index into `names` field (if M is >= -1), or the number of sub-ranges for the current variable in this generated range (where the expression differs on how to obtain the current variable’s value)
+    * If M == -1, then
+        * Do nothing.
+        * Note: The variable is not accessible within this generated range.
+    * Else if M >= 0, then
+        * M is used as an index into `names` field
+        * Note: The variable is accessible by evaluating the value expression for the entirety of this generated range.
+    * Else,
+      * Note: there are at least 2 sub-ranges.
+      * DATA offset into `names` field or -1
+        * Note: The variable is accessible using this value expression starting from the beginning of the generated range until the start of the next sub-range.
+        * Note: Use -1 to indicate that the current variable is unavailable (e.g. due to shadowing) in this sub-range.
       * (M - 1) times
         * DATA line in the generated code
+          * Note: The line is relative to the previous sub-range line or the start of the current generated range item if it’s the first for this loop.
         * DATA column in the generated code
-          * Note: This is the point (exclusive) in the generated code until the previous expression must be used to obtain the current variable’s value.
-          * Note: The line is relative to the previous sub-range line or the start of the current generated range item if it’s the first.
           * Note: The column is relative to the column of the previous sub-range if it’s on the same line or absolute if it’s on a new line.
         * DATA offset into `names` field or -1
           * Note: The expression to obtain the current variable’s value in the sub-range that starts at line/column and ends at either the next sub-range start or this generated range’s end.
