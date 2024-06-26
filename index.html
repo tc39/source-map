@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version a1dabb26c, updated Mon Jun 17 15:00:44 2024 -0700" name="generator">
   <link href="https://source-map.github.io/source-map-spec/" rel="canonical">
-  <meta content="7b28d726f26b411bdb3572ccff050c1e3604ee9d" name="revision">
+  <meta content="66bdf0dfd8acf4a5a452a4353f4ddf4a6b09020b" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2172,7 +2172,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">Source Map</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-06-25">25 June 2024</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-06-26">26 June 2024</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2286,7 +2286,9 @@ bit (the 6th bit) is used as the continuation bit, and the "digits" are encoded
 into the string least significant first, and where the least significant bit of
 the first digit is used as the sign bit.</p>
    <p class="note" role="note"><span class="marker">Note:</span> The values that can be represented by the VLQ Base64 encoded are limited to
-32-bit quantities until some use case for larger values is presented.</p>
+32-bit quantities until some use case for larger values is presented.  This
+means that values exceeding 32-bits are invalid and implementations may reject
+them. The sign bit is counted towards the limit, but the continuation bits are not.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="source-mapping-url">Source Mapping URL</dfn> refers to the URL referencing
 the location of a source map from the <a data-link-type="dfn" href="#generated-code" id="ref-for-generated-code">Generated code</a>.</p>
    <ins><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="column">Column</dfn> is the 0 (zero) indexed offsets within a line of the
