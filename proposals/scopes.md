@@ -136,7 +136,11 @@ interface OriginalScope {
 interface GeneratedRange {
   start: GeneratedPosition;
   end: GeneratedPosition;
-  isScope: boolean;
+  /**
+   * If the generated range is a function/method/accessor in the generated JavaScript code (anything callable).
+   * Consumers use this to figure out which call frames to include/exclude when processing stack traces.
+   */
+  isFunctionScope: boolean;
   originalScope?: OriginalScope;
   /** If this scope corresponds to an inlined function body, record the callsite of the inlined function in the original code */
   callsite?: OriginalPosition;
@@ -228,7 +232,7 @@ Note: Each DATA represents one VLQ number.
   * Note: Unknown flags would skip the whole scope.
   * 0x1 has definition
   * 0x2 has callsite
-  * 0x4 is scope
+  * 0x4 is function scope
 * definition: (only existing if `has definition` flag is set)
   * DATA offset into `sources`
     * Note: This offset is relative to the offset of the last definition or absolute if this is the first definition
