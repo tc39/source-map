@@ -185,7 +185,8 @@ following structure:
 }
 ```
 
-* <dfn><code>version</code></dfn> is the version field which must always be the number `3` as an integer. The source map may be rejected in case of a value different from `3`.
+* <dfn><code>version</code></dfn> is the version field which must always be the number
+    `3` as an integer. The source map may be rejected in case of a value different from `3`.
 * <dfn><code>file</code></dfn> is an optional name of the generated code
     that this source map is associated with. It's not specified if this can
     be a URL, relative path name, or just a base name. As such it has a mostly informal
