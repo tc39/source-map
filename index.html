@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version a1dabb26c, updated Mon Jun 17 15:00:44 2024 -0700" name="generator">
   <link href="https://tc39.es/source-map/" rel="canonical">
-  <meta content="85ed738ded73cd1d4971a7670b796dce84f13a7f" name="revision">
+  <meta content="85443511976284cb314235842f4c35878e06b7e0" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2172,7 +2172,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">Source Map</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-06-26">26 June 2024</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-07-10">10 July 2024</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2180,7 +2180,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
      <dt>Previous Versions:
      <dd><a href="https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#" rel="prev">https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#</a>
      <dt class="editor">Author:
-     <dd class="editor p-author h-card vcard"><span class="p-name fn">Armin Ronacher</span> (<span class="p-org org">Sentry</span>)
+     <dd class="editor p-author h-card vcard"><span class="p-name fn">Asumu Takikawa</span> (<span class="p-org org">Igalia</span>)
      <dt class="editor">Former Authors:
      <dd class="editor p-author h-card vcard"><span class="p-name fn">Victor Porof</span> (<span class="p-org org">Google</span>)
      <dd class="editor p-author h-card vcard"><span class="p-name fn">John Lenz</span> (<span class="p-org org">Google</span>)
@@ -2206,7 +2206,6 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <li><a href="#mappings-structure"><span class="secno">4.1</span> <span class="content">Mappings Structure</span></a>
       <li><a href="#resolving-sources"><span class="secno">4.2</span> <span class="content">Resolving Sources</span></a>
       <li><a href="#extensions"><span class="secno">4.3</span> <span class="content">Extensions</span></a>
-      <li><a href="#notes-on-file-offsets"><span class="secno">4.4</span> <span class="content">Notes on File Offsets</span></a>
      </ol>
     <li>
      <a href="#index-map"><span class="secno">5</span> <span class="content">Index Map</span></a>
@@ -2255,21 +2254,13 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    <p>This document is a draft version of a hardened version of the Source Map v3
 specification.  In its current form, it’s not a defined standard and is subject to
 modifications.  If you want to get involved you will find more information under
-the following GitHub repositories:</p>
-   <ul>
-    <li data-md>
-     <p><a href="https://github.com/source-map/source-map-spec/">Spec Repository</a>: holds the different
-specifications (v1, v2, v3 and the hardened v3 draft you are looking at)</p>
-    <li data-md>
-     <p><a href="https://github.com/source-map/source-map-rfc/">RFC Repository</a>: meta
-repository for change suggestions to the specification.</p>
-   </ul>
+the following <a href="https://github.com/tc39/source-map">Specification Repository</a>.</p>
    <h2 class="heading settled" data-level="1" id="background"><span class="secno">1. </span><span class="content">Background</span><a class="self-link" href="#background"></a></h2>
    <p>The original source map format (v1) was created by Joseph Schorr for use by
 Closure Inspector to enable source-level debugging of optimized JavaScript code
 (although the format itself is language agnostic).  However, as the size of the
 projects using the source maps expanded the verbosity of the format started to
-become a problem.  The v2 (<a data-link-type="biblio" href="#biblio-v2format" title="Source Map Revision 2 Proposal">[V2Format]</a>) was created by trading some simplicity
+become a problem.  The v2 <a data-link-type="biblio" href="#biblio-v2format" title="Source Map Revision 2 Proposal">[V2Format]</a> was created by trading some simplicity
 and flexibility to reduce the overall size of the source map. Even with the
 changes made with the v2 version of the format, the source map file size was
 limiting its usefulness.  The v3 format is based on suggestions made by
@@ -2291,19 +2282,24 @@ means that values exceeding 32-bits are invalid and implementations may reject
 them. The sign bit is counted towards the limit, but the continuation bits are not.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="source-mapping-url">Source Mapping URL</dfn> refers to the URL referencing
 the location of a source map from the <a data-link-type="dfn" href="#generated-code" id="ref-for-generated-code">Generated code</a>.</p>
-   <ins><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="column">Column</dfn> is the 0 (zero) indexed offsets within a line of the
-generated code measured.  The definition for columns in source maps can depend on
-the content type.  For JavaScript and CSS based source maps are defined to be in
-UTF-16 code units analogous to JavaScript string indexes.  That means that
-"A" (<code class="highlight">LATIN CAPITAL LETTER A</code>) measures 1 code unit, and "🔥" (<code class="highlight">FIRE</code>) measures
-2 code units.  For WebAssembly, columns are defined as byte offsets from the beginning 
-of the binary content (and there is only one group representing a line).  Source maps
-for other content types might diverge from this. </ins>
-   <h2 class="heading settled" data-level="3" id="general-goals"><span class="secno">3. </span><span class="content">General Goals</span><a class="self-link" href="#general-goals"></a></h2>
-   <p><mark>The goals for the v3 format of Source Maps</mark></p>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="column">Column</dfn> is the zero-based indexed offset within a line of the
+generated code.  The definition for columns in source maps can depend on
+the content type.</p>
    <ul>
     <li data-md>
-     <p>Reduce the overall size to improve parse time, memory consumption, and download time.</p>
+     <p>For JavaScript and CSS based source maps are defined to be in
+UTF-16 code units analogous to JavaScript string indexes.  That means that
+"A" (<code class="highlight">LATIN CAPITAL LETTER A</code>) measures 1 code unit, and "🔥" (<code class="highlight">FIRE</code>) measures
+2 code units.</p>
+    <li data-md>
+     <p>For WebAssembly, columns are defined as byte offsets from the beginning
+of the binary content (and there is only one group representing a line).</p>
+    <li data-md>
+     <p>Source maps for other content types might diverge from this.</p>
+   </ul>
+   <h2 class="heading settled" data-level="3" id="general-goals"><span class="secno">3. </span><span class="content">General Goals</span><a class="self-link" href="#general-goals"></a></h2>
+   <p>The goals for the v3 format of Source Maps:</p>
+   <ul>
     <li data-md>
      <p>Support source-level debugging allowing bidirectional mapping</p>
     <li data-md>
@@ -2323,32 +2319,39 @@ following structure:</p>
   <c- f>"ignoreList"</c-><c- p>:</c-> <c- p>[</c-><c- mi>0</c-><c- p>]</c->
 <c- p>}</c->
 </pre>
-   <p class="note" role="note"><span class="marker">Note:</span> The previous specification suggested an order to the keys in this file, but
-for practical reasons, the order cannot be defined in many JSON generators and
-has never been enforced.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="version"><code class="highlight">version</code></dfn> is the version field which must always be the number <code class="highlight"><c- mf>3</c-></code> as an integer. The source map may be rejected in case of a value different from <code class="highlight"><c- mf>3</c-></code>.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="file"><code class="highlight">file</code></dfn> an optional name of the generated code
-that this source map is associated with. <mark>It’s not specified if this can
+   <ul>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="version"><code class="highlight">version</code></dfn> is the version field which must always be the number <code class="highlight"><c- mf>3</c-></code> as an integer. The source map may be rejected in case of a value different from <code class="highlight"><c- mf>3</c-></code>.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="file"><code class="highlight">file</code></dfn> is an optional name of the generated code
+that this source map is associated with. It’s not specified if this can
 be a URL, relative path name, or just a base name. As such it has a mostly informal
-character.</mark></p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sourceroot"><code class="highlight">sourceRoot</code></dfn> an optional source root,
+character.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sourceroot"><code class="highlight">sourceRoot</code></dfn> is an optional source root,
 useful for relocating source files on a server or removing repeated values in
 the <a data-link-type="dfn" href="#sources" id="ref-for-sources">sources</a> entry.  This value is prepended to the individual entries in the
 "source" field.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sources"><code class="highlight">sources</code></dfn> is a list of original sources
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sources"><code class="highlight">sources</code></dfn> is a list of original sources
 used by the <a data-link-type="dfn" href="#mappings" id="ref-for-mappings">mappings</a> entry.  Each entry is either a string that is a
 (potentially relative) URL or <code class="highlight"><c- kc>null</c-></code> if the source name is not known.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sourcescontent"><code class="highlight">sourcesContent</code></dfn> an optional list
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sourcescontent"><code class="highlight">sourcesContent</code></dfn> is an optional list
 of source content (that is the <a data-link-type="dfn" href="#original-source" id="ref-for-original-source">Original Source</a>), useful when the "source"
 can’t be hosted.  The contents are listed in the same order as the <a data-link-type="dfn" href="#sources" id="ref-for-sources①">sources</a>. <code class="highlight"><c- kc>null</c-></code> may be used if some original sources should be retrieved by name.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="names"><code class="highlight">names</code></dfn> an optional list of symbol names which may be used by the <a data-link-type="dfn" href="#mappings" id="ref-for-mappings①">mappings</a> entry.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="mappings"><code class="highlight">mappings</code></dfn> a string with the encoded mapping data (see <a href="#mappings-structure">§ 4.1 Mappings Structure</a>).</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="ignorelist"><code class="highlight">ignoreList</code></dfn> an optional list of indices of files that
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="names"><code class="highlight">names</code></dfn> is an optional list of symbol names which may be used by the <a data-link-type="dfn" href="#mappings" id="ref-for-mappings①">mappings</a> entry.</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="mappings"><code class="highlight">mappings</code></dfn> is a string with the encoded mapping data (see <a href="#mappings-structure">§ 4.1 Mappings Structure</a>).</p>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="ignorelist"><code class="highlight">ignoreList</code></dfn> is an optional list of indices of files that
 should be considered third party code, such as framework code or bundler-generated code. This 
 allows developer tools to avoid code that developers likely don’t want to see
 or step through, without requiring developers to configure this beforehand.
 It refers to the <a data-link-type="dfn" href="#sources" id="ref-for-sources②">sources</a> array and lists the indices of all the known third-party sources
-in the source map. Some browsers may also use the deprecated <code class="highlight">x_google_ignoreList</code> field if <code class="highlight">ignoreList</code> is not present.</p>
+in the source map. Some browsers may also use the deprecated <code class="highlight">x_google_ignoreList</code> field if <code class="highlight"><a data-link-type="dfn" href="#ignorelist" id="ref-for-ignorelist">ignoreList</a></code> is not present.</p>
+   </ul>
    <h3 class="heading settled" data-level="4.1" id="mappings-structure"><span class="secno">4.1. </span><span class="content">Mappings Structure</span><a class="self-link" href="#mappings-structure"></a></h3>
    <p>The <a data-link-type="dfn" href="#mappings" id="ref-for-mappings②">mappings</a> data is broken down as follows:</p>
    <ul>
@@ -2384,8 +2387,10 @@ present if there is a source field.</p>
 field is a base 64 VLQ relative to the previous occurrence of this field unless this
 is the first occurrence of this field, in which case the whole value is represented.</p>
    </ol>
-   <p class="note" role="note"><span class="marker">Note:</span> This encoding reduces the source map size by 50% relative to the V2 format in tests performed
+   <p class="note" role="note"><span class="marker">Note:</span> The purpose of this encoding is to reduce the source map size. VLQ encoding reduced source maps by 50% relative to the <a data-link-type="biblio" href="#biblio-v2format" title="Source Map Revision 2 Proposal">[V2Format]</a> in tests performed
 using Google Calendar.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Using file offsets was considered but rejected in favor of using line/column data to avoid becoming
+misaligned with the original due to platform-specific line endings.</p>
    <h3 class="heading settled" data-level="4.2" id="resolving-sources"><span class="secno">4.2. </span><span class="content">Resolving Sources</span><a class="self-link" href="#resolving-sources"></a></h3>
    <p>If the sources are not absolute URLs after prepending the <a data-link-type="dfn" href="#sourceroot" id="ref-for-sourceroot">sourceRoot</a>, the sources are
 resolved relative to the SourceMap (like resolving the script <code class="highlight">src</code> attribute in an HTML document).</p>
@@ -2393,9 +2398,6 @@ resolved relative to the SourceMap (like resolving the script <code class="highl
    <p>Source map consumers must ignore any additional unrecognized properties, rather than causing the
 source map to be rejected, so that additional features can be added to this format without
 breaking existing users.</p>
-   <h3 class="heading settled" data-level="4.4" id="notes-on-file-offsets"><span class="secno">4.4. </span><span class="content">Notes on File Offsets</span><a class="self-link" href="#notes-on-file-offsets"></a></h3>
-   <p>Using file offsets was considered but rejected in favor of using line/column data to avoid becoming
-misaligned with the original due to platform-specific line endings.</p>
    <h2 class="heading settled" data-level="5" id="index-map"><span class="secno">5. </span><span class="content">Index Map</span><a class="self-link" href="#index-map"></a></h2>
    <p>To support concatenating generated code and other common post-processing,
 an alternate representation of a map is supported:</p>
@@ -2428,21 +2430,25 @@ an alternate representation of a map is supported:</p>
 </pre>
    <p>The index map follows the form of the standard map.  Like the regular source map,
 the file format is JSON with a top-level object.  It shares the <a data-link-type="dfn" href="#version" id="ref-for-version">version</a> and <a data-link-type="dfn" href="#file" id="ref-for-file">file</a> field from the regular source map, but gains a new <a data-link-type="dfn" href="#sections" id="ref-for-sections">sections</a> field.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sections"><code class="highlight">sections</code></dfn> is an array of JSON objects that itself has two
-fields <a data-link-type="dfn" href="#offset" id="ref-for-offset">offset</a> and <a data-link-type="dfn" href="#map" id="ref-for-map">map</a>.</p>
+   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sections"><code class="highlight">sections</code></dfn> is an array of <a data-link-type="dfn" href="#sections" id="ref-for-sections①">Section</a> objects.</p>
    <h3 class="heading settled" data-level="5.1" id="section"><span class="secno">5.1. </span><span class="content">Section</span><a class="self-link" href="#section"></a></h3>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="offset"><code class="highlight">offset</code></dfn> is an object with two fields, <code class="highlight">line</code> and <code class="highlight">column</code>,
+   <p>Section objects have the following fields:</p>
+   <ul>
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="offset"><code class="highlight">offset</code></dfn> is an object with two fields, <code class="highlight">line</code> and <code class="highlight">column</code>,
 that represent the offset into generated code that the referenced source map
 represents.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="map"><code class="highlight">map</code></dfn> is an embedded complete source map object.
+    <li data-md>
+     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="map"><code class="highlight">map</code></dfn> is an embedded complete source map object.
 An embedded map does not inherit any values from the containing index map.</p>
+   </ul>
    <p>The sections must be sorted by starting position and the represented sections
-may not overlap.</p>
+must not overlap.</p>
    <h2 class="heading settled" data-level="6" id="conventions"><span class="secno">6. </span><span class="content">Conventions</span><a class="self-link" href="#conventions"></a></h2>
    <p>The following conventions should be followed when working with source maps or
 when generating them.</p>
    <h3 class="heading settled" data-level="6.1" id="source-map-naming"><span class="secno">6.1. </span><span class="content">Source Map Naming</span><a class="self-link" href="#source-map-naming"></a></h3>
-   <p>Optionally, a source map will have the same name as the generated file but with a <code class="highlight"><c- p>.</c->map</code> extension.  For example, for <code class="highlight">page<c- p>.</c->js</code> a source map named <code class="highlight">page<c- p>.</c->js<c- p>.</c->map</code> would be generated.</p>
+   <p>Commonly, a source map will have the same name as the generated file but with a <code class="highlight"><c- p>.</c->map</code> extension.  For example, for <code class="highlight">page<c- p>.</c->js</code> a source map named <code class="highlight">page<c- p>.</c->js<c- p>.</c->map</code> would be generated.</p>
    <h3 class="heading settled" data-level="6.2" id="linking-generated-code"><span class="secno">6.2. </span><span class="content">Linking generated code to source maps</span><a class="self-link" href="#linking-generated-code"></a></h3>
    <p>While the source map format is intended to be language and platform agnostic, it is useful
 to have some conventions for the expected use-case of web server-hosted JavaScript.</p>
@@ -3241,14 +3247,14 @@ let dfnPanelData = {
 "f47b40bc": {"dfnID":"f47b40bc","dfnText":"white space code points","external":true,"refSections":[{"refs":[{"id":"ref-for-sec-white-space"}],"title":"6.2.2.1. Extraction methods for JavaScript sources"}],"url":"https://tc39.es/ecma262/#sec-white-space"},
 "file": {"dfnID":"file","dfnText":"file","external":false,"refSections":[{"refs":[{"id":"ref-for-file"}],"title":"5. Index Map"}],"url":"#file"},
 "generated-code": {"dfnID":"generated-code","dfnText":"Generated Code","external":false,"refSections":[{"refs":[{"id":"ref-for-generated-code"}],"title":"2. Terminology"}],"url":"#generated-code"},
-"ignorelist": {"dfnID":"ignorelist","dfnText":"ignoreList","external":false,"refSections":[],"url":"#ignorelist"},
-"map": {"dfnID":"map","dfnText":"map","external":false,"refSections":[{"refs":[{"id":"ref-for-map"}],"title":"5. Index Map"}],"url":"#map"},
+"ignorelist": {"dfnID":"ignorelist","dfnText":"ignoreList","external":false,"refSections":[{"refs":[{"id":"ref-for-ignorelist"}],"title":"4. Source Map Format"}],"url":"#ignorelist"},
+"map": {"dfnID":"map","dfnText":"map","external":false,"refSections":[],"url":"#map"},
 "mappings": {"dfnID":"mappings","dfnText":"mappings","external":false,"refSections":[{"refs":[{"id":"ref-for-mappings"},{"id":"ref-for-mappings\u2460"}],"title":"4. Source Map Format"},{"refs":[{"id":"ref-for-mappings\u2461"}],"title":"4.1. Mappings Structure"}],"url":"#mappings"},
 "match-a-source-map-url-in-a-comment": {"dfnID":"match-a-source-map-url-in-a-comment","dfnText":"match a Source Map URL in a comment","external":false,"refSections":[{"refs":[{"id":"ref-for-match-a-source-map-url-in-a-comment"},{"id":"ref-for-match-a-source-map-url-in-a-comment\u2460"},{"id":"ref-for-match-a-source-map-url-in-a-comment\u2461"}],"title":"6.2.2.1. Extraction methods for JavaScript sources"}],"url":"#match-a-source-map-url-in-a-comment"},
 "names": {"dfnID":"names","dfnText":"names","external":false,"refSections":[{"refs":[{"id":"ref-for-names"}],"title":"4.1. Mappings Structure"}],"url":"#names"},
-"offset": {"dfnID":"offset","dfnText":"offset","external":false,"refSections":[{"refs":[{"id":"ref-for-offset"}],"title":"5. Index Map"}],"url":"#offset"},
+"offset": {"dfnID":"offset","dfnText":"offset","external":false,"refSections":[],"url":"#offset"},
 "original-source": {"dfnID":"original-source","dfnText":"Original Source","external":false,"refSections":[{"refs":[{"id":"ref-for-original-source"}],"title":"4. Source Map Format"}],"url":"#original-source"},
-"sections": {"dfnID":"sections","dfnText":"sections","external":false,"refSections":[{"refs":[{"id":"ref-for-sections"}],"title":"5. Index Map"}],"url":"#sections"},
+"sections": {"dfnID":"sections","dfnText":"sections","external":false,"refSections":[{"refs":[{"id":"ref-for-sections"},{"id":"ref-for-sections\u2460"}],"title":"5. Index Map"}],"url":"#sections"},
 "source-mapping-url": {"dfnID":"source-mapping-url","dfnText":"Source Mapping URL","external":false,"refSections":[{"refs":[{"id":"ref-for-source-mapping-url"},{"id":"ref-for-source-mapping-url\u2460"}],"title":"6.2. Linking generated code to source maps"}],"url":"#source-mapping-url"},
 "source-origin": {"dfnID":"source-origin","dfnText":"source origin","external":false,"refSections":[{"refs":[{"id":"ref-for-source-origin"},{"id":"ref-for-source-origin\u2460"},{"id":"ref-for-source-origin\u2461"},{"id":"ref-for-source-origin\u2462"},{"id":"ref-for-source-origin\u2463"}],"title":"6.2. Linking generated code to source maps"}],"url":"#source-origin"},
 "sourceroot": {"dfnID":"sourceroot","dfnText":"sourceRoot","external":false,"refSections":[{"refs":[{"id":"ref-for-sourceroot"}],"title":"4.2. Resolving Sources"}],"url":"#sourceroot"},
@@ -3650,11 +3656,10 @@ let refsData = {
 "#extract-a-source-map-url-from-javascript-without-parsing": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"extract a source map url from javascript without parsing","type":"dfn","url":"#extract-a-source-map-url-from-javascript-without-parsing"},
 "#file": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"file","type":"dfn","url":"#file"},
 "#generated-code": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"generated code","type":"dfn","url":"#generated-code"},
-"#map": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"map","type":"dfn","url":"#map"},
+"#ignorelist": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"ignorelist","type":"dfn","url":"#ignorelist"},
 "#mappings": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"mappings","type":"dfn","url":"#mappings"},
 "#match-a-source-map-url-in-a-comment": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"match a source map url in a comment","type":"dfn","url":"#match-a-source-map-url-in-a-comment"},
 "#names": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"names","type":"dfn","url":"#names"},
-"#offset": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"offset","type":"dfn","url":"#offset"},
 "#original-source": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"original source","type":"dfn","url":"#original-source"},
 "#sections": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"sections","type":"dfn","url":"#sections"},
 "#source-mapping-url": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"source-map","spec":"source-map-1","status":"local","text":"source mapping url","type":"dfn","url":"#source-mapping-url"},
