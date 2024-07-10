@@ -193,6 +193,7 @@ Note: Each DATA represents one VLQ number.
 * DATA column in the original code
   * Note: Column is always absolute.
 * DATA kind offset into `names` field
+  * Note: This offset is relative to the offset of the last `kind` or absolute if this is the first `kind`.
   * Note: This is type of the scope.
   * Note: JavaScript implementations should use `'global'`, `'class'`, `'function'`, and `'block'`.
 * DATA field flags
