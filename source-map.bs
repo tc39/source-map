@@ -155,8 +155,8 @@ the content type.
     "A" (`LATIN CAPITAL LETTER A`) measures 1 code unit, and "🔥" (`FIRE`) measures
     2 code units.
   * For WebAssembly, columns are defined as byte offsets from the beginning 
-    of the binary content (and there is only one group representing a line).  Source maps
-    for other content types might diverge from this.
+    of the binary content (and there is only one group representing a line).
+  * Source maps for other content types might diverge from this.
 
 General Goals {#general-goals}
 ==============================
