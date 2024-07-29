@@ -293,7 +293,37 @@ function _z(_m) {
 console.log("Hello World2"); // <- Inlined
 ```
 
-Scopes:
+Original Scopes:
+
+```
+A|   var x = 1;
+ |B| function z(message) {
+ | |   let y = 2;
+ | |   console.log(message + y);
+ | | }
+ |   z("Hello World");
+```
+
+`LX CY`: Line X Column Y
+
+```
+Start Original Scope L0 C0 { // A
+  kind: global
+  field flags: none
+  name: none
+  variables: x, z
+}
+Start Original Scope L1 C10 { // B
+  kind: function
+  field flags: has name
+  name: z
+  variables: message, y
+}
+End Original Scope L4 C1  // B
+End Original Scope L5 C17 // A
+```
+
+Generated Ranges:
 
 ```
 A|    var _x = 1;
@@ -307,30 +337,27 @@ A|    var _x = 1;
 `LX CY`: Line X Column Y
 
 ```
-Start Scope C0 { // A
-  field flags: has definition
-  info flags:
-  definition: file.js L1 C0 - L6 C17
+Start Generated Range C0 { // A
+  field flags: has definition, is scope
+  definition: file.js, scope offset 0
+  callsite: none
   bindings: x -> _x, z -> _z
 }
 ;
-Start Scope C16 { // B
-  field flags: has name, has definition
-  info flags: function, inherit parent bindings
-  name: z
-  definition: file.js L2 C20 - L5 C1
+Start Generated Range C16 { // B
+  field flags: has definition, is scope
+  definition: file.js, scope offset 1
+  callsite: none
   bindings: message -> _m, y -> _y
 }
 ;
 ;
 ;
-End Scope C1 // B
+End Generated Range C1 // B
 ;
-Start Scope C0 { // C
-  field flags: has name, has definition, has callsite
-  info flags: function, inherit parent bindings
-  name: z
-  definition: file.js L2 C0 - L5 C1
+Start Generated Range C0 { // C
+  field flags: has definition, has callsite
+  definition: file.js, scope offset 1
   callsite: file.js L6 C0
   bindings: message -> "Hello World", y -> 2
 }
@@ -338,7 +365,7 @@ End Scope C28 // C
 End Scope C28 // A
 ```
 
-`XXXX` stands for a "Start Scope" item, `X` for an "End Scope" item
+`XXXX` stands for a "Start Generated Range" item, `X` for an "End Generated Range" item
 ```
 XXXX;XXXX;;;X;XXXX,X,X
 ```
