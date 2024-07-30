@@ -358,7 +358,7 @@ End Generated Range C1 // B
 Start Generated Range C0 { // C
   field flags: has definition, has callsite
   definition: file.js, scope offset 1
-  callsite: file.js L6 C0
+  callsite: file.js L5 C0
   bindings: message -> "Hello World", y -> 2
 }
 End Scope C28 // C
