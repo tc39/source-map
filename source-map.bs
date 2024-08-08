@@ -404,7 +404,7 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
     NOTE: These are the valid [[base64]] characters (excluding the padding character `=`), together
     with `,` and `;`.
 
-    then, throw an error.
+    then throw an error.
 1. Let |decodedMappings| be a new empty [=list=].
 1. Let |groups| be the result of [=strictly split|strictly splitting=] |mappings| on `;`.
 1. Let |generatedLine| be 0.
@@ -459,10 +459,10 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
             1. [=Decode a base64 VLQ=] from |segment| given |position| and let |relativeNameIndex|
                 be the result.
             1. If |relativeNameIndex| is not null, then:
-              1. Increase |nameIndex| by |relativeNameIndex|.
-              1. If |nameIndex| is negative or greater than |names|'s [=list/size=], [=optionally
-                  report an error=].
-              1. Else, set |decodedMapping|'s [=decoded mapping/name=] to |names|[|nameIndex|].
+                1. Increase |nameIndex| by |relativeNameIndex|.
+                1. If |nameIndex| is negative or greater than |names|'s [=list/size=], [=optionally
+                    report an error=].
+                1. Else, set |decodedMapping|'s [=decoded mapping/name=] to |names|[|nameIndex|].
             1. If |position| does not point to the end of |segment|, [=optionally report an
                 error=].
     1. Increase |generatedLine| by 1.
