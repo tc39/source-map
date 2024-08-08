@@ -490,9 +490,6 @@ position, run the following stepsis the number :
 1. Advance |position| by 1.
 1. Return |value| * |sign|.
 
- return the result of decoding a base64 VLQ from |segment| starting at position |position|,
-and increase |position| by the number of bytes consumed. Return null if it's not possible to do so.
-
 NOTE: In addition to returning the decoded value, this algorithm updates the [=position variable=]
 in the calling algorithm.
 
