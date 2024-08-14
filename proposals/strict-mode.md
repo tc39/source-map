@@ -1,6 +1,6 @@
 # Strict Mode
 
-- Stage: 0
+- Stage: 1
 - Author: Jonathan Kuperman
 - Date: June, 2024
 
