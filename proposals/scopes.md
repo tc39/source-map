@@ -125,7 +125,7 @@ interface SourceMap {
 interface OriginalScope {
   start: OriginalPosition;
   end: OriginalPosition;
-  kind: ScopeKind;
+  kind: string;
   /** Class/module/function name. Can be used for stack traces or naming scopes in a debugger's scope view */
   name?: string;
   /** Symbols defined in this scope */
@@ -151,8 +151,6 @@ interface GeneratedRange {
   bindings?: (string | undefined | BindingRange[])[];
   children?: GeneratedRange[];
 }
-
-type ScopeKind = 'global' | 'class' | 'function' | 'block';
 
 interface BindingRange {
   from: GeneratedPosition;
@@ -194,12 +192,10 @@ Note: Each DATA represents one VLQ number.
   * Note: this is the point in the original code where the scope starts. `line` is relative to the `line` of the preceding "start/end original scope" item.
 * DATA column in the original code
   * Note: Column is always absolute.
-* DATA kind
+* DATA kind offset into `names` field
+  * Note: This offset is relative to the offset of the last `kind` or absolute if this is the first `kind`.
   * Note: This is type of the scope.
-  * 0x1 toplevel
-  * 0x2 function
-  * 0x3 class
-  * 0x4 block
+  * Note: JavaScript implementations should use `'global'`, `'class'`, `'function'`, and `'block'`.
 * DATA field flags
   * Note: binary flags that specify if a field is used for this scope.
   * Note: Unknown flags would skip the whole scope.
@@ -297,7 +293,37 @@ function _z(_m) {
 console.log("Hello World2"); // <- Inlined
 ```
 
-Scopes:
+Original Scopes:
+
+```
+A|   var x = 1;
+ |B| function z(message) {
+ | |   let y = 2;
+ | |   console.log(message + y);
+ | | }
+ |   z("Hello World");
+```
+
+`LX CY`: Line X Column Y
+
+```
+Start Original Scope L0 C0 { // A
+  kind: global
+  field flags: none
+  name: none
+  variables: x, z
+}
+Start Original Scope L1 C10 { // B
+  kind: function
+  field flags: has name
+  name: z
+  variables: message, y
+}
+End Original Scope L4 C1  // B
+End Original Scope L5 C17 // A
+```
+
+Generated Ranges:
 
 ```
 A|    var _x = 1;
@@ -311,38 +337,35 @@ A|    var _x = 1;
 `LX CY`: Line X Column Y
 
 ```
-Start Scope C0 { // A
-  field flags: has definition
-  info flags:
-  definition: file.js L1 C0 - L6 C17
+Start Generated Range C0 { // A
+  field flags: has definition, is scope
+  definition: file.js, scope offset 0
+  callsite: none
   bindings: x -> _x, z -> _z
 }
 ;
-Start Scope C16 { // B
-  field flags: has name, has definition
-  info flags: function, inherit parent bindings
-  name: z
-  definition: file.js L2 C20 - L5 C1
+Start Generated Range C16 { // B
+  field flags: has definition, is scope
+  definition: file.js, scope offset 1
+  callsite: none
   bindings: message -> _m, y -> _y
 }
 ;
 ;
 ;
-End Scope C1 // B
+End Generated Range C1 // B
 ;
-Start Scope C0 { // C
-  field flags: has name, has definition, has callsite
-  info flags: function, inherit parent bindings
-  name: z
-  definition: file.js L2 C0 - L5 C1
-  callsite: file.js L6 C0
+Start Generated Range C0 { // C
+  field flags: has definition, has callsite
+  definition: file.js, scope offset 1
+  callsite: file.js L5 C0
   bindings: message -> "Hello World", y -> 2
 }
 End Scope C28 // C
 End Scope C28 // A
 ```
 
-`XXXX` stands for a "Start Scope" item, `X` for an "End Scope" item
+`XXXX` stands for a "Start Generated Range" item, `X` for an "End Generated Range" item
 ```
 XXXX;XXXX;;;X;XXXX,X,X
 ```
