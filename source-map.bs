@@ -148,7 +148,8 @@ The string `"iB"` represents a [=Base64 VLQ=] with two digits. The first digit
 `"i"` encodes the bit pattern `0x100010`, which has a continuation bit of `1` (the
 VLQ continues), a sign bit of `0` (non-negative), and the value bits `0x0001`.
 The second digit `B` encodes the bit pattern `0x000001`, which has a continuation
-bit of `0` and no sign bit. The decoding of this VLQ string is the number 17.
+bit of `0`, no sign bit, and value bits `0x00001`. The decoding of this VLQ string
+is the number 17.
 </div>
 
 <div class="example">
