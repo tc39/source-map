@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 6270e4735, updated Tue Aug 6 12:12:30 2024 -0700" name="generator">
   <link href="https://tc39.es/source-map/" rel="canonical">
-  <meta content="9ec39c51625484b29b2d434971602436a76ff902" name="revision">
+  <meta content="fec48d3340dc62f6391cb4b20ef507319f9d0203" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2172,7 +2172,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">Source Map</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-08-14">14 August 2024</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-08-21">21 August 2024</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2280,6 +2280,13 @@ the first digit is used as the sign bit.</p>
 32-bit quantities until some use case for larger values is presented.  This
 means that values exceeding 32-bits are invalid and implementations may reject
 them. The sign bit is counted towards the limit, but the continuation bits are not.</p>
+   <div class="example" id="example-a554ae4a"><a class="self-link" href="#example-a554ae4a"></a> The string <code class="highlight"><c- u>"iB"</c-></code> represents a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq">Base64 VLQ</a> with two digits. The first digit <code class="highlight"><c- u>"i"</c-></code> encodes the bit pattern <code class="highlight"><c- mh>0x100010</c-></code>, which has a continuation bit of <code class="highlight"><c- mf>1</c-></code> (the
+VLQ continues), a sign bit of <code class="highlight"><c- mf>0</c-></code> (non-negative), and the value bits <code class="highlight"><c- mh>0x0001</c-></code>.
+The second digit <code class="highlight">B</code> encodes the bit pattern <code class="highlight"><c- mh>0x000001</c-></code>, which has a continuation
+bit of <code class="highlight"><c- mf>0</c-></code>, no sign bit, and value bits <code class="highlight"><c- mh>0x00001</c-></code>. The decoding of this VLQ string
+is the number 17. </div>
+   <div class="example" id="example-34ad0ed3"><a class="self-link" href="#example-34ad0ed3"></a> The string <code class="highlight"><c- u>"V"</c-></code> represents a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq①">Base64 VLQ</a> with one digit. The digit <code class="highlight"><c- u>"V"</c-></code> encodes the bit pattern <code class="highlight"><c- mh>0x010101</c-></code>, which has a continuation bit of <code class="highlight"><c- mf>0</c-></code> (no continuation), a sign bit of <code class="highlight"><c- mf>1</c-></code> (negative), and the value bits <code class="highlight"><c- mh>0x1010</c-></code>.
+The decoding of this VLQ string is the number -10. </div>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="source-mapping-url">Source Mapping URL</dfn> refers to the URL referencing
 the location of a source map from the <a data-link-type="dfn" href="#generated-code" id="ref-for-generated-code">Generated code</a>.</p>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="column">Column</dfn> is the zero-based indexed offset within a line of the
@@ -2367,19 +2374,19 @@ in the source map. Some browsers may also use the deprecated <code class="highli
     <li data-md>
      <p>The zero-based starting <a data-link-type="dfn" href="#column" id="ref-for-column">column</a> of the line in the generated code that the segment represents.
 If this is the first field of the first segment, or the first segment following a new generated
-line (<code class="highlight"><c- p>;</c-></code>), then this field holds the whole <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq">Base64 VLQ</a>.  Otherwise, this field contains
-a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq①">Base64 VLQ</a> that is relative to the previous occurrence of this field. <em>Note that this
+line (<code class="highlight"><c- p>;</c-></code>), then this field holds the whole <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq②">Base64 VLQ</a>.  Otherwise, this field contains
+a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq③">Base64 VLQ</a> that is relative to the previous occurrence of this field. <em>Note that this
 is different than the fields below because the previous value is reset after every generated line.</em></p>
     <li data-md>
-     <p>If present, a zero-based index into the <a data-link-type="dfn" href="#sources" id="ref-for-sources③">sources</a> list. This field is a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq②">Base64 VLQ</a> relative to the previous occurrence of this field, unless this is the first occurrence of this
+     <p>If present, a zero-based index into the <a data-link-type="dfn" href="#sources" id="ref-for-sources③">sources</a> list. This field is a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq④">Base64 VLQ</a> relative to the previous occurrence of this field, unless this is the first occurrence of this
 field, in which case the whole value is represented.</p>
     <li data-md>
-     <p>If present, the zero-based starting line in the original source is represented.  This field is a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq③">Base64 VLQ</a> relative to the previous occurrence of this field, unless this is the first
+     <p>If present, the zero-based starting line in the original source is represented.  This field is a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq⑤">Base64 VLQ</a> relative to the previous occurrence of this field, unless this is the first
 occurrence of this field, in which case the whole value is represented.  Always present if there
 is a source field.</p>
     <li data-md>
      <p>If present, the zero-based starting <a data-link-type="dfn" href="#column" id="ref-for-column①">column</a> of the line in the source represented.  This
-field is a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq④">Base64 VLQ</a> relative to the previous occurrence of this field unless this
+field is a <a data-link-type="dfn" href="#base64-vlq" id="ref-for-base64-vlq⑥">Base64 VLQ</a> relative to the previous occurrence of this field unless this
 is the first occurrence of this field, in which case the whole value is represented.  Always
 present if there is a source field.</p>
     <li data-md>
@@ -3231,7 +3238,7 @@ let dfnPanelData = {
 "a33db89a": {"dfnID":"a33db89a","dfnText":"fetch","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-fetch"}],"title":"9. Fetching Source Maps"}],"url":"https://fetch.spec.whatwg.org/#concept-fetch"},
 "a499d34e": {"dfnID":"a499d34e","dfnText":"regexpbuiltinexec","external":true,"refSections":[{"refs":[{"id":"ref-for-sec-regexpbuiltinexec"}],"title":"6.2.2.1. Extraction methods for JavaScript sources"}],"url":"https://tc39.es/ecma262/#sec-regexpbuiltinexec"},
 "b262501e": {"dfnID":"b262501e","dfnText":"reject","external":true,"refSections":[{"refs":[{"id":"ref-for-reject"},{"id":"ref-for-reject\u2460"}],"title":"9. Fetching Source Maps"}],"url":"https://webidl.spec.whatwg.org/#reject"},
-"base64-vlq": {"dfnID":"base64-vlq","dfnText":"Base64 VLQ","external":false,"refSections":[{"refs":[{"id":"ref-for-base64-vlq"},{"id":"ref-for-base64-vlq\u2460"},{"id":"ref-for-base64-vlq\u2461"},{"id":"ref-for-base64-vlq\u2462"},{"id":"ref-for-base64-vlq\u2463"}],"title":"4.1. Mappings Structure"}],"url":"#base64-vlq"},
+"base64-vlq": {"dfnID":"base64-vlq","dfnText":"Base64 VLQ","external":false,"refSections":[{"refs":[{"id":"ref-for-base64-vlq"},{"id":"ref-for-base64-vlq\u2460"}],"title":"2. Terminology"},{"refs":[{"id":"ref-for-base64-vlq\u2461"},{"id":"ref-for-base64-vlq\u2462"},{"id":"ref-for-base64-vlq\u2463"},{"id":"ref-for-base64-vlq\u2464"},{"id":"ref-for-base64-vlq\u2465"}],"title":"4.1. Mappings Structure"}],"url":"#base64-vlq"},
 "bb1f9628": {"dfnID":"bb1f9628","dfnText":"code point substring","external":true,"refSections":[{"refs":[{"id":"ref-for-code-point-substring"}],"title":"6.2.2.1. Extraction methods for JavaScript sources"}],"url":"https://infra.spec.whatwg.org/#code-point-substring"},
 "cbdc89b4": {"dfnID":"cbdc89b4","dfnText":"while","external":true,"refSections":[{"refs":[{"id":"ref-for-iteration-while"}],"title":"6.2.2.1. Extraction methods for JavaScript sources"},{"refs":[{"id":"ref-for-iteration-while\u2460"}],"title":"9. Fetching Source Maps"}],"url":"https://infra.spec.whatwg.org/#iteration-while"},
 "column": {"dfnID":"column","dfnText":"Column","external":false,"refSections":[{"refs":[{"id":"ref-for-column"},{"id":"ref-for-column\u2460"}],"title":"4.1. Mappings Structure"}],"url":"#column"},
