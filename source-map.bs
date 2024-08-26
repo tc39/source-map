@@ -399,7 +399,6 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
     - U+0041 (A) to U+005A (Z);
     - U+0061 (a) to U+007A (z);
     - U+002B (+), U+002F (/)
-    <!-- TODO: Is = allowed? -->
 
     NOTE: These are the valid [[base64]] characters (excluding the padding character `=`), together
     with `,` and `;`.
@@ -408,12 +407,12 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
 1. Let |decodedMappings| be a new empty [=list=].
 1. Let |groups| be the result of [=strictly split|strictly splitting=] |mappings| on `;`.
 1. Let |generatedLine| be 0.
+1. Let |sourceIndex| be 0.
 1. While |generatedLine| is less than |groups|'s [=list/size=]:
     1. If |groups|[|generatedLine|] is not the empty string, then:
         1. Let |segments| be the result of [=strictly split|strictly splitting=]
             |groups|[|generatedLine|] on `,`.
         1. Let |generatedColumn| be 0.
-        1. Let |sourceIndex| be 0.
         1. Let |originalLine| be 0.
         1. Let |originalColumn| be 0.
         1. Let |nameIndex| be 0.
