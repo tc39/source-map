@@ -43,6 +43,22 @@ urlPrefix:https://tc39.es/ecma262/#; type:dfn; spec:ecmascript
     url:prod-MultiLineComment; text:multi-line comment
     url:prod-MultiLineComment; text:multi-line comment
     url:sec-regexpbuiltinexec; text:RegExpBuiltinExec
+    url:prod-FunctionDeclaration; text:FunctionDeclaration
+    url:prod-FunctionExpression; text:FunctionExpression
+    url:prod-AsyncFunctionDeclaration; text:AsyncFunctionDeclaration
+    url:prod-AsyncFunctionExpression; text:AsyncFunctionExpression
+    url:prod-ArrowParameters; text:ArrowParameters
+    url:prod-AsyncArrowFunction; text:AsyncArrowFunction
+    url:prod-GeneratorDeclaration; text:GeneratorDeclaration
+    url:prod-GeneratorExpression; text:GeneratorExpression
+    url:prod-MethodDefinition; text:MethodDefinition
+    url:prod-AsyncGeneratorDeclaration; text:AsyncGeneratorDeclaration
+    url:prod-AsyncGeneratorExpression; text:AsyncGeneratorExpression
+    url:prod-Identifier; text:Identifier
+    url:prod-LexicalDeclaration; text:LexicalDeclaration
+    url:prod-VariableStatement; text:VariableStatement
+    url:sec-parameter-lists; text:Parameter List
+    url:sec-environment-records; text:Environment Record
 
 urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
     url:binary/modules.html#binary-customsec; text:custom section
@@ -273,6 +289,44 @@ fields represent mapped code that also has a mapped name.
 
 Note: Using file offsets was considered but rejected in favor of using line/column data to avoid becoming
 misaligned with the original due to platform-specific line endings. 
+
+### [=names=] for generated JavaScript code
+
+Source map generators should create a [=mapping=] entry with a [=name=] field for
+the following JavaScript tokens, if
+
+1. The original source language construct maps semantically to the generated
+    JavaScript code.
+
+1. The original source language construct has a name.
+
+Then the [=name=] of the [=mapping=] entry should be the name of the original
+source language construct.
+
+Example: A TypeScript arrow function compiled to a JavaScript function, or a
+local variable that was renamed.
+
+1. The opening parenthesis `(` of [=FunctionDeclaration=], [=FunctionExpression=],
+    [=AsyncFunctionDeclaration=] and [=AsyncFunctionExpression=] for (async) functions.
+
+1. The opening parenthesis `(` or the first letter of the *BindingExpression*
+    of [=ArrowParameters=] and [=AsyncArrowFunction=] for (async) arrow functions.
+
+1. The opening parenthesis `(` of [=MethodDefinition=] for class methods. For the
+    [=MethodDefinition=] where *PropName* is "constructor", the [=name=] should be
+    the original class name.
+
+1. The opening parenthesis `(` of [=GeneratorDeclaration=], [=GeneratorExpression=],
+    [=AsyncGeneratorDeclaration=] and [=AsyncGeneratorExpression=] for (async) generator functions.
+
+1. The first letter of [=Identifier=] for variables. This includes (but is not limited to)
+    [=LexicalDeclaration=], [=VariableStatement=] and arguments in [=Parameter List=].
+    Source map generators may choose to only emit a [=mapping=] entry with a [=name=] at a
+    variable's definition site and may choose to omit such a mapping for further use-sites
+    in the same [=Environment Record=].
+
+Note: The opening parenthesis is chosen because it is present in all styles of function
+definition except arrow functions with a single parameter.
 
 Resolving Sources {#resolving-sources}
 --------------------------------------
