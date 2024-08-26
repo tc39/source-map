@@ -507,15 +507,18 @@ a [=list=] of either [=strings=] or nulls <dfn for="decode source map sources">|
 and a [=list=] of numbers <dfn for="decode source map sources">|ignoredSources|</dfn>,
 run the following steps:
 1. Let |decodedSources| be a new empty [=list=].
+1. Let |sourceURLPrefix| be "".
 1. If |sourceRoot| is not null, then:
-    1. Set |sourceRootURL| to the result of [=URL parser|URL parsing=] |sourceRoot| with |baseURL|.
-    <!-- What happens in this case? -->
-    1. If |sourceRootURL| is failure, [=optionally report an error=].
-    1. Else, set |baseURL| to |sourceRootURL|.
+    1. If |sourceRoot| contains the code point U+002F (/), then:
+        1. Let |index| be the index of the last occurrence of U+002F (/) in |sourceRoot|.
+        1. Set |sourceURLPrefix| to the [=code unit substring|substring=] of |sourceRoot| from 0 to
+            |index| + 1.
+    1. Else, set |sourceURLPrefix| to the concatenation of |sourceRoot| and "/".
 1. [=For each=] |source| of |sources| with index |index|:
     1. Let |decodedSource| be a new [=decoded source=] whose [=decoded source/URL=] is null,
         [=decoded source/content=] is null, and [=decoded source/ignored=] is false.
     1. If |source| is not null:
+        1. Set |source| to the [=string/concatenate|concatenation=] of |sourceURLPrefix| and |source|.
         1. Let |sourceURL| be the result of [=URL parser|URL parsing=] |source| with |baseURL|.
         1. If |sourceURL| is failure, [=optionally report an error=].
         1. Else, set |decodedSource|'s [=decoded source/URL=] to |sourceURL|.
