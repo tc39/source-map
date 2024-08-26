@@ -438,15 +438,15 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
             1. [=Decode a base64 VLQ=] from |segment| given |position| and let
                 |relativeOriginalLine| be the result.
             1. [=Decode a base64 VLQ=] from |segment| given |position| and let
-                |relativeOriginalPosition| be the result.
-            1. If |relativeOriginalPosition| is null, then:
+                |relativeOriginalColumn| be the result.
+            1. If |relativeOriginalColumn| is null, then:
                 1. If |relativeSourceIndex| is not null, [=optionally report an error=].
                 1. Continue with the next iteration.
             <!-- TODO: If there is a relativeSourceIndex but not a relativeOriginalLine,
                  should |sourceIndex| still be increased? -->
             1. Increase |sourceIndex| by |relativeSourceIndex|.
             1. Increase |originalLine| by |relativeOriginalLine|.
-            1. Increase |originalColumn| by |relativeOriginalPosition|.
+            1. Increase |originalColumn| by |relativeOriginalColumn|.
             1. If any of |sourceIndex|, |originalLine|, or |originalColumn| are less than 0, or if
                 |sourceIndex| is greater than or equal to |sources|'s [=list/size=], [=optionally
                 report an error=].
