@@ -470,7 +470,8 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
 1. Return |decodedMappings|.
 
 To <dfn>decode a base64 VLQ</dfn> from a [=string=] |segment| given a [=position variable=]
-position, run the following stepsis the number :
+|position|, run the following steps:
+1. If |position| points to the end of |segment|, return null.
 1. Let |first| be a [=byte=] whose the [=byte/value=] is the number corresponding to |segment|'s
     |position|th [=code unit=], according to the [[base64]] encoding.
 
