@@ -500,8 +500,8 @@ resolved relative to the SourceMap (like resolving the script `src` attribute in
 
 To <dfn>decode source map sources</dfn> given a [=/URL=] |baseURL|,
 a [=string=] or null <dfn for="decode source map sources">|sourceRoot|</dfn>,
-a [=list=] of [=strings=] <dfn for="decode source map sources">|sources|</dfn>,
-a [=list=] of [=strings=] <dfn for="decode source map sources">|sourcesContent|</dfn>,
+a [=list=] of either [=strings=] or nulls <dfn for="decode source map sources">|sources|</dfn>,
+a [=list=] of either [=strings=] or nulls <dfn for="decode source map sources">|sourcesContent|</dfn>,
 and a [=list=] of numbers <dfn for="decode source map sources">|ignoredSources|</dfn>,
 run the following steps:
 1. Let |decodedSources| be a new empty [=list=].
