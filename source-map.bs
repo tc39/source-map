@@ -250,6 +250,8 @@ To <dfn export>decode a source map</dfn> given a [=string=]-keyed [=map=] |jsonM
     [=optionally report an error=].
 1. If |jsonMap|[`"mappings"`] does not [=map/exist=] or |jsonMap|[`"mappings"`], is not a
     [=string=], throw an error.
+1. If |jsonMap|[`"sources"`] does not [=map/exist=] or |jsonMap|[`"sources"`], is not a
+    [=list=], throw an error.
 1. Let |sourceMap| be a new [=decoded source map=].
 1. Set |sourceMap|'s [=decoded source map/file=] to [=optionally get a string=] `"file"` from |jsonMap|.
 1. Set |sourceMap|'s [=decoded source map/sources=] to the result of [=decode source map
