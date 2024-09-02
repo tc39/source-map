@@ -296,13 +296,11 @@ as per [=ECMAScript Lexical Grammar=]:
 
 1. [=Mapping=] entries must point to the first code point of the source text matched by
     [=IdentifierName=], [=PrivateIdentifier=], [=Punctuator=], [=DivPunctuator=], [=RightBracePunctuator=],
-    [=NumericLiteral=], [=RegularExpressionLiteral=], [=Template=] and [=TemplateSubstitutionTail=].
+    [=NumericLiteral=] and [=RegularExpressionLiteral=].
 
 1. [=Mapping=] entries may point to any code point of the source text matched by
-    [=Comment=], [=HashbangComment=] and [=StringLiteral=].
-
-1. [=Mapping=] entries must not point to any code point of the source text matched by
-    [=WhiteSpace=] and [=LineTerminator=].
+    [=Comment=], [=HashbangComment=], [=StringLiteral=], [=Template=],
+    [=TemplateSubstitutionTail=], [=WhiteSpace=] and [=LineTerminator=].
 
 Resolving Sources {#resolving-sources}
 --------------------------------------
