@@ -478,7 +478,7 @@ To <dfn>decode a base64 VLQ</dfn> from a [=string=] |segment| given a [=position
     NOTE: The two most significant bits of |first| are 0.
 1. Let |sign| be 1 if |first| & 0x01 is 0x00, and -1 otherwise.
 1. Let |value| be (|first| &gt;&gt; 1) & 0x0F, as a number.
-1. Let |nextShift| be 4.
+1. Let |nextShift| be 16.
 1. Let |currentByte| be |first|.
 1. While |currentByte| & 0x20 is 0x20:
     1. Advance |position| by 1.
@@ -486,10 +486,13 @@ To <dfn>decode a base64 VLQ</dfn> from a [=string=] |segment| given a [=position
     1. Set |currentByte| to the [=byte=] whose the [=byte/value=] is the number corresponding to
         |segment|'s |position|th [=code unit=], according to the [[base64]] encoding.
     1. Let |chunk| be |currentByte| & 0x1F, as a number.
-    1. Add |chunk| &lt;&lt; |nextShift| to |value|.
+    1. Add |chunk| * |nextShift| to |value|.
     1. If |value| is greater than or equal to 2<sup>31</sup>, throw an error.
-    1. Increase |nextShift| by 5.
+    1. Multiply |nextShift| by 32.
 1. Advance |position| by 1.
+1. If |value| is 0 and |sign| is -1, return -2147483648.
+
+    NOTE: -2147483648 is the smallest 32-bit signed integer.
 1. Return |value| * |sign|.
 
 NOTE: In addition to returning the decoded value, this algorithm updates the [=position variable=]
