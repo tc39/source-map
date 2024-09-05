@@ -410,6 +410,7 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
 1. Let |groups| be the result of [=strictly split|strictly splitting=] |mappings| on `;`.
 1. Let |generatedLine| be 0.
 1. Let |sourceIndex| be 0.
+1. Let |nameIndex| be 0.
 1. While |generatedLine| is less than |groups|'s [=list/size=]:
     1. If |groups|[|generatedLine|] is not the empty string, then:
         1. Let |segments| be the result of [=strictly split|strictly splitting=]
@@ -417,7 +418,6 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
         1. Let |generatedColumn| be 0.
         1. Let |originalLine| be 0.
         1. Let |originalColumn| be 0.
-        1. Let |nameIndex| be 0.
         1. [=For each=] |segment| in |segments|:
             1. Let |position| be a [=position variable=] for |segment|, initially pointing at
                 |segment|'s start.
