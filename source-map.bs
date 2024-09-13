@@ -532,6 +532,10 @@ run the following steps:
     1. [=list/Append=] |decodedSource| to |decodedSources|.
 1. Return |decodedSources|.
 
+NOTE: Implementations that support showing source contents but do not support showing multiple
+sources with the same URL and different content will arbitrarily choose one of the various contents
+corresponding to the given URL.
+
 Extensions {#extensions}
 ------------------------
 
