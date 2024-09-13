@@ -21,6 +21,9 @@ Markup Shorthands: markdown yes
 Group: tc39
 </pre>
 
+<!-- Uncomment the next line when generating the PDF version of the spec -->
+<!-- <link rel="stylesheet" href="./ecma-style/ecma.css"> -->
+
 <pre class=link-defaults>
 spec:html; type:element;
     text:a
@@ -132,6 +135,50 @@ Pavel Podivilov (Google).
 
 The Source Map format does not have version numbers anymore, and it is instead
 hard-coded to always be "3".
+
+<div style="display: none" id="copyright-before"></div>
+<div style="display: none" id="copyright">
+<p>COPYRIGHT NOTICE</p>
+<p>© 2024 Ecma International</p>
+
+<p>This document may be copied, published and distributed to others, and certain derivative works of it
+may be prepared, copied, published, and distributed, in whole or in part, provided that the above
+copyright notice and this Copyright License and Disclaimer are included on all such copies and
+derivative works. The only derivative works that are permissible under this Copyright License and
+Disclaimer are:</p>
+<ol>
+<li>works which incorporate all or portion of this document for the purpose of providing commentary
+or explanation (such as an annotated version of the document),</li>
+<li>works which incorporate all or portion of this document for the purpose of incorporating
+features that provide accessibility,</li>
+<li>translations of this document into languages other than English and into different formats
+and</li>
+<li>works by making use of this specification in standard conformant products by implementing (e.g.
+by copy and paste wholly or partly) the functionality therein.</li>
+</ol>
+
+<p>However, the content of this document itself may not be modified in any way, including by
+removing the copyright notice or references to Ecma International, except as required to translate
+it into languages other than English or into a different format.</p>
+
+<p>The official version of an Ecma International document is the English language version on the
+Ecma International website. In the event of discrepancies between a translated version and the
+official version, the official version shall govern.</p>
+
+<p>The limited permissions granted above are perpetual and will not be revoked by Ecma
+International or its successors or assigns.</p>
+
+<p>This document and the information contained herein is provided on an "AS IS" basis and ECMA
+INTERNATIONAL DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY
+WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY OWNERSHIP RIGHTS OR ANY
+IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.</p>
+</div>
+<div style="display: none" id="copyright-after"></div>
+
+<!-- Use a script tag because bikeshed doesn't like <h1> tags -->
+<script>document.write(`
+  <h1 id="pdf-title" style="display: none" id="print-title">Source Map specification</h1>
+`)</script>
 
 Scope {#scope}
 ==============
