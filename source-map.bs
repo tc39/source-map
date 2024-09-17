@@ -126,22 +126,22 @@ The document at [https://tc39.es/source-map/](https://tc39.es/source-map/) is th
 up-to-date Source Map specification. It contains the content of the most recently published snapshot
 plus any modifications that will be included in the next snapshot.
 
-If you want to get involved you will find more information under the following [Specification
-Repository](https://github.com/tc39/source-map).
+If you want to get involved you will find more information at the [specification
+repository](https://github.com/tc39/source-map).
 
 <h2 class="no-num">Introduction</h2>
 
 This Ecma standard defines the Source Map format, used for mapping transpiled source code back to the original sources.
 
-The Source Maps format has the following goals:
+The Source Map format has the following goals:
 * Support source-level debugging allowing bidirectional mapping
 * Support server-side stack trace deobfuscation
 
-The original source map format (v1) was created by Joseph Schorr for use by
+The original Source Map format (v1) was created by Joseph Schorr for use by
 Closure Inspector to enable source-level debugging of optimized JavaScript code
 (although the format itself is language agnostic).  However, as the size of the
-projects using the source maps expanded the verbosity of the format started to
-become a problem.  The v2 [[V2Format]] was created by trading some simplicity
+projects using source maps expanded, the verbosity of the format started to
+become a problem.  The v2 format [[V2Format]] was created by trading some simplicity
 and flexibility to reduce the overall size of the source map. Even with the
 changes made with the v2 version of the format, the source map file size was
 limiting its usefulness.  The v3 format is based on suggestions made by
@@ -236,18 +236,18 @@ For the purposes of this document, the following terms and definitions apply.
 : <dfn>Source Mapping URL</dfn>
 :: The URL referencing the location of a source map from the [=Generated code=].
 : <dfn>Column</dfn>
-:: The 0 (zero) indexed offsets within a line of the generated code measured. The definition for
-      columns in source maps can depend on the content type.  For JavaScript and CSS based source
-      maps are defined to be in UTF-16 code units analogous to JavaScript string indexes. That means
-      that "A" (`LATIN CAPITAL LETTER A`) measures 1 code unit, and "🔥" (`FIRE`) measures 2 code
+:: The zero-based indexed offset within a line of the generated code. How this offset is
+      measured can depend on the content type.  For JavaScript and CSS based source
+      maps, they are defined to be in UTF-16 code units analogous to JavaScript string indices. That means
+      that "A" (`LATIN CAPITAL LETTER A`) measures as 1 code unit, and "🔥" (`FIRE`) measures as 2 code
       units.  For WebAssembly, columns are defined as byte offsets from the beginning of the binary
       content (and there is only one group representing a line). Source maps for other content types
-      might diverge from this.
+      may diverge from this.
 
 Source Map Format {#source-map-format}
 ======================================
 
-The source map is a JSON document containing a top-level JSON object with the
+A source map is a JSON document containing a top-level JSON object with the
 following structure:
 
 ```json
@@ -264,22 +264,22 @@ following structure:
 ```
 
 * <dfn for="json"><code>version</code></dfn> is the version field which must always be the number
-    `3` as an integer. The source map may be rejected in case of a value different from `3`.
+    `3` as an integer. The source map may be rejected if the field has any other value.
 * <dfn for="json"><code>file</code></dfn> is an optional name of the generated code
     that this source map is associated with. It's not specified if this can
     be a URL, relative path name, or just a base name. As such it has a mostly informal
     character.
-* <dfn for="json"><code>sourceRoot</code></dfn> is an optional source root,
-    useful for relocating source files on a server or removing repeated values in
+* <dfn for="json"><code>sourceRoot</code></dfn> is an optional source root string,
+    used for relocating source files on a server or removing repeated values in
     the [=json/sources=] entry.  This value is prepended to the individual entries in the
-    "source" field.
+    [=json/sources=] field.
 * <dfn for="json"><code>sources</code></dfn> is a list of original sources
     used by the [=json/mappings=] entry.  Each entry is either a string that is a
     (potentially relative) URL or `null` if the source name is not known.
 * <dfn for="json"><code>sourcesContent</code></dfn> is an optional list
-    of source content (that is the [=Original Source=]), useful when the "source"
-    can't be hosted.  The contents are listed in the same order as the [=json/sources=].
-    `null` may be used if some original sources should be retrieved by name.
+    of source content (i.e., the [=Original Source=]) strings, used when the source
+    cannot be hosted.  The contents are listed in the same order as the [=json/sources=].
+    Entries may be `null` if some original sources should be retrieved by name.
 * <dfn for="json"><code>names</code></dfn> is an optional list of symbol names which may be used by the [=json/mappings=] entry.
 * <dfn for="json"><code>mappings</code></dfn> is a string with the encoded mapping data (see [[#mappings-structure]]).
 * <dfn for="json"><code>ignoreList</code></dfn> is an optional list of indices of files that
@@ -415,24 +415,24 @@ The fields in each segment are:
     If this is the first field of the first segment, or the first segment following a new generated
     line (`;`), then this field holds the whole [=Base64 VLQ=].  Otherwise, this field contains
     a [=Base64 VLQ=] that is relative to the previous occurrence of this field.  <em>Note that this
-    is different than the fields below because the previous value is reset after every generated line.</em>
+    is different from the subsequent fields below because the previous value is reset after every generated line.</em>
 
-2. If present, a zero-based index into the [=json/sources=] list. This field is a [=Base64 VLQ=]
-    relative to the previous occurrence of this field, unless this is the first occurrence of this
+2. If present, the zero-based index into the [=json/sources=] list. This field contains a [=Base64 VLQ=]
+    relative to the previous occurrence of this field, unless it is the first occurrence of this
     field, in which case the whole value is represented.
 
-3. If present, the zero-based starting line in the original source is represented.  This field is a
-    [=Base64 VLQ=] relative to the previous occurrence of this field, unless this is the first
-    occurrence of this field, in which case the whole value is represented.  Always present if there
+3. If present, the zero-based starting line in the original source.  This field contains a
+    [=Base64 VLQ=] relative to the previous occurrence of this field, unless it is the first
+    occurrence of this field, in which case the whole value is represented.  Must be present if there
     is a source field.
 
-4. If present, the zero-based starting [=column=] of the line in the source represented. This
-    field is a [=Base64 VLQ=] relative to the previous occurrence of this field unless this
-    is the first occurrence of this field, in which case the whole value is represented.  Always
-    present if there is a source field.
+4. If present, the zero-based starting [=column=] of the line in the original source.  This
+    field contains a [=Base64 VLQ=] relative to the previous occurrence of this field, unless it
+    is the first occurrence of this field, in which case the whole value is represented.  Must
+    be present if there is a source field.
 
-5. If present, the zero-based index into the [=json/names=] list associated with this segment. This
-    field is a base 64 VLQ relative to the previous occurrence of this field unless this
+5. If present, the zero-based index into the [=json/names=] list associated with this segment.  This
+    field contains a [=Base64 VLQ=] relative to the previous occurrence of this field, unless it
     is the first occurrence of this field, in which case the whole value is represented.
 
 Note: The purpose of this encoding is to reduce the source map size. VLQ encoding reduced source maps by 50% relative to the [[V2Format]] in tests performed
@@ -702,7 +702,7 @@ extension.  For example, for `page.js` a source map named `page.js.map` would be
 Linking generated code to source maps {#linking-generated-code}
 ---------------------------------------------------------------
 
-While the source map format is intended to be language and platform agnostic, it is useful
+While the Source Map format is intended to be language and platform agnostic, it is useful
 to have some conventions for the expected use-case of web server-hosted JavaScript.
 
 There are two suggested ways to link source maps to the output.  The first requires server
@@ -713,8 +713,8 @@ characters outside the set permitted to appear in URIs must be percent-encoded
 and it may be a data URI.  Using a data URI along with [=json/sourcesContent=] allows
 for a completely self-contained source map.
 
-<ins>The HTTP `sourcemap` header has precedence over a source annotation, and if both are present,
-the header URL should be used to resolve the source map file.</ins>
+The HTTP `sourcemap` header has precedence over a source annotation, and if both are present,
+the header URL should be used to resolve the source map file.
 
 Regardless of the method used to retrieve the [=Source Mapping URL=] the same
 process is used to resolve it, which is as follows:
@@ -724,7 +724,9 @@ When the [=Source Mapping URL=] is not absolute, then it is relative to the gene
 
 - If the generated source is not associated with a script element that has a `src`
     attribute and there exists a `//# sourceURL` comment in the generated code, that
-    comment should be used to determine the [=source origin=]. Note: Previously, this was
+    comment should be used to determine the [=source origin=].
+
+    Note: Previously, this was
     `//@ sourceURL`, as with `//@ sourceMappingURL`, it is reasonable to accept both
     but `//#` is preferred.
 
