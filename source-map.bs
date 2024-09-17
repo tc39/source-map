@@ -113,8 +113,7 @@ Repository](https://github.com/tc39/source-map).
 
 <h2 class="no-num">Introduction</h2>
 
-This Ecma standard defines the Source Map format, used for mapping transpiled source code (primarily
-JavaScript) back to the original sources.
+This Ecma standard defines the Source Map format, used for mapping transpiled source code back to the original sources.
 
 The Source Maps format has the following goals:
 * Support source-level debugging allowing bidirectional mapping
