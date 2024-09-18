@@ -267,8 +267,8 @@ following structure:
     `3` as an integer. The source map may be rejected if the field has any other value.
 * <dfn for="json"><code>file</code></dfn> is an optional name of the generated code
     that this source map is associated with. It's not specified if this can
-    be a URL, relative path name, or just a base name. As such it has a mostly informal
-    character.
+    be a URL, relative path name, or just a base name. Source map generators may
+    choose the appropriate interpretation for their contexts of use.
 * <dfn for="json"><code>sourceRoot</code></dfn> is an optional source root string,
     used for relocating source files on a server or removing repeated values in
     the [=json/sources=] entry.  This value is prepended to the individual entries in the
