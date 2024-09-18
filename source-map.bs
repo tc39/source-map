@@ -51,6 +51,21 @@ urlPrefix:https://tc39.es/ecma262/#; type:dfn; spec:ecmascript
     url:prod-MultiLineComment; text:multi-line comment
     url:prod-MultiLineComment; text:multi-line comment
     url:sec-regexpbuiltinexec; text:RegExpBuiltinExec
+    url:prod-Comment; text:Comment
+    url:prod-DivPunctuator; text:DivPunctuator
+    url:prod-HashbangComment; text:HashbangComment
+    url:prod-IdentifierName; text:IdentifierName
+    url:prod-LineTerminator; text:LineTerminator
+    url:prod-NumericLiteral; text:NumericLiteral
+    url:prod-Punctuator; text:Punctuator
+    url:prod-PrivateIdentifier; text:PrivateIdentifier
+    url:prod-RegularExpressionLiteral; text:RegularExpressionLiteral
+    url:prod-RightBracePunctuator; text:RightBracePunctuator
+    url:prod-StringLiteral; text:StringLiteral
+    url:prod-Template; text:Template
+    url:prod-TemplateSubstitutionTail; text:TemplateSubstitutionTail
+    url:prod-WhiteSpace; text:WhiteSpace
+    url:sec-ecmascript-language-lexical-grammar; text:ECMAScript Lexical Grammar
 
 urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
     url:binary/modules.html#binary-customsec; text:custom section
@@ -558,6 +573,19 @@ To <dfn>decode a base64 VLQ</dfn> from a [=string=] |segment| given a [=position
 
 NOTE: In addition to returning the decoded value, this algorithm updates the [=position variable=]
 in the calling algorithm.
+
+### [=Mappings=] for generated JavaScript code
+
+Generated code positions that may have [=Mapping=] entries are defined in terms of *input elements*
+as per [=ECMAScript Lexical Grammar=]. [=Mapping=] entries must point to either:
+
+1. the first code point of the source text matched by
+    [=IdentifierName=], [=PrivateIdentifier=], [=Punctuator=], [=DivPunctuator=], [=RightBracePunctuator=],
+    [=NumericLiteral=] and [=RegularExpressionLiteral=].
+
+1. any code point of the source text matched by
+    [=Comment=], [=HashbangComment=], [=StringLiteral=], [=Template=],
+    [=TemplateSubstitutionTail=], [=WhiteSpace=] and [=LineTerminator=].
 
 Resolving Sources {#resolving-sources}
 --------------------------------------
