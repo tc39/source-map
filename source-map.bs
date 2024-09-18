@@ -292,13 +292,13 @@ misaligned with the original due to platform-specific line endings.
 ### [=Mappings=] for generated JavaScript code
 
 Generated code positions that may have [=Mapping=] entries are defined in terms of *input elements*
-as per [=ECMAScript Lexical Grammar=]:
+as per [=ECMAScript Lexical Grammar=]. [=Mapping=] entries must point to either:
 
-1. [=Mapping=] entries must point to the first code point of the source text matched by
+1. the first code point of the source text matched by
     [=IdentifierName=], [=PrivateIdentifier=], [=Punctuator=], [=DivPunctuator=], [=RightBracePunctuator=],
     [=NumericLiteral=] and [=RegularExpressionLiteral=].
 
-1. [=Mapping=] entries may point to any code point of the source text matched by
+1. any code point of the source text matched by
     [=Comment=], [=HashbangComment=], [=StringLiteral=], [=Template=],
     [=TemplateSubstitutionTail=], [=WhiteSpace=] and [=LineTerminator=].
 
