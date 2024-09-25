@@ -123,7 +123,7 @@ urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
 <h2 class="no-num no-toc">About this Specification</h2>
 
 The document at [https://tc39.es/source-map/](https://tc39.es/source-map/) is the most accurate and
-up-to-date Source Map specification. It contains the content of the most recently published snapshot
+up-to-date source map specification. It contains the content of the most recently published snapshot
 plus any modifications that will be included in the next snapshot.
 
 If you want to get involved you will find more information at the [specification
@@ -131,13 +131,13 @@ repository](https://github.com/tc39/source-map).
 
 <h2 class="no-num">Introduction</h2>
 
-This Ecma standard defines the Source Map format, used for mapping transpiled source code back to the original sources.
+This Ecma Standard defines the Source Map Format, used for mapping transpiled source code back to the original sources.
 
-The Source Map format has the following goals:
+The source map format has the following goals:
 * Support source-level debugging allowing bidirectional mapping
 * Support server-side stack trace deobfuscation
 
-The original Source Map format (v1) was created by Joseph Schorr for use by
+The original source map format (v1) was created by Joseph Schorr for use by
 Closure Inspector to enable source-level debugging of optimized JavaScript code
 (although the format itself is language agnostic).  However, as the size of the
 projects using source maps expanded, the verbosity of the format started to
@@ -147,7 +147,7 @@ changes made with the v2 version of the format, the source map file size was
 limiting its usefulness.  The v3 format is based on suggestions made by
 Pavel Podivilov (Google).
 
-The Source Map format does not have version numbers anymore, and it is instead
+The source map format does not have version numbers anymore, and it is instead
 hard-coded to always be "3".
 
 <div style="display: none" id="copyright-before"></div>
@@ -197,7 +197,7 @@ IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.</p>
 Scope {#scope}
 ==============
 
-This Standard defines the Source Map format.
+This Standard defines the Source Map Format.
 
 Terms and definitions {#terminology}
 ====================================
@@ -702,7 +702,7 @@ extension.  For example, for `page.js` a source map named `page.js.map` would be
 Linking generated code to source maps {#linking-generated-code}
 ---------------------------------------------------------------
 
-While the Source Map format is intended to be language and platform agnostic, it is useful
+While the source map format is intended to be language and platform agnostic, it is useful
 to have some conventions for the expected use-case of web server-hosted JavaScript.
 
 There are two suggested ways to link source maps to the output.  The first requires server
