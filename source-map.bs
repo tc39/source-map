@@ -500,7 +500,7 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
             1. [=Decode a list of base64 VLQ=] from |segment| and let |vlqs| be the result.
             1. If |vlqs|'s [=list/size=] is not 1, 4 or 5, [=optionally report an error=]
                 and continue with the next iteration.
-            1. Increase |generatedColumn| by |vlqs[0]|. If the result is negative,
+            1. Increase |generatedColumn| by |vlqs|[0]. If the result is negative,
                 [=optionally report an error=] and continue with the next iteration.
             1. Let |decodedMapping| be a new [=decoded mapping=] whose
                 [=decoded mapping/generatedLine=] is |generatedLine|,
