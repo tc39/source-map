@@ -486,13 +486,10 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
             |groups|[|generatedLine|] on `,`.
         1. Let |generatedColumn| be 0.
         1. [=For each=] |segment| in |segments|:
-            1. Let |position| be a [=position variable=] for |segment|, initially pointing at
-                |segment|'s start.
-            1. [=Decode a base64 VLQ=] from |segment| given |position| and let
-                |relativeGeneratedColumn| be the result.
-            1. If |relativeGeneratedColumn| is null, [=optionally report an error=] and continue
+            1. [=Decode a list of base64 VLQ=] from |segment| and let |vlqs| be the result.
+            1. If |vlqs| is [=list/empty=], [=optionally report an error=] and continue
                 with the next iteration.
-            1. Increase |generatedColumn| by |relativeGeneratedColumn|. If the result is negative,
+            1. Increase |generatedColumn| by |vlqs|[0]. If the result is negative,
                 [=optionally report an error=] and continue with the next iteration.
             1. Let |decodedMapping| be a new [=decoded mapping=] whose
                 [=decoded mapping/generatedLine=] is |generatedLine|,
@@ -502,18 +499,10 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
                 [=decoded mapping/originalColumn=] is null,
                 and [=decoded mapping/name=] is null.
             1. Append |decodedMapping| to |decodedMappings|.
-            1. [=Decode a base64 VLQ=] from |segment| given |position| and let |relativeSourceIndex|
-                be the result.
-            1. [=Decode a base64 VLQ=] from |segment| given |position| and let
-                |relativeOriginalLine| be the result.
-            1. [=Decode a base64 VLQ=] from |segment| given |position| and let
-                |relativeOriginalColumn| be the result.
-            1. If |relativeOriginalColumn| is null, then:
-                1. If |relativeSourceIndex| is not null, [=optionally report an error=].
-                1. Continue with the next iteration.
-            1. Increase |sourceIndex| by |relativeSourceIndex|.
-            1. Increase |originalLine| by |relativeOriginalLine|.
-            1. Increase |originalColumn| by |relativeOriginalColumn|.
+            1. If |vlqs|'s [=list/size=] is 1, continue with the next iteration.
+            1. Increase |sourceIndex| by |vlqs|[1].
+            1. If |vlqs|[2] [=list/exists=], increase |originalLine| by |vlqs|[2].
+            1. If |vlqs|[3] [=list/exists=], increase |originalColumn| by |vlqs|[3].
             1. If any of |sourceIndex|, |originalLine|, or |originalColumn| are less than 0, or if
                 |sourceIndex| is greater than or equal to |sources|'s [=list/size=], [=optionally
                 report an error=].
@@ -522,15 +511,12 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
                     |sources|[|sourceIndex|].
                 1. Set |decodedMapping|'s [=decoded mapping/originalLine=] to |originalLine|.
                 1. Set |decodedMapping|'s [=decoded mapping/originalColumn=] to |originalColumn|.
-            1. [=Decode a base64 VLQ=] from |segment| given |position| and let |relativeNameIndex|
-                be the result.
-            1. If |relativeNameIndex| is not null, then:
-                1. Increase |nameIndex| by |relativeNameIndex|.
-                1. If |nameIndex| is negative or greater than |names|'s [=list/size=], [=optionally
-                    report an error=].
-                1. Else, set |decodedMapping|'s [=decoded mapping/name=] to |names|[|nameIndex|].
-            1. If |position| does not point to the end of |segment|, [=optionally report an
-                error=].
+            1. If |vlqs|'s [=list/size=] is 4, continue with the next iteration.
+            1. Increase |nameIndex| by |vlqs|[4].
+            1. If |nameIndex| is negative or greater than |names|'s [=list/size=],
+                [=optionally report an error=].
+            1. Else, set |decodedMapping|'s [=decoded mapping/name=] to |names|[|nameIndex|].
+            1. If |vlqs|'s [=list/size=] is greater then 4, [=optionally report an error=].
     1. Increase |generatedLine| by 1.
 1. Return |decodedMappings|.
 
@@ -576,6 +562,16 @@ To <dfn>decode a base64 VLQ</dfn> from a [=string=] |segment| given a [=position
 
 NOTE: In addition to returning the decoded value, this algorithm updates the [=position variable=]
 in the calling algorithm.
+
+To <dfn>decode a list of base64 VLQ</dfn> from a [=string=] |segment|, run the following steps:
+1. Let |position| be a [=position variable=] for |segment|, initially pointing at
+    |segment|'s start.
+1. Let |vlqs| be a new empty [=list=].
+1. While |position| does not point to the end of |segment|:
+    1. [=Decode a base64 VLQ=] from |segment| given |position| and let |vlq| be the result.
+    1. Assert |vlq| is not null.
+    1. Append |vlq| to |vlqs|.
+1. Return |vlqs|.
 
 ### [=Mappings=] for generated JavaScript code
 
