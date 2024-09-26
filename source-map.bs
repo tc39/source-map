@@ -511,9 +511,9 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
                 and [=decoded mapping/name=] is null.
             1. Append |decodedMapping| to |decodedMappings|.
             1. If |vlqs|'s [=list/size=] is 1, continue with the next iteration.
-            1. Increase |sourceIndex| by |vlqs[1]|.
-            1. If |vlqs[2]| [=list/exists=], increase |originalLine| by |vlqs[2]|.
-            1. If |vlqs[3]| [=list/exists=], increase |originalColumn| by |vlqs[3]|.
+            1. Increase |sourceIndex| by |vlqs|[1].
+            1. If |vlqs|[2] [=list/exists=], increase |originalLine| by |vlqs|[2].
+            1. If |vlqs|[3] [=list/exists=], increase |originalColumn| by |vlqs|[3].
             1. If any of |sourceIndex|, |originalLine|, or |originalColumn| are less than 0, or if
                 |sourceIndex| is greater than or equal to |sources|'s [=list/size=], [=optionally
                 report an error=].
@@ -523,7 +523,7 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
                 1. Set |decodedMapping|'s [=decoded mapping/originalLine=] to |originalLine|.
                 1. Set |decodedMapping|'s [=decoded mapping/originalColumn=] to |originalColumn|.
             1. If |vlqs|'s [=list/size=] is 4, continue with the next iteration.
-            1. Increase |nameIndex| by |vlqs[4]|.
+            1. Increase |nameIndex| by |vlqs|[4].
             1. If |nameIndex| is negative or greater than |names|'s [=list/size=],
                 [=optionally report an error=].
             1. Else, set |decodedMapping|'s [=decoded mapping/name=] to |names|[|nameIndex|].
