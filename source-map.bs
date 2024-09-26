@@ -498,8 +498,8 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
         1. Let |generatedColumn| be 0.
         1. [=For each=] |segment| in |segments|:
             1. [=Decode a list of base64 VLQ=] from |segment| and let |vlqs| be the result.
-            1. If |vlqs|'s [=list/size=] is not 1, 4 or 5, [=optionally report an error=]
-                and continue with the next iteration.
+            1. If |vlqs| is [=list/empty=], [=optionally report an error=] and continue
+                with the next iteration.
             1. Increase |generatedColumn| by |vlqs|[0]. If the result is negative,
                 [=optionally report an error=] and continue with the next iteration.
             1. Let |decodedMapping| be a new [=decoded mapping=] whose
@@ -512,8 +512,8 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
             1. Append |decodedMapping| to |decodedMappings|.
             1. If |vlqs|'s [=list/size=] is 1, continue with the next iteration.
             1. Increase |sourceIndex| by |vlqs[1]|.
-            1. Increase |originalLine| by |vlqs[2]|.
-            1. Increase |originalColumn| by |vlqs[3]|.
+            1. If |vlqs[2]| [=list/exists=], increase |originalLine| by |vlqs[2]|.
+            1. If |vlqs[3]| [=list/exists=], increase |originalColumn| by |vlqs[3]|.
             1. If any of |sourceIndex|, |originalLine|, or |originalColumn| are less than 0, or if
                 |sourceIndex| is greater than or equal to |sources|'s [=list/size=], [=optionally
                 report an error=].
@@ -527,6 +527,7 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
             1. If |nameIndex| is negative or greater than |names|'s [=list/size=],
                 [=optionally report an error=].
             1. Else, set |decodedMapping|'s [=decoded mapping/name=] to |names|[|nameIndex|].
+            1. If |vlqs|'s [=list/size=] is greater then 4, [=optionally report an error=].
     1. Increase |generatedLine| by 1.
 1. Return |decodedMappings|.
 
