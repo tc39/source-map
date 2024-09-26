@@ -472,18 +472,7 @@ To <dfn>decode source map mappings</dfn> given a [=string=]
 <dfn for="decode source map mappings">|mappings|</dfn>, a [=list=] of [=strings=]
 <dfn for="decode source map mappings">|names|</dfn>, and a [=list=] of [=decoded source|decoded
 sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the following steps:
-1. If |mappings| is not an [=ASCII string=], throw an error.
-1. If |mappings| contains any [=code unit=] other than:
-    - U+002C (,) or U+003B (;);
-    - U+0030 (0) to U+0039 (9);
-    - U+0041 (A) to U+005A (Z);
-    - U+0061 (a) to U+007A (z);
-    - U+002B (+), U+002F (/)
-
-    NOTE: These are the valid [[base64]] characters (excluding the padding character `=`), together
-    with `,` and `;`.
-
-    then throw an error.
+1. [=Validate base64 VLQ groupings=] with |mappings|.
 1. Let |decodedMappings| be a new empty [=list=].
 1. Let |groups| be the result of [=strictly split|strictly splitting=] |mappings| on `;`.
 1. Let |generatedLine| be 0.
@@ -544,6 +533,20 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
                 error=].
     1. Increase |generatedLine| by 1.
 1. Return |decodedMappings|.
+
+To <dfn>validate base64 VLQ groupings</dfn> from a [=string=] |groupings|, run the following steps:
+1. If |groupings| is not an [=ASCII string=], throw an error.
+1. If |groupings| contains any [=code unit=] other than:
+    - U+002C (,) or U+003B (;);
+    - U+0030 (0) to U+0039 (9);
+    - U+0041 (A) to U+005A (Z);
+    - U+0061 (a) to U+007A (z);
+    - U+002B (+), U+002F (/)
+
+    NOTE: These are the valid [[base64]] characters (excluding the padding character `=`), together
+    with `,` and `;`.
+
+    then throw an error.
 
 To <dfn>decode a base64 VLQ</dfn> from a [=string=] |segment| given a [=position variable=]
 |position|, run the following steps:
