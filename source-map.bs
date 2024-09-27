@@ -120,7 +120,7 @@ urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
 }
 </pre>
 
-<h2 class="no-num no-toc">About this Specification</h2>
+<h2 class="no-num no-toc" id="about">About this Specification</h2>
 
 The document at [https://tc39.es/source-map/](https://tc39.es/source-map/) is the most accurate and
 up-to-date source map specification. It contains the content of the most recently published snapshot
@@ -129,7 +129,7 @@ plus any modifications that will be included in the next snapshot.
 If you want to get involved you will find more information at the [specification
 repository](https://github.com/tc39/source-map).
 
-<h2 class="no-num">Introduction</h2>
+<h2 class="no-num" id="intro">Introduction</h2>
 
 This Ecma Standard defines the Source Map Format, used for mapping transpiled source code back to the original sources.
 
@@ -319,10 +319,10 @@ To <dfn export>decode a source map from a JSON string</dfn> |str| given a [=/URL
 following steps:
 1. Let |jsonMap| be the result of [=parse a JSON string to an Infra value|parsing a JSON string to
     an Infra value=] |str|.
-1. If |jsonMap| is not a [=map=], report an error and abort these steps.
+1. If |jsonMap| is not a [=/map=], report an error and abort these steps.
 1. [=Decode a source map=] given |jsonMap| and |baseURL|, and return its result if any.
 
-To <dfn export>decode a source map</dfn> given a [=string=]-keyed [=map=] |jsonMap| and a [=/URL=]
+To <dfn export>decode a source map</dfn> given a [=string=]-keyed [=/map=] |jsonMap| and a [=/URL=]
 |baseURL|, run the following steps:
 1. If |jsonMap|[`"version"`] does not [=map/exist=] or |jsonMap|[`"version"`] is not 3,
     [=optionally report an error=].
@@ -350,13 +350,13 @@ To <dfn export>decode a source map</dfn> given a [=string=]-keyed [=map=] |jsonM
     - [=decode source map mappings/sources=] set to |sourceMap|'s [=decoded source map/sources=].
 1. Return |sourceMap|.
 
-To <dfn>optionally get a string</dfn> |key| from a [=string=]-keyed [=map=] |jsonMap|, run the
+To <dfn>optionally get a string</dfn> |key| from a [=string=]-keyed [=/map=] |jsonMap|, run the
 following steps:
 1. If |jsonMap|[|key|] does not [=map/exist=], return null.
 1. If |jsonMap|[|key|] is not a [=string=], [=optionally report an error=] and return null.
 1. Return |jsonMap|[|key|].
 
-To <dfn>optionally get a list of strings</dfn> |key| from a [=string=]-keyed [=map=]
+To <dfn>optionally get a list of strings</dfn> |key| from a [=string=]-keyed [=/map=]
 |jsonMap|, run the following steps:
 1. If |jsonMap|[|key|] does not [=map/exist=], return a new empty [=list=].
 1. If |jsonMap|[|key|] is not a [=list=], [=optionally report an error=] and return a new empty
@@ -368,7 +368,7 @@ To <dfn>optionally get a list of strings</dfn> |key| from a [=string=]-keyed [=m
     1. Else, [=optionally report an error=] and append `""` to |list|.
 1. Return |list|.
 
-To <dfn>optionally get a list of optional strings</dfn> |key| from a [=string=]-keyed [=map=]
+To <dfn>optionally get a list of optional strings</dfn> |key| from a [=string=]-keyed [=/map=]
 |jsonMap|, run the following steps:
 1. If |jsonMap|[|key|] does not [=map/exist=], return a new empty [=list=].
 1. If |jsonMap|[|key|] is not a [=list=], [=optionally report an error=] and return a new empty
@@ -381,7 +381,7 @@ To <dfn>optionally get a list of optional strings</dfn> |key| from a [=string=]-
         1. Append null to |list|.
 1. Return |list|.
 
-To <dfn>optionally get a list of array indexes</dfn> |key| from a [=string=]-keyed [=map=]
+To <dfn>optionally get a list of array indexes</dfn> |key| from a [=string=]-keyed [=/map=]
 |jsonMap|, run the following steps:
 1. If |jsonMap|[|key|] does not [=map/exist=], return a new empty [=list=].
 1. If |jsonMap|[|key|] is not a [=list=], [=optionally report an error=] and return a new empty
@@ -577,10 +577,10 @@ To <dfn>decode a base64 VLQ</dfn> from a [=string=] |segment| given a [=position
 NOTE: In addition to returning the decoded value, this algorithm updates the [=position variable=]
 in the calling algorithm.
 
-### [=Mappings=] for generated JavaScript code
+### [=json/Mappings=] for generated JavaScript code ### {#mapping-javascript}
 
-Generated code positions that may have [=Mapping=] entries are defined in terms of *input elements*
-as per [=ECMAScript Lexical Grammar=]. [=Mapping=] entries must point to either:
+Generated code positions that may have [=json/Mapping=] entries are defined in terms of *input elements*
+as per [=ECMAScript Lexical Grammar=]. [=json/Mapping=] entries must point to either:
 
 1. the first code point of the source text matched by
     [=IdentifierName=], [=PrivateIdentifier=], [=Punctuator=], [=DivPunctuator=], [=RightBracePunctuator=],
@@ -635,8 +635,8 @@ Source map consumers must ignore any additional unrecognized properties, rather 
 source map to be rejected, so that additional features can be added to this format without
 breaking existing users.
 
-Index Map
-=========
+Index Map {#index-map}
+======================
 
 To support concatenating generated code and other common post-processing,
 an alternate representation of a map is supported:
@@ -672,19 +672,19 @@ an alternate representation of a map is supported:
 
 The index map follows the form of the standard map.  Like the regular source map,
 the file format is JSON with a top-level object.  It shares the [=json/version=] and
-[=json/file=] field from the regular source map, but gains a new [=sections=] field.
+[=json/file=] field from the regular source map, but gains a new [=index-map/sections=] field.
 
-<dfn><code>sections</code></dfn> is an array of [=Section=] objects.
+<dfn dfn-for="index-map"><code>sections</code></dfn> is an array of [=index-map/Section=] objects.
 
-## Section
+## Section ## {#section-object}
 
 Section objects have the following fields:
 
-* <dfn><code>offset</code></dfn> is an object with two fields, `line` and `column`,
+* <dfn dfn-for="index-map"><code>offset</code></dfn> is an object with two fields, `line` and `column`,
     that represent the offset into generated code that the referenced source map
     represents.
 
-* <dfn><code>map</code></dfn> is an embedded complete source map object.
+* <dfn dfn-for="index-map"><code>map</code></dfn> is an embedded complete source map object.
     An embedded map does not inherit any values from the containing index map.
 
 The sections must be sorted by starting position and the represented sections
@@ -742,7 +742,7 @@ When the [=Source Mapping URL=] is not absolute, then it is relative to the gene
 - If the generated code is being evaluated as a string with the `eval()` function or
     via `new Function()`, then the [=source origin=] will be the page's origin.
 
-### Linking through HTTP headers
+### Linking through HTTP headers ### {#linking-http-header}
 
 If a file is served through HTTP(S) with a `sourcemap` header, the value of the header is
 the URL of the linked source map.
@@ -754,7 +754,7 @@ sourcemap: <url>
 Note: Previous revisions of this document recommended a header name of `x-sourcemap`.  This
 is now deprecated; `sourcemap` is now expected.
 
-### Linking through inline annotations
+### Linking through inline annotations ### {#linking-inline}
 
 The generated code should include a comment, or the equivalent construct depending on its
 language or format, named `sourceMappingURL` and that contains the URL of the source map. This
@@ -786,7 +786,7 @@ without parsing|without parsing=] gives `foo.js.map`.
 
 </div>
 
-#### Extraction methods for JavaScript sources
+#### Extraction methods for JavaScript sources #### {#extraction-javascript}
 
 To <dfn export>extract a Source Map URL from JavaScript through parsing</dfn> a [=string=] |source|,
 run the following steps:
@@ -897,12 +897,12 @@ Explorer's Conditional Compilation and was changed to `//#`.
 
 Source map generators must only emit `//#` while source map consumers must accept both `//@` and `//#`.
 
-#### Extraction methods for CSS sources
+#### Extraction methods for CSS sources #### {#extraction-css}
 
 Extracting source mapping URLs from CSS is similar to JavaScript, with the exception that CSS only
 supports `/* ... */`-style comments.
 
-#### Extraction methods for WebAssembly binaries
+#### Extraction methods for WebAssembly binaries #### {#extraction-wasm}
 
 To <dfn export>extract a Source Map URL from a WebAssembly source</dfn> given
 a [=byte sequence=] |bytes|, run the following steps:
@@ -921,8 +921,8 @@ Since WebAssembly is not a textual format and it does not support comments, it s
 The URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=]. It is invalid for
 tools that generate WebAssembly code to generate two or more [=custom section|custom sections=] with the "sourceMappingURL" name.
 
-Linking eval'd code to named generated code
--------------------------------------------
+Linking eval'd code to named generated code {#linking-eval}
+-----------------------------------------------------------
 
 There is an existing convention that should be supported for the use of source maps with
 eval'd code, it has the following form:
@@ -933,13 +933,13 @@ eval'd code, it has the following form:
 
 It is described in [[EvalSourceURL]].
 
-Language Neutral Stack Mapping Notes
-====================================
+Language Neutral Stack Mapping Notes {#language-neutral-mapping}
+================================================================
 
 Stack tracing mapping without knowledge of the source language is not covered by this document.
 
-Multi-level Mapping Notes
-=========================
+Multi-level Mapping Notes {#multi-level-mapping}
+================================================
 
 It is getting more common to have tools generate sources from some DSL (templates) or compile
 TypeScript -> JavaScript -> minified JavaScript, resulting in multiple translations before the
@@ -988,7 +988,7 @@ To fetch a source map given a [=/URL=] |url|, run the following steps:
     1. Otherwise, [=resolve=] |promise| with |sourceMap|.
 1. Return |promise|.
 
-License
-=======
+License {#license}
+==================
 
 This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
