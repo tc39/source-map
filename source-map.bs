@@ -2,19 +2,27 @@
 Title: Source Map
 H1: Source Map
 Shortname: source-map
-Level: 1
+Level: none
 Status: STAGE0
 URL: https://tc39.es/source-map/
+Repository: https://github.com/tc39/source-map/
+Issue Tracking: GitHub Issues https://github.com/tc39/source-map/issues
+Test Suite: https://github.com/tc39/source-map-tests
+Editor Term: Editor, Editors
 Editor: Asumu Takikawa, Igalia
 Former Editor: Victor Porof, Google
 Former Editor: John Lenz, Google
 Former Editor: Nick Fitzgerald, Mozilla
 Previous Version: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#
 Repository: source-map/source-map-spec
-Abstract: A specification for mapping transpiled source code back to the original sources.  This specification is a living document and describes a hardened version of the Source Map v3 specification.
+Abstract: This Ecma standard defines the Source Map format, used for mapping transpiled source code back to the original sources.
+No Abstract: true
 Markup Shorthands: markdown yes
 Group: tc39
 </pre>
+
+<!-- Uncomment the next line when generating the PDF version of the spec -->
+<!-- <link rel="stylesheet" href="./ecma-style/ecma.css"> -->
 
 <pre class=link-defaults>
 spec:html; type:element;
@@ -43,6 +51,21 @@ urlPrefix:https://tc39.es/ecma262/#; type:dfn; spec:ecmascript
     url:prod-MultiLineComment; text:multi-line comment
     url:prod-MultiLineComment; text:multi-line comment
     url:sec-regexpbuiltinexec; text:RegExpBuiltinExec
+    url:prod-Comment; text:Comment
+    url:prod-DivPunctuator; text:DivPunctuator
+    url:prod-HashbangComment; text:HashbangComment
+    url:prod-IdentifierName; text:IdentifierName
+    url:prod-LineTerminator; text:LineTerminator
+    url:prod-NumericLiteral; text:NumericLiteral
+    url:prod-Punctuator; text:Punctuator
+    url:prod-PrivateIdentifier; text:PrivateIdentifier
+    url:prod-RegularExpressionLiteral; text:RegularExpressionLiteral
+    url:prod-RightBracePunctuator; text:RightBracePunctuator
+    url:prod-StringLiteral; text:StringLiteral
+    url:prod-Template; text:Template
+    url:prod-TemplateSubstitutionTail; text:TemplateSubstitutionTail
+    url:prod-WhiteSpace; text:WhiteSpace
+    url:sec-ecmascript-language-lexical-grammar; text:ECMAScript Lexical Grammar
     url:prod-FunctionDeclaration; text:FunctionDeclaration
     url:prod-FunctionExpression; text:FunctionExpression
     url:prod-AsyncFunctionDeclaration; text:AsyncFunctionDeclaration
@@ -113,95 +136,134 @@ urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
 }
 </pre>
 
-## License
+<h2 class="no-num no-toc">About this Specification</h2>
 
-This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
+The document at [https://tc39.es/source-map/](https://tc39.es/source-map/) is the most accurate and
+up-to-date source map specification. It contains the content of the most recently published snapshot
+plus any modifications that will be included in the next snapshot.
 
-## Introduction
+If you want to get involved you will find more information at the [specification
+repository](https://github.com/tc39/source-map).
 
-This document is a draft version of a hardened version of the Source Map v3
-specification.  In its current form, it's not a defined standard and is subject to
-modifications.  If you want to get involved you will find more information under
-the following [Specification Repository](https://github.com/tc39/source-map).
+<h2 class="no-num">Introduction</h2>
 
-Background {#background}
-========================
+This Ecma Standard defines the Source Map Format, used for mapping transpiled source code back to the original sources.
+
+The source map format has the following goals:
+* Support source-level debugging allowing bidirectional mapping
+* Support server-side stack trace deobfuscation
 
 The original source map format (v1) was created by Joseph Schorr for use by
 Closure Inspector to enable source-level debugging of optimized JavaScript code
 (although the format itself is language agnostic).  However, as the size of the
-projects using the source maps expanded the verbosity of the format started to
-become a problem.  The v2 [[V2Format]] was created by trading some simplicity
+projects using source maps expanded, the verbosity of the format started to
+become a problem.  The v2 format [[V2Format]] was created by trading some simplicity
 and flexibility to reduce the overall size of the source map. Even with the
 changes made with the v2 version of the format, the source map file size was
 limiting its usefulness.  The v3 format is based on suggestions made by
 Pavel Podivilov (Google).
 
-<mark>This document codifies the prior art that is Source Map v3 but is more specific
-about the precise meanings of the specification.</mark>
+The source map format does not have version numbers anymore, and it is instead
+hard-coded to always be "3".
 
-Terminology {#terminology}
-==========================
+<div style="display: none" id="copyright-before"></div>
+<div style="display: none" id="copyright">
+<p>COPYRIGHT NOTICE</p>
+<p>© 2024 Ecma International</p>
 
-<dfn>Generated Code</dfn> is the code which is generated
-by the compiler or transpiler.
+<p>This document may be copied, published and distributed to others, and certain derivative works of it
+may be prepared, copied, published, and distributed, in whole or in part, provided that the above
+copyright notice and this Copyright License and Disclaimer are included on all such copies and
+derivative works. The only derivative works that are permissible under this Copyright License and
+Disclaimer are:</p>
+<ol>
+<li>works which incorporate all or portion of this document for the purpose of providing commentary
+or explanation (such as an annotated version of the document),</li>
+<li>works which incorporate all or portion of this document for the purpose of incorporating
+features that provide accessibility,</li>
+<li>translations of this document into languages other than English and into different formats
+and</li>
+<li>works by making use of this specification in standard conformant products by implementing (e.g.
+by copy and paste wholly or partly) the functionality therein.</li>
+</ol>
 
-<dfn>Original Source</dfn> is the source code which has not
-been passed through the compiler.
+<p>However, the content of this document itself may not be modified in any way, including by
+removing the copyright notice or references to Ecma International, except as required to translate
+it into languages other than English or into a different format.</p>
 
-<dfn>Base64 VLQ</dfn>: [[VLQ]] is a [[base64]] value, where the most significant
-bit (the 6th bit) is used as the continuation bit, and the "digits" are encoded
-into the string least significant first, and where the least significant bit of
-the first digit is used as the sign bit.
+<p>The official version of an Ecma International document is the English language version on the
+Ecma International website. In the event of discrepancies between a translated version and the
+official version, the official version shall govern.</p>
 
-Note: The values that can be represented by the VLQ Base64 encoded are limited to
-32-bit quantities until some use case for larger values is presented.  This
-means that values exceeding 32-bits are invalid and implementations may reject
-them. The sign bit is counted towards the limit, but the continuation bits are not.
+<p>The limited permissions granted above are perpetual and will not be revoked by Ecma
+International or its successors or assigns.</p>
 
-<div class="example">
-The string `"iB"` represents a [=Base64 VLQ=] with two digits. The first digit
-`"i"` encodes the bit pattern `0x100010`, which has a continuation bit of `1` (the
-VLQ continues), a sign bit of `0` (non-negative), and the value bits `0x0001`.
-The second digit `B` encodes the bit pattern `0x000001`, which has a continuation
-bit of `0`, no sign bit, and value bits `0x00001`. The decoding of this VLQ string
-is the number 17.
+<p>This document and the information contained herein is provided on an "AS IS" basis and ECMA
+INTERNATIONAL DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY
+WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY OWNERSHIP RIGHTS OR ANY
+IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.</p>
 </div>
+<div style="display: none" id="copyright-after"></div>
 
-<div class="example">
-The string `"V"` represents a [=Base64 VLQ=] with one digit. The digit
-`"V"` encodes the bit pattern `0x010101`, which has a continuation bit of `0`
-(no continuation), a sign bit of `1` (negative), and the value bits `0x1010`.
-The decoding of this VLQ string is the number -10.
-</div>
+<!-- Use a script tag because bikeshed doesn't like <h1> tags -->
+<script>document.write(`
+  <h1 id="pdf-title" style="display: none" id="print-title">Source Map specification</h1>
+`)</script>
 
-<dfn>Source Mapping URL</dfn> refers to the URL referencing
-the location of a source map from the [=Generated code=].
+Scope {#scope}
+==============
 
-<dfn>Column</dfn> is the zero-based indexed offset within a line of the
-generated code.  The definition for columns in source maps can depend on
-the content type.
+This Standard defines the Source Map Format.
 
-  * For JavaScript and CSS based source maps are defined to be in
-    UTF-16 code units analogous to JavaScript string indexes.  That means that
-    "A" (`LATIN CAPITAL LETTER A`) measures 1 code unit, and "🔥" (`FIRE`) measures
-    2 code units.
-  * For WebAssembly, columns are defined as byte offsets from the beginning 
-    of the binary content (and there is only one group representing a line).
-  * Source maps for other content types might diverge from this.
+Terms and definitions {#terminology}
+====================================
 
-General Goals {#general-goals}
-==============================
+For the purposes of this document, the following terms and definitions apply.
 
-The goals for the v3 format of Source Maps:
+: <dfn>Generated Code</dfn>
+:: The code which is generated by the compiler or transpiler.
+: <dfn>Original Source</dfn>
+:: The source code which has not been passed through the compiler.
+: <dfn>Base64 VLQ</dfn> [[VLQ]]
+:: A [[base64]] value, where the most significant bit (the 6th bit) is used as the continuation bit,
+    and the "digits" are encoded into the string least significant first, and where the least
+    significant bit of the first digit is used as the sign bit.
 
-* Support source-level debugging allowing bidirectional mapping
-* Support server-side stack trace deobfuscation
+    Note: The values that can be represented by the VLQ Base64 encoded are limited to
+    32-bit quantities until some use case for larger values is presented.  This
+    means that values exceeding 32-bits are invalid and implementations may reject
+    them. The sign bit is counted towards the limit, but the continuation bits are not.
+
+    <div class="example">
+    The string `"iB"` represents a [=Base64 VLQ=] with two digits. The first digit
+    `"i"` encodes the bit pattern `0x100010`, which has a continuation bit of `1` (the
+    VLQ continues), a sign bit of `0` (non-negative), and the value bits `0x0001`.
+    The second digit `B` encodes the bit pattern `0x000001`, which has a continuation
+    bit of `0`, no sign bit, and value bits `0x00001`. The decoding of this VLQ string
+    is the number 17.
+    </div>
+
+    <div class="example">
+    The string `"V"` represents a [=Base64 VLQ=] with one digit. The digit
+    `"V"` encodes the bit pattern `0x010101`, which has a continuation bit of `0`
+    (no continuation), a sign bit of `1` (negative), and the value bits `0x1010`.
+    The decoding of this VLQ string is the number -10.
+    </div>
+: <dfn>Source Mapping URL</dfn>
+:: The URL referencing the location of a source map from the [=Generated code=].
+: <dfn>Column</dfn>
+:: The zero-based indexed offset within a line of the generated code. How this offset is
+      measured can depend on the content type.  For JavaScript and CSS based source
+      maps, they are defined to be in UTF-16 code units analogous to JavaScript string indices. That means
+      that "A" (`LATIN CAPITAL LETTER A`) measures as 1 code unit, and "🔥" (`FIRE`) measures as 2 code
+      units.  For WebAssembly, columns are defined as byte offsets from the beginning of the binary
+      content (and there is only one group representing a line). Source maps for other content types
+      may diverge from this.
 
 Source Map Format {#source-map-format}
 ======================================
 
-The source map is a JSON document containing a top-level JSON object with the
+A source map is a JSON document containing a top-level JSON object with the
 following structure:
 
 ```json
@@ -217,37 +279,147 @@ following structure:
 }
 ```
 
-* <dfn><code>version</code></dfn> is the version field which must always be the number
-    `3` as an integer. The source map may be rejected in case of a value different from `3`.
-* <dfn><code>file</code></dfn> is an optional name of the generated code
+* <dfn for="json"><code>version</code></dfn> is the version field which must always be the number
+    `3` as an integer. The source map may be rejected if the field has any other value.
+* <dfn for="json"><code>file</code></dfn> is an optional name of the generated code
     that this source map is associated with. It's not specified if this can
-    be a URL, relative path name, or just a base name. As such it has a mostly informal
-    character.
-* <dfn><code>sourceRoot</code></dfn> is an optional source root,
-    useful for relocating source files on a server or removing repeated values in
-    the [=sources=] entry.  This value is prepended to the individual entries in the
-    "source" field.
-* <dfn><code>sources</code></dfn> is a list of original sources
-    used by the [=mappings=] entry.  Each entry is either a string that is a
+    be a URL, relative path name, or just a base name. Source map generators may
+    choose the appropriate interpretation for their contexts of use.
+* <dfn for="json"><code>sourceRoot</code></dfn> is an optional source root string,
+    used for relocating source files on a server or removing repeated values in
+    the [=json/sources=] entry.  This value is prepended to the individual entries in the
+    [=json/sources=] field.
+* <dfn for="json"><code>sources</code></dfn> is a list of original sources
+    used by the [=json/mappings=] entry.  Each entry is either a string that is a
     (potentially relative) URL or `null` if the source name is not known.
-* <dfn><code>sourcesContent</code></dfn> is an optional list
-    of source content (that is the [=Original Source=]), useful when the "source"
-    can't be hosted.  The contents are listed in the same order as the [=sources=].
-    `null` may be used if some original sources should be retrieved by name.
-* <dfn><code>names</code></dfn> is an optional list of symbol names which may be used by the [=mappings=] entry.
-* <dfn><code>mappings</code></dfn> is a string with the encoded mapping data (see [[#mappings-structure]]).
-* <dfn><code>ignoreList</code></dfn> is an optional list of indices of files that
-    should be considered third party code, such as framework code or bundler-generated code. This 
+* <dfn for="json"><code>sourcesContent</code></dfn> is an optional list
+    of source content (i.e., the [=Original Source=]) strings, used when the source
+    cannot be hosted.  The contents are listed in the same order as the [=json/sources=].
+    Entries may be `null` if some original sources should be retrieved by name.
+* <dfn for="json"><code>names</code></dfn> is an optional list of symbol names which may be used by the [=json/mappings=] entry.
+* <dfn for="json"><code>mappings</code></dfn> is a string with the encoded mapping data (see [[#mappings-structure]]).
+* <dfn for="json"><code>ignoreList</code></dfn> is an optional list of indices of files that
+    should be considered third party code, such as framework code or bundler-generated code. This
     allows developer tools to avoid code that developers likely don't want to see
     or step through, without requiring developers to configure this beforehand.
-    It refers to the [=sources=] array and lists the indices of all the known third-party sources
+    It refers to the [=json/sources=] array and lists the indices of all the known third-party sources
     in the source map. Some browsers may also use the deprecated <code>x_google_ignoreList</code>
-    field if <code>[=ignoreList=]</code> is not present.
+    field if <code>[=json/ignoreList=]</code> is not present.
+
+
+A <dfn export>decoded source map</dfn> is a [=struct=] with the following fields:
+<dl dfn-for="decoded source map">
+  <dt><dfn>file</dfn></dt>
+  <dd>A [=string=] or null.</dd>
+
+  <dt><dfn>sources</dfn></dt>
+  <dd>A [=list=] of [=decoded source|decoded sources=].</dd>
+
+  <dt><dfn>mappings</dfn></dt>
+  <dd>A [=list=] of [=decoded mapping|decoded mappings=].</dd>
+</dl>
+
+A <dfn>decoded source</dfn> is a [=struct=] with the following fields:
+<dl dfn-for="decoded source">
+  <dt><dfn>URL</dfn></dt>
+  <dd>A [=/URL=] or null.</dd>
+
+  <dt><dfn>content</dfn></dt>
+  <dd>A [=string=] or null.</dd>
+
+  <dt><dfn>ignored</dfn></dt>
+  <dd>A [=boolean=].</dd>
+</dl>
+
+To <dfn export>decode a source map from a JSON string</dfn> |str| given a [=/URL=] |baseURL|, run the
+following steps:
+1. Let |jsonMap| be the result of [=parse a JSON string to an Infra value|parsing a JSON string to
+    an Infra value=] |str|.
+1. If |jsonMap| is not a [=map=], report an error and abort these steps.
+1. [=Decode a source map=] given |jsonMap| and |baseURL|, and return its result if any.
+
+To <dfn export>decode a source map</dfn> given a [=string=]-keyed [=map=] |jsonMap| and a [=/URL=]
+|baseURL|, run the following steps:
+1. If |jsonMap|[`"version"`] does not [=map/exist=] or |jsonMap|[`"version"`] is not 3,
+    [=optionally report an error=].
+1. If |jsonMap|[`"mappings"`] does not [=map/exist=] or |jsonMap|[`"mappings"`], is not a
+    [=string=], throw an error.
+1. If |jsonMap|[`"sources"`] does not [=map/exist=] or |jsonMap|[`"sources"`], is not a
+    [=list=], throw an error.
+1. Let |sourceMap| be a new [=decoded source map=].
+1. Set |sourceMap|'s [=decoded source map/file=] to [=optionally get a string=] `"file"` from |jsonMap|.
+1. Set |sourceMap|'s [=decoded source map/sources=] to the result of [=decode source map
+    sources|decoding source map sources=] given |baseURL| with:
+    - [=decode source map sources/sourceRoot=] set to [=optionally get a string=] `"sourceRoot"`
+        from |jsonMap|;
+    - [=decode source map sources/sources=] set to [=optionally get a list of optional strings=]
+        `"sources"` from |jsonMap|;
+    - [=decode source map sources/sourcesContent=] set to [=optionally get a list of optional
+        strings=] `"sourcesContent"` from |jsonMap|;
+    - [=decode source map sources/ignoredSources=] set to [=optionally get a list of array indexes=]
+        `"ignoreList"` from |jsonMap|.
+1. Set |sourceMap|'s [=decoded source map/mappings=] to the result of [=decode source map
+    mappings|decoding source map mappings=] with:
+    - [=decode source map mappings/mappings=] set to |jsonMap|[`"mappings"`];
+    - [=decode source map mappings/names=] set to [=optionally get a list of strings=] `"names"`
+        from |jsonMap|;
+    - [=decode source map mappings/sources=] set to |sourceMap|'s [=decoded source map/sources=].
+1. Return |sourceMap|.
+
+To <dfn>optionally get a string</dfn> |key| from a [=string=]-keyed [=map=] |jsonMap|, run the
+following steps:
+1. If |jsonMap|[|key|] does not [=map/exist=], return null.
+1. If |jsonMap|[|key|] is not a [=string=], [=optionally report an error=] and return null.
+1. Return |jsonMap|[|key|].
+
+To <dfn>optionally get a list of strings</dfn> |key| from a [=string=]-keyed [=map=]
+|jsonMap|, run the following steps:
+1. If |jsonMap|[|key|] does not [=map/exist=], return a new empty [=list=].
+1. If |jsonMap|[|key|] is not a [=list=], [=optionally report an error=] and return a new empty
+    [=list=].
+1. Let |list| be a new empty [=list=].
+1. [=For each=] |jsonItem| of |jsonMap|[|key|]:
+    1. If |jsonItem| is a [=string=], [=list/append=] it to |list|.
+    <!-- TODO: What happens in this case? -->
+    1. Else, [=optionally report an error=] and append `""` to |list|.
+1. Return |list|.
+
+To <dfn>optionally get a list of optional strings</dfn> |key| from a [=string=]-keyed [=map=]
+|jsonMap|, run the following steps:
+1. If |jsonMap|[|key|] does not [=map/exist=], return a new empty [=list=].
+1. If |jsonMap|[|key|] is not a [=list=], [=optionally report an error=] and return a new empty
+    [=list=].
+1. Let |list| be a new empty [=list=].
+1. [=For each=] |jsonItem| of |jsonMap|[|key|]:
+    1. If |jsonItem| is a [=string=], [=list/append=] it to |list|.
+    1. Else,
+        1. If |jsonItem| is not null, [=optionally report an error=].
+        1. Append null to |list|.
+1. Return |list|.
+
+To <dfn>optionally get a list of array indexes</dfn> |key| from a [=string=]-keyed [=map=]
+|jsonMap|, run the following steps:
+1. If |jsonMap|[|key|] does not [=map/exist=], return a new empty [=list=].
+1. If |jsonMap|[|key|] is not a [=list=], [=optionally report an error=] and return a new empty
+    [=list=].
+1. Let |list| be a new empty [=list=].
+1. [=For each=] |jsonItem| of |jsonMap|[|key|]:
+    1. If |jsonItem| is a non-negative integer number, [=list/append=] it to |list|.
+    1. Else,
+        <!-- Test case: a floating point number and a negative number -->
+        1. If |jsonItem| is not null, [=optionally report an error=].
+        1. Append null to |list|.
+1. Return |list|.
+
+To <dfn>optionally report an error</dfn>, implementations can choose to:
+- Do nothing.
+- Report an error to the user, and continue processing.
+- Throw an error to abort the running algorithm. ([[Infra#algorithm-control-flow]])
 
 Mappings Structure {#mappings-structure}
 ----------------------------------------
 
-The [=mappings=] data is broken down as follows:
+The [=json/mappings=] data is broken down as follows:
 
 - each group representing a line in the generated file is separated by a semicolon (`;`)
 - each segment is separated by a comma (`,`)
@@ -259,24 +431,24 @@ The fields in each segment are:
     If this is the first field of the first segment, or the first segment following a new generated
     line (`;`), then this field holds the whole [=Base64 VLQ=].  Otherwise, this field contains
     a [=Base64 VLQ=] that is relative to the previous occurrence of this field.  <em>Note that this
-    is different than the fields below because the previous value is reset after every generated line.</em>
+    is different from the subsequent fields below because the previous value is reset after every generated line.</em>
 
-2. If present, a zero-based index into the [=sources=] list. This field is a [=Base64 VLQ=]
-    relative to the previous occurrence of this field, unless this is the first occurrence of this
+2. If present, the zero-based index into the [=json/sources=] list. This field contains a [=Base64 VLQ=]
+    relative to the previous occurrence of this field, unless it is the first occurrence of this
     field, in which case the whole value is represented.
 
-3. If present, the zero-based starting line in the original source is represented.  This field is a
-    [=Base64 VLQ=] relative to the previous occurrence of this field, unless this is the first
-    occurrence of this field, in which case the whole value is represented.  Always present if there
+3. If present, the zero-based starting line in the original source.  This field contains a
+    [=Base64 VLQ=] relative to the previous occurrence of this field, unless it is the first
+    occurrence of this field, in which case the whole value is represented.  Must be present if there
     is a source field.
 
-4. If present, the zero-based starting [=column=] of the line in the source represented.  This
-    field is a [=Base64 VLQ=] relative to the previous occurrence of this field unless this
-    is the first occurrence of this field, in which case the whole value is represented.  Always
-    present if there is a source field.
+4. If present, the zero-based starting [=column=] of the line in the original source.  This
+    field contains a [=Base64 VLQ=] relative to the previous occurrence of this field, unless it
+    is the first occurrence of this field, in which case the whole value is represented.  Must
+    be present if there is a source field.
 
-5. If present, the zero-based index into the [=names=] list associated with this segment.  This
-    field is a base 64 VLQ relative to the previous occurrence of this field unless this
+5. If present, the zero-based index into the [=json/names=] list associated with this segment.  This
+    field contains a [=Base64 VLQ=] relative to the previous occurrence of this field, unless it
     is the first occurrence of this field, in which case the whole value is represented.
 
 Note: The purpose of this encoding is to reduce the source map size. VLQ encoding reduced source maps by 50% relative to the [[V2Format]] in tests performed
@@ -288,7 +460,151 @@ with four fields represent mapped code where a corresponding name does not exist
 fields represent mapped code that also has a mapped name.
 
 Note: Using file offsets was considered but rejected in favor of using line/column data to avoid becoming
-misaligned with the original due to platform-specific line endings. 
+misaligned with the original due to platform-specific line endings.
+
+A <dfn>decoded mapping</dfn> is a [=struct=] with the following fields:
+<dl dfn-for="decoded mapping">
+  <dt><dfn>generatedLine</dfn></dt>
+  <dd>A non-negative integer.</dd>
+
+  <dt><dfn>generatedColumn</dfn></dt>
+  <dd>A non-negative integer.</dd>
+
+  <dt><dfn>originalSource</dfn></dt>
+  <dd>A [=decoded source=] or null.</dd>
+
+  <dt><dfn>originalLine</dfn></dt>
+  <dd>A non-negative integer or null.</dd>
+
+  <dt><dfn>originalColumn</dfn></dt>
+  <dd>A non-negative integer or null.</dd>
+
+  <dt><dfn>name</dfn></dt>
+  <dd>A [=string=] or null.</dd>
+</dl>
+
+
+To <dfn>decode source map mappings</dfn> given a [=string=]
+<dfn for="decode source map mappings">|mappings|</dfn>, a [=list=] of [=strings=]
+<dfn for="decode source map mappings">|names|</dfn>, and a [=list=] of [=decoded source|decoded
+sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the following steps:
+1. [=Validate base64 VLQ groupings=] with |mappings|.
+1. Let |decodedMappings| be a new empty [=list=].
+1. Let |groups| be the result of [=strictly split|strictly splitting=] |mappings| on `;`.
+1. Let |generatedLine| be 0.
+1. Let |originalLine| be 0.
+1. Let |originalColumn| be 0.
+1. Let |sourceIndex| be 0.
+1. Let |nameIndex| be 0.
+1. While |generatedLine| is less than |groups|'s [=list/size=]:
+    1. If |groups|[|generatedLine|] is not the empty string, then:
+        1. Let |segments| be the result of [=strictly split|strictly splitting=]
+            |groups|[|generatedLine|] on `,`.
+        1. Let |generatedColumn| be 0.
+        1. [=For each=] |segment| in |segments|:
+            1. Let |position| be a [=position variable=] for |segment|, initially pointing at
+                |segment|'s start.
+            1. [=Decode a base64 VLQ=] from |segment| given |position| and let
+                |relativeGeneratedColumn| be the result.
+            1. If |relativeGeneratedColumn| is null, [=optionally report an error=] and continue
+                with the next iteration.
+            1. Increase |generatedColumn| by |relativeGeneratedColumn|. If the result is negative,
+                [=optionally report an error=] and continue with the next iteration.
+            1. Let |decodedMapping| be a new [=decoded mapping=] whose
+                [=decoded mapping/generatedLine=] is |generatedLine|,
+                [=decoded mapping/generatedColumn=] is |generatedColumn|,
+                [=decoded mapping/originalSource=] is null,
+                [=decoded mapping/originalLine=] is null,
+                [=decoded mapping/originalColumn=] is null,
+                and [=decoded mapping/name=] is null.
+            1. Append |decodedMapping| to |decodedMappings|.
+            1. [=Decode a base64 VLQ=] from |segment| given |position| and let |relativeSourceIndex|
+                be the result.
+            1. [=Decode a base64 VLQ=] from |segment| given |position| and let
+                |relativeOriginalLine| be the result.
+            1. [=Decode a base64 VLQ=] from |segment| given |position| and let
+                |relativeOriginalColumn| be the result.
+            1. If |relativeOriginalColumn| is null, then:
+                1. If |relativeSourceIndex| is not null, [=optionally report an error=].
+                1. Continue with the next iteration.
+            1. Increase |sourceIndex| by |relativeSourceIndex|.
+            1. Increase |originalLine| by |relativeOriginalLine|.
+            1. Increase |originalColumn| by |relativeOriginalColumn|.
+            1. If any of |sourceIndex|, |originalLine|, or |originalColumn| are less than 0, or if
+                |sourceIndex| is greater than or equal to |sources|'s [=list/size=], [=optionally
+                report an error=].
+            1. Else,
+                1. Set |decodedMapping|'s [=decoded mapping/originalSource=] to
+                    |sources|[|sourceIndex|].
+                1. Set |decodedMapping|'s [=decoded mapping/originalLine=] to |originalLine|.
+                1. Set |decodedMapping|'s [=decoded mapping/originalColumn=] to |originalColumn|.
+            1. [=Decode a base64 VLQ=] from |segment| given |position| and let |relativeNameIndex|
+                be the result.
+            1. If |relativeNameIndex| is not null, then:
+                1. Increase |nameIndex| by |relativeNameIndex|.
+                1. If |nameIndex| is negative or greater than |names|'s [=list/size=], [=optionally
+                    report an error=].
+                1. Else, set |decodedMapping|'s [=decoded mapping/name=] to |names|[|nameIndex|].
+            1. If |position| does not point to the end of |segment|, [=optionally report an
+                error=].
+    1. Increase |generatedLine| by 1.
+1. Return |decodedMappings|.
+
+To <dfn>validate base64 VLQ groupings</dfn> from a [=string=] |groupings|, run the following steps:
+1. If |groupings| is not an [=ASCII string=], throw an error.
+1. If |groupings| contains any [=code unit=] other than:
+    - U+002C (,) or U+003B (;);
+    - U+0030 (0) to U+0039 (9);
+    - U+0041 (A) to U+005A (Z);
+    - U+0061 (a) to U+007A (z);
+    - U+002B (+), U+002F (/)
+
+    NOTE: These are the valid [[base64]] characters (excluding the padding character `=`), together
+    with `,` and `;`.
+
+    then throw an error.
+
+To <dfn>decode a base64 VLQ</dfn> from a [=string=] |segment| given a [=position variable=]
+|position|, run the following steps:
+1. If |position| points to the end of |segment|, return null.
+1. Let |first| be a [=byte=] whose the [=byte/value=] is the number corresponding to |segment|'s
+    |position|th [=code unit=], according to the [[base64]] encoding.
+
+    NOTE: The two most significant bits of |first| are 0.
+1. Let |sign| be 1 if |first| & 0x01 is 0x00, and -1 otherwise.
+1. Let |value| be (|first| &gt;&gt; 1) & 0x0F, as a number.
+1. Let |nextShift| be 16.
+1. Let |currentByte| be |first|.
+1. While |currentByte| & 0x20 is 0x20:
+    1. Advance |position| by 1.
+    1. If |position| points to the end of |segment|, throw an error.
+    1. Set |currentByte| to the [=byte=] whose the [=byte/value=] is the number corresponding to
+        |segment|'s |position|th [=code unit=], according to the [[base64]] encoding.
+    1. Let |chunk| be |currentByte| & 0x1F, as a number.
+    1. Add |chunk| * |nextShift| to |value|.
+    1. If |value| is greater than or equal to 2<sup>31</sup>, throw an error.
+    1. Multiply |nextShift| by 32.
+1. Advance |position| by 1.
+1. If |value| is 0 and |sign| is -1, return -2147483648.
+
+    NOTE: -2147483648 is the smallest 32-bit signed integer.
+1. Return |value| * |sign|.
+
+NOTE: In addition to returning the decoded value, this algorithm updates the [=position variable=]
+in the calling algorithm.
+
+### [=Mappings=] for generated JavaScript code
+
+Generated code positions that may have [=Mapping=] entries are defined in terms of *input elements*
+as per [=ECMAScript Lexical Grammar=]. [=Mapping=] entries must point to either:
+
+1. the first code point of the source text matched by
+    [=IdentifierName=], [=PrivateIdentifier=], [=Punctuator=], [=DivPunctuator=], [=RightBracePunctuator=],
+    [=NumericLiteral=] and [=RegularExpressionLiteral=].
+
+1. any code point of the source text matched by
+    [=Comment=], [=HashbangComment=], [=StringLiteral=], [=Template=],
+    [=TemplateSubstitutionTail=], [=WhiteSpace=] and [=LineTerminator=].
 
 ### [=names=] for generated JavaScript code
 
@@ -331,8 +647,40 @@ definition except arrow functions with a single parameter.
 Resolving Sources {#resolving-sources}
 --------------------------------------
 
-If the sources are not absolute URLs after prepending the [=sourceRoot=], the sources are
+If the sources are not absolute URLs after prepending the [=json/sourceRoot=], the sources are
 resolved relative to the SourceMap (like resolving the script `src` attribute in an HTML document).
+
+To <dfn>decode source map sources</dfn> given a [=/URL=] |baseURL|,
+a [=string=] or null <dfn for="decode source map sources">|sourceRoot|</dfn>,
+a [=list=] of either [=strings=] or nulls <dfn for="decode source map sources">|sources|</dfn>,
+a [=list=] of either [=strings=] or nulls <dfn for="decode source map sources">|sourcesContent|</dfn>,
+and a [=list=] of numbers <dfn for="decode source map sources">|ignoredSources|</dfn>,
+run the following steps:
+1. Let |decodedSources| be a new empty [=list=].
+1. Let |sourceURLPrefix| be "".
+1. If |sourceRoot| is not null, then:
+    1. If |sourceRoot| contains the code point U+002F (/), then:
+        1. Let |index| be the index of the last occurrence of U+002F (/) in |sourceRoot|.
+        1. Set |sourceURLPrefix| to the [=code unit substring|substring=] of |sourceRoot| from 0 to
+            |index| + 1.
+    1. Else, set |sourceURLPrefix| to the concatenation of |sourceRoot| and "/".
+1. [=For each=] |source| of |sources| with index |index|:
+    1. Let |decodedSource| be a new [=decoded source=] whose [=decoded source/URL=] is null,
+        [=decoded source/content=] is null, and [=decoded source/ignored=] is false.
+    1. If |source| is not null:
+        1. Set |source| to the [=string/concatenate|concatenation=] of |sourceURLPrefix| and |source|.
+        1. Let |sourceURL| be the result of [=URL parser|URL parsing=] |source| with |baseURL|.
+        1. If |sourceURL| is failure, [=optionally report an error=].
+        1. Else, set |decodedSource|'s [=decoded source/URL=] to |sourceURL|.
+    1. If |index| is in |ignoredSources|, set |decodedSource|'s [=decoded source/ignored=] to true.
+    1. If |sourcesContent|'s [=list/size=] is greater than or equal to |index|, set
+        |decodedSource|'s [=decoded source/content=] to |sourcesContent|[|index|].
+    1. [=list/Append=] |decodedSource| to |decodedSources|.
+1. Return |decodedSources|.
+
+NOTE: Implementations that support showing source contents but do not support showing multiple
+sources with the same URL and different content will arbitrarily choose one of the various contents
+corresponding to the given URL.
 
 Extensions {#extensions}
 ------------------------
@@ -377,8 +725,8 @@ an alternate representation of a map is supported:
 ```
 
 The index map follows the form of the standard map.  Like the regular source map,
-the file format is JSON with a top-level object.  It shares the [=version=] and
-[=file=] field from the regular source map, but gains a new [=sections=] field.
+the file format is JSON with a top-level object.  It shares the [=json/version=] and
+[=json/file=] field from the regular source map, but gains a new [=sections=] field.
 
 <dfn><code>sections</code></dfn> is an array of [=Section=] objects.
 
@@ -386,7 +734,7 @@ the file format is JSON with a top-level object.  It shares the [=version=] and
 
 Section objects have the following fields:
 
-* <dfn><code>offset</dfn></code> is an object with two fields, `line` and `column`,
+* <dfn><code>offset</code></dfn> is an object with two fields, `line` and `column`,
     that represent the offset into generated code that the referenced source map
     represents.
 
@@ -419,11 +767,11 @@ support in order to add an HTTP header and the second requires an annotation in 
 
 Source maps are linked through URLs as defined in [[URL]]; in particular,
 characters outside the set permitted to appear in URIs must be percent-encoded
-and it may be a data URI.  Using a data URI along with [=sourcesContent=] allows
+and it may be a data URI.  Using a data URI along with [=json/sourcesContent=] allows
 for a completely self-contained source map.
 
-<ins>The HTTP `sourcemap` header has precedence over a source annotation, and if both are present,
-the header URL should be used to resolve the source map file.</ins>
+The HTTP `sourcemap` header has precedence over a source annotation, and if both are present,
+the header URL should be used to resolve the source map file.
 
 Regardless of the method used to retrieve the [=Source Mapping URL=] the same
 process is used to resolve it, which is as follows:
@@ -433,7 +781,9 @@ When the [=Source Mapping URL=] is not absolute, then it is relative to the gene
 
 - If the generated source is not associated with a script element that has a `src`
     attribute and there exists a `//# sourceURL` comment in the generated code, that
-    comment should be used to determine the [=source origin=]. Note: Previously, this was
+    comment should be used to determine the [=source origin=].
+
+    Note: Previously, this was
     `//@ sourceURL`, as with `//@ sourceMappingURL`, it is reasonable to accept both
     but `//#` is preferred.
 
@@ -662,7 +1012,7 @@ JavaScript-style single-line comments.
 Fetching Source Maps {#fetching-source-maps}
 ============================================
 
-To fetch a source map given a [=URL=] |url|, run the following steps:
+To fetch a source map given a [=/URL=] |url|, run the following steps:
 
 1. Let |promise| be [=a new promise=].
 1. Let |request| be a new [=request=] whose [=request/URL=] is |url|.
@@ -691,3 +1041,8 @@ To fetch a source map given a [=URL=] |url|, run the following steps:
     1. If the previous step threw an error, [=reject=] |promise| with that error.
     1. Otherwise, [=resolve=] |promise| with |sourceMap|.
 1. Return |promise|.
+
+License
+=======
+
+This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
