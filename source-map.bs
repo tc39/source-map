@@ -577,10 +577,10 @@ To <dfn>decode a base64 VLQ</dfn> from a [=string=] |segment| given a [=position
 NOTE: In addition to returning the decoded value, this algorithm updates the [=position variable=]
 in the calling algorithm.
 
-### [=json/Mappings=] for generated JavaScript code ### {#mapping-javascript}
+### [=decoded mapping|Mappings=] for generated JavaScript code ### {#mappings-javascript}
 
-Generated code positions that may have [=json/Mapping=] entries are defined in terms of *input elements*
-as per [=ECMAScript Lexical Grammar=]. [=json/Mapping=] entries must point to either:
+Generated code positions that may have [=decoded mapping|mapping=] entries are defined in terms of *input elements*
+as per [=ECMAScript Lexical Grammar=]. [=decoded mapping|Mapping=] entries must point to either:
 
 1. the first code point of the source text matched by
     [=IdentifierName=], [=PrivateIdentifier=], [=Punctuator=], [=DivPunctuator=], [=RightBracePunctuator=],
