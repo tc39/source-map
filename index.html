@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 6270e4735, updated Tue Aug 6 12:12:30 2024 -0700" name="generator">
   <link href="https://tc39.es/source-map/" rel="canonical">
-  <meta content="f7efad964e993cc869c954fd15d907955987bddf" name="revision">
+  <meta content="75f0a28e95bea29143142ebf8edf9b7a9d0f70f6" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2172,7 +2172,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">Source Map</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-09-26">26 September 2024</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-10-02">2 October 2024</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2197,7 +2197,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <nav data-fill-with="table-of-contents" id="toc">
    <h2 class="no-num no-toc no-ref" id="contents">Table of Contents</h2>
    <ol class="toc" role="directory">
-    <li><a href="#introduction"><span class="secno"></span> <span class="content">Introduction</span></a>
+    <li><a href="#intro"><span class="secno"></span> <span class="content">Introduction</span></a>
     <li><a href="#scope"><span class="secno">1</span> <span class="content">Scope</span></a>
     <li><a href="#terminology"><span class="secno">2</span> <span class="content">Terms and definitions</span></a>
     <li>
@@ -2206,7 +2206,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <li>
        <a href="#mappings-structure"><span class="secno">3.1</span> <span class="content">Mappings Structure</span></a>
        <ol class="toc">
-        <li><a href="#mappings-for-generated-javascript-code"><span class="secno">3.1.1</span> <span class="content"><span>Mappings</span> for generated JavaScript code</span></a>
+        <li><a href="#mappings-javascript"><span class="secno">3.1.1</span> <span class="content"><span>Mappings</span> for generated JavaScript code</span></a>
        </ol>
       <li><a href="#resolving-sources"><span class="secno">3.2</span> <span class="content">Resolving Sources</span></a>
       <li><a href="#extensions"><span class="secno">3.3</span> <span class="content">Extensions</span></a>
@@ -2214,7 +2214,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     <li>
      <a href="#index-map"><span class="secno">4</span> <span class="content">Index Map</span></a>
      <ol class="toc">
-      <li><a href="#section"><span class="secno">4.1</span> <span class="content">Section</span></a>
+      <li><a href="#section-object"><span class="secno">4.1</span> <span class="content">Section</span></a>
      </ol>
     <li>
      <a href="#conventions"><span class="secno">5</span> <span class="content">Conventions</span></a>
@@ -2223,19 +2223,19 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <li>
        <a href="#linking-generated-code"><span class="secno">5.2</span> <span class="content">Linking generated code to source maps</span></a>
        <ol class="toc">
-        <li><a href="#linking-through-http-headers"><span class="secno">5.2.1</span> <span class="content">Linking through HTTP headers</span></a>
+        <li><a href="#linking-http-header"><span class="secno">5.2.1</span> <span class="content">Linking through HTTP headers</span></a>
         <li>
-         <a href="#linking-through-inline-annotations"><span class="secno">5.2.2</span> <span class="content">Linking through inline annotations</span></a>
+         <a href="#linking-inline"><span class="secno">5.2.2</span> <span class="content">Linking through inline annotations</span></a>
          <ol class="toc">
-          <li><a href="#extraction-methods-for-javascript-sources"><span class="secno">5.2.2.1</span> <span class="content">Extraction methods for JavaScript sources</span></a>
-          <li><a href="#extraction-methods-for-css-sources"><span class="secno">5.2.2.2</span> <span class="content">Extraction methods for CSS sources</span></a>
-          <li><a href="#extraction-methods-for-webassembly-binaries"><span class="secno">5.2.2.3</span> <span class="content">Extraction methods for WebAssembly binaries</span></a>
+          <li><a href="#extraction-javascript"><span class="secno">5.2.2.1</span> <span class="content">Extraction methods for JavaScript sources</span></a>
+          <li><a href="#extraction-css"><span class="secno">5.2.2.2</span> <span class="content">Extraction methods for CSS sources</span></a>
+          <li><a href="#extraction-wasm"><span class="secno">5.2.2.3</span> <span class="content">Extraction methods for WebAssembly binaries</span></a>
          </ol>
        </ol>
-      <li><a href="#linking-evald-code-to-named-generated-code"><span class="secno">5.3</span> <span class="content">Linking eval’d code to named generated code</span></a>
+      <li><a href="#linking-eval"><span class="secno">5.3</span> <span class="content">Linking eval’d code to named generated code</span></a>
      </ol>
-    <li><a href="#language-neutral-stack-mapping-notes"><span class="secno">6</span> <span class="content">Language Neutral Stack Mapping Notes</span></a>
-    <li><a href="#multi-level-mapping-notes"><span class="secno">7</span> <span class="content">Multi-level Mapping Notes</span></a>
+    <li><a href="#language-neutral-mapping"><span class="secno">6</span> <span class="content">Language Neutral Stack Mapping Notes</span></a>
+    <li><a href="#multi-level-mapping"><span class="secno">7</span> <span class="content">Multi-level Mapping Notes</span></a>
     <li><a href="#fetching-source-maps"><span class="secno">8</span> <span class="content">Fetching Source Maps</span></a>
     <li><a href="#license"><span class="secno">9</span> <span class="content">License</span></a>
     <li>
@@ -2253,13 +2253,13 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
    </ol>
   </nav>
   <main>
-   <h2 class="no-num no-toc heading settled" id="about-this-specification"><span class="content">About this Specification</span></h2>
+   <h2 class="no-num no-toc heading settled" id="about"><span class="content">About this Specification</span></h2>
    <p>The document at <a href="https://tc39.es/source-map/">https://tc39.es/source-map/</a> is the most accurate and
 up-to-date source map specification. It contains the content of the most recently published snapshot
 plus any modifications that will be included in the next snapshot.</p>
    <p>If you want to get involved you will find more information at the <a href="https://github.com/tc39/source-map">specification
 repository</a>.</p>
-   <h2 class="no-num heading settled" id="introduction"><span class="content">Introduction</span></h2>
+   <h2 class="no-num heading settled" id="intro"><span class="content">Introduction</span></h2>
    <p>This Ecma Standard defines the Source Map Format, used for mapping transpiled source code back to the original sources.</p>
    <p>The source map format has the following goals:</p>
    <ul>
@@ -2427,11 +2427,11 @@ following steps:</p>
      <p>Let <var>jsonMap</var> be the result of <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#parse-a-json-string-to-an-infra-value" id="ref-for-parse-a-json-string-to-an-infra-value">parsing a JSON string to
 an Infra value</a> <var>str</var>.</p>
     <li data-md>
-     <p>If <var>jsonMap</var> is not a <a data-link-type="dfn" href="#map" id="ref-for-map">map</a>, report an error and abort these steps.</p>
+     <p>If <var>jsonMap</var> is not a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#ordered-map" id="ref-for-ordered-map">map</a>, report an error and abort these steps.</p>
     <li data-md>
      <p><a data-link-type="dfn" href="#decode-a-source-map" id="ref-for-decode-a-source-map">Decode a source map</a> given <var>jsonMap</var> and <var>baseURL</var>, and return its result if any.</p>
    </ol>
-   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="decode-a-source-map">decode a source map</dfn> given a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string②">string</a>-keyed <a data-link-type="dfn" href="#map" id="ref-for-map①">map</a> <var>jsonMap</var> and a <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url" id="ref-for-concept-url②">URL</a> <var>baseURL</var>, run the following steps:</p>
+   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="decode-a-source-map">decode a source map</dfn> given a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string②">string</a>-keyed <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#ordered-map" id="ref-for-ordered-map①">map</a> <var>jsonMap</var> and a <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url" id="ref-for-concept-url②">URL</a> <var>baseURL</var>, run the following steps:</p>
    <ol>
     <li data-md>
      <p>If <var>jsonMap</var>[<code class="highlight"><c- u>"version"</c-></code>] does not <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-exists" id="ref-for-map-exists">exist</a> or <var>jsonMap</var>[<code class="highlight"><c- u>"version"</c-></code>] is not 3, <a data-link-type="dfn" href="#optionally-report-an-error" id="ref-for-optionally-report-an-error">optionally report an error</a>.</p>
@@ -2469,7 +2469,7 @@ strings</a> <code class="highlight"><c- u>"sourcesContent"</c-></code> from <var
     <li data-md>
      <p>Return <var>sourceMap</var>.</p>
    </ol>
-   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="optionally-get-a-string">optionally get a string</dfn> <var>key</var> from a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string④">string</a>-keyed <a data-link-type="dfn" href="#map" id="ref-for-map②">map</a> <var>jsonMap</var>, run the
+   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="optionally-get-a-string">optionally get a string</dfn> <var>key</var> from a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string④">string</a>-keyed <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#ordered-map" id="ref-for-ordered-map②">map</a> <var>jsonMap</var>, run the
 following steps:</p>
    <ol>
     <li data-md>
@@ -2479,7 +2479,7 @@ following steps:</p>
     <li data-md>
      <p>Return <var>jsonMap</var>[<var>key</var>].</p>
    </ol>
-   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="optionally-get-a-list-of-strings">optionally get a list of strings</dfn> <var>key</var> from a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string⑥">string</a>-keyed <a data-link-type="dfn" href="#map" id="ref-for-map③">map</a> <var>jsonMap</var>, run the following steps:</p>
+   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="optionally-get-a-list-of-strings">optionally get a list of strings</dfn> <var>key</var> from a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string⑥">string</a>-keyed <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#ordered-map" id="ref-for-ordered-map③">map</a> <var>jsonMap</var>, run the following steps:</p>
    <ol>
     <li data-md>
      <p>If <var>jsonMap</var>[<var>key</var>] does not <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-exists" id="ref-for-map-exists④">exist</a>, return a new empty <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list③">list</a>.</p>
@@ -2498,7 +2498,7 @@ following steps:</p>
     <li data-md>
      <p>Return <var>list</var>.</p>
    </ol>
-   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="optionally-get-a-list-of-optional-strings">optionally get a list of optional strings</dfn> <var>key</var> from a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string⑧">string</a>-keyed <a data-link-type="dfn" href="#map" id="ref-for-map④">map</a> <var>jsonMap</var>, run the following steps:</p>
+   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="optionally-get-a-list-of-optional-strings">optionally get a list of optional strings</dfn> <var>key</var> from a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string⑧">string</a>-keyed <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#ordered-map" id="ref-for-ordered-map④">map</a> <var>jsonMap</var>, run the following steps:</p>
    <ol>
     <li data-md>
      <p>If <var>jsonMap</var>[<var>key</var>] does not <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-exists" id="ref-for-map-exists⑤">exist</a>, return a new empty <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list⑦">list</a>.</p>
@@ -2523,7 +2523,7 @@ following steps:</p>
     <li data-md>
      <p>Return <var>list</var>.</p>
    </ol>
-   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="optionally-get-a-list-of-array-indexes">optionally get a list of array indexes</dfn> <var>key</var> from a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string①⓪">string</a>-keyed <a data-link-type="dfn" href="#map" id="ref-for-map⑤">map</a> <var>jsonMap</var>, run the following steps:</p>
+   <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="optionally-get-a-list-of-array-indexes">optionally get a list of array indexes</dfn> <var>key</var> from a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string①⓪">string</a>-keyed <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#ordered-map" id="ref-for-ordered-map⑤">map</a> <var>jsonMap</var>, run the following steps:</p>
    <ol>
     <li data-md>
      <p>If <var>jsonMap</var>[<var>key</var>] does not <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#map-exists" id="ref-for-map-exists⑥">exist</a>, return a new empty <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list①①">list</a>.</p>
@@ -2782,8 +2782,8 @@ with <code class="highlight"><c- p>,</c-></code> and <code class="highlight"><c-
      <p>Return <var>value</var> * <var>sign</var>.</p>
    </ol>
    <p class="note" role="note"><span class="marker">NOTE:</span> In addition to returning the decoded value, this algorithm updates the <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string-position-variable" id="ref-for-string-position-variable②">position variable</a> in the calling algorithm.</p>
-   <h4 class="heading settled" data-level="3.1.1" id="mappings-for-generated-javascript-code"><span class="secno">3.1.1. </span><span class="content"><a data-link-type="dfn" href="#decode-source-map-mappings-mappings" id="ref-for-decode-source-map-mappings-mappings①">Mappings</a> for generated JavaScript code</span><a class="self-link" href="#mappings-for-generated-javascript-code"></a></h4>
-   <p>Generated code positions that may have <a data-link-type="dfn">Mapping</a> entries are defined in terms of <em>input elements</em> as per <a data-link-type="dfn" href="https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar" id="ref-for-sec-ecmascript-language-lexical-grammar">ECMAScript Lexical Grammar</a>. <a data-link-type="dfn">Mapping</a> entries must point to either:</p>
+   <h4 class="heading settled" data-level="3.1.1" id="mappings-javascript"><span class="secno">3.1.1. </span><span class="content"><a data-link-type="dfn" href="#decoded-mapping" id="ref-for-decoded-mapping②">Mappings</a> for generated JavaScript code</span><a class="self-link" href="#mappings-javascript"></a></h4>
+   <p>Generated code positions that may have <a data-link-type="dfn" href="#decoded-mapping" id="ref-for-decoded-mapping③">mapping</a> entries are defined in terms of <em>input elements</em> as per <a data-link-type="dfn" href="https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar" id="ref-for-sec-ecmascript-language-lexical-grammar">ECMAScript Lexical Grammar</a>. <a data-link-type="dfn" href="#decoded-mapping" id="ref-for-decoded-mapping④">Mapping</a> entries must point to either:</p>
    <ol>
     <li data-md>
      <p>the first code point of the source text matched by <a data-link-type="dfn" href="https://tc39.es/ecma262/#prod-IdentifierName" id="ref-for-prod-IdentifierName">IdentifierName</a>, <a data-link-type="dfn" href="https://tc39.es/ecma262/#prod-PrivateIdentifier" id="ref-for-prod-PrivateIdentifier">PrivateIdentifier</a>, <a data-link-type="dfn" href="https://tc39.es/ecma262/#prod-Punctuator" id="ref-for-prod-Punctuator">Punctuator</a>, <a data-link-type="dfn" href="https://tc39.es/ecma262/#prod-DivPunctuator" id="ref-for-prod-DivPunctuator">DivPunctuator</a>, <a data-link-type="dfn" href="https://tc39.es/ecma262/#prod-RightBracePunctuator" id="ref-for-prod-RightBracePunctuator">RightBracePunctuator</a>, <a data-link-type="dfn" href="https://tc39.es/ecma262/#prod-NumericLiteral" id="ref-for-prod-NumericLiteral">NumericLiteral</a> and <a data-link-type="dfn" href="https://tc39.es/ecma262/#prod-RegularExpressionLiteral" id="ref-for-prod-RegularExpressionLiteral">RegularExpressionLiteral</a>.</p>
@@ -2883,17 +2883,17 @@ an alternate representation of a map is supported:</p>
 <c- p>}</c->
 </pre>
    <p>The index map follows the form of the standard map.  Like the regular source map,
-the file format is JSON with a top-level object.  It shares the <a data-link-type="dfn" href="#json-version" id="ref-for-json-version">version</a> and <a data-link-type="dfn" href="#json-file" id="ref-for-json-file">file</a> field from the regular source map, but gains a new <a data-link-type="dfn" href="#sections" id="ref-for-sections">sections</a> field.</p>
-   <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sections"><code class="highlight">sections</code></dfn> is an array of <a data-link-type="dfn" href="#sections" id="ref-for-sections①">Section</a> objects.</p>
-   <h3 class="heading settled" data-level="4.1" id="section"><span class="secno">4.1. </span><span class="content">Section</span><a class="self-link" href="#section"></a></h3>
+the file format is JSON with a top-level object.  It shares the <a data-link-type="dfn" href="#json-version" id="ref-for-json-version">version</a> and <a data-link-type="dfn" href="#json-file" id="ref-for-json-file">file</a> field from the regular source map, but gains a new <a data-link-type="dfn" href="#index-map-sections" id="ref-for-index-map-sections">sections</a> field.</p>
+   <p><dfn class="dfn-paneled" data-dfn-for="index-map" data-dfn-type="dfn" data-noexport id="index-map-sections"><code class="highlight">sections</code></dfn> is an array of <a data-link-type="dfn" href="#index-map-sections" id="ref-for-index-map-sections①">Section</a> objects.</p>
+   <h3 class="heading settled" data-level="4.1" id="section-object"><span class="secno">4.1. </span><span class="content">Section</span><a class="self-link" href="#section-object"></a></h3>
    <p>Section objects have the following fields:</p>
    <ul>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="offset"><code class="highlight">offset</code></dfn> is an object with two fields, <code class="highlight">line</code> and <code class="highlight">column</code>,
+     <p><dfn class="dfn-paneled" data-dfn-for="index-map" data-dfn-type="dfn" data-noexport id="index-map-offset"><code class="highlight">offset</code></dfn> is an object with two fields, <code class="highlight">line</code> and <code class="highlight">column</code>,
 that represent the offset into generated code that the referenced source map
 represents.</p>
     <li data-md>
-     <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="map"><code class="highlight">map</code></dfn> is an embedded complete source map object.
+     <p><dfn class="dfn-paneled" data-dfn-for="index-map" data-dfn-type="dfn" data-noexport id="index-map-map"><code class="highlight">map</code></dfn> is an embedded complete source map object.
 An embedded map does not inherit any values from the containing index map.</p>
    </ul>
    <p>The sections must be sorted by starting position and the represented sections
@@ -2933,14 +2933,14 @@ not have a <code class="highlight">src</code> attribute, then the <a data-link-t
      <p>If the generated code is being evaluated as a string with the <code class="highlight">eval<c- p>()</c-></code> function or
 via <code class="highlight"><c- ow>new</c-> Function<c- p>()</c-></code>, then the <a data-link-type="dfn" href="#source-origin" id="ref-for-source-origin④">source origin</a> will be the page’s origin.</p>
    </ul>
-   <h4 class="heading settled" data-level="5.2.1" id="linking-through-http-headers"><span class="secno">5.2.1. </span><span class="content">Linking through HTTP headers</span><a class="self-link" href="#linking-through-http-headers"></a></h4>
+   <h4 class="heading settled" data-level="5.2.1" id="linking-http-header"><span class="secno">5.2.1. </span><span class="content">Linking through HTTP headers</span><a class="self-link" href="#linking-http-header"></a></h4>
    <p>If a file is served through HTTP(S) with a <code class="highlight">sourcemap</code> header, the value of the header is
 the URL of the linked source map.</p>
 <pre class="highlight">sourcemap<c- o>:</c-> <c- o>&lt;</c->url<c- o>></c->
 </pre>
    <p class="note" role="note"><span class="marker">Note:</span> Previous revisions of this document recommended a header name of <code class="highlight">x<c- o>-</c->sourcemap</code>.  This
 is now deprecated; <code class="highlight">sourcemap</code> is now expected.</p>
-   <h4 class="heading settled" data-level="5.2.2" id="linking-through-inline-annotations"><span class="secno">5.2.2. </span><span class="content">Linking through inline annotations</span><a class="self-link" href="#linking-through-inline-annotations"></a></h4>
+   <h4 class="heading settled" data-level="5.2.2" id="linking-inline"><span class="secno">5.2.2. </span><span class="content">Linking through inline annotations</span><a class="self-link" href="#linking-inline"></a></h4>
    <p>The generated code should include a comment, or the equivalent construct depending on its
 language or format, named <code class="highlight">sourceMappingURL</code> and that contains the URL of the source map. This
 specification defines how the comment should look like for JavaScript, CSS, and WebAssembly.
@@ -2959,7 +2959,7 @@ produces an output file that links to a source map, it must do so <a data-link-t
 </pre>
     <p>Extracing a Source Map URL from it <a data-link-type="dfn" href="#extract-a-source-map-url-from-javascript-through-parsing" id="ref-for-extract-a-source-map-url-from-javascript-through-parsing">through parsing</a> gives null, while <a data-link-type="dfn" href="#extract-a-source-map-url-from-javascript-without-parsing" id="ref-for-extract-a-source-map-url-from-javascript-without-parsing">without parsing</a> gives <code class="highlight">foo<c- p>.</c->js<c- p>.</c->map</code>.</p>
    </div>
-   <h5 class="heading settled" data-level="5.2.2.1" id="extraction-methods-for-javascript-sources"><span class="secno">5.2.2.1. </span><span class="content">Extraction methods for JavaScript sources</span><a class="self-link" href="#extraction-methods-for-javascript-sources"></a></h5>
+   <h5 class="heading settled" data-level="5.2.2.1" id="extraction-javascript"><span class="secno">5.2.2.1. </span><span class="content">Extraction methods for JavaScript sources</span><a class="self-link" href="#extraction-javascript"></a></h5>
    <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="extract-a-source-map-url-from-javascript-through-parsing">extract a Source Map URL from JavaScript through parsing</dfn> a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string①⑨">string</a> <var>source</var>,
 run the following steps:</p>
    <ol>
@@ -3109,10 +3109,10 @@ returning early after scanning through a line that contains a <code class="highl
    <p class="note" role="note"><span class="marker">Note:</span> The prefix for this annotation was initially <code class="highlight"><c- c1>//@</c-></code> however this conflicts with Internet
 Explorer’s Conditional Compilation and was changed to <code class="highlight"><c- c1>//#</c-></code>.</p>
    <p>Source map generators must only emit <code class="highlight"><c- c1>//#</c-></code> while source map consumers must accept both <code class="highlight"><c- c1>//@</c-></code> and <code class="highlight"><c- c1>//#</c-></code>.</p>
-   <h5 class="heading settled" data-level="5.2.2.2" id="extraction-methods-for-css-sources"><span class="secno">5.2.2.2. </span><span class="content">Extraction methods for CSS sources</span><a class="self-link" href="#extraction-methods-for-css-sources"></a></h5>
+   <h5 class="heading settled" data-level="5.2.2.2" id="extraction-css"><span class="secno">5.2.2.2. </span><span class="content">Extraction methods for CSS sources</span><a class="self-link" href="#extraction-css"></a></h5>
    <p>Extracting source mapping URLs from CSS is similar to JavaScript, with the exception that CSS only
 supports <code class="highlight"><c- d>/* ... */</c-></code>-style comments.</p>
-   <h5 class="heading settled" data-level="5.2.2.3" id="extraction-methods-for-webassembly-binaries"><span class="secno">5.2.2.3. </span><span class="content">Extraction methods for WebAssembly binaries</span><a class="self-link" href="#extraction-methods-for-webassembly-binaries"></a></h5>
+   <h5 class="heading settled" data-level="5.2.2.3" id="extraction-wasm"><span class="secno">5.2.2.3. </span><span class="content">Extraction methods for WebAssembly binaries</span><a class="self-link" href="#extraction-wasm"></a></h5>
    <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="extract-a-source-map-url-from-a-webassembly-source">extract a Source Map URL from a WebAssembly source</dfn> given
 a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#byte-sequence" id="ref-for-byte-sequence">byte sequence</a> <var>bytes</var>, run the following steps:</p>
    <ol>
@@ -3142,15 +3142,15 @@ a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#byte-sequence" id
    <p>Since WebAssembly is not a textual format and it does not support comments, it supports a single unambiguous extraction method.
 The URL is encoded using <a data-link-type="biblio" href="#biblio-wasmnamesbinaryformat" title="WebAssembly Names binary format">[WasmNamesBinaryFormat]</a>, and it’s placed as the content of the <a data-link-type="dfn" href="https://webassembly.github.io/spec/core/binary/modules.html#binary-customsec" id="ref-for-binary-customsec①">custom section</a>. It is invalid for
 tools that generate WebAssembly code to generate two or more <a data-link-type="dfn" href="https://webassembly.github.io/spec/core/binary/modules.html#binary-customsec" id="ref-for-binary-customsec②">custom sections</a> with the "sourceMappingURL" name.</p>
-   <h3 class="heading settled" data-level="5.3" id="linking-evald-code-to-named-generated-code"><span class="secno">5.3. </span><span class="content">Linking eval’d code to named generated code</span><a class="self-link" href="#linking-evald-code-to-named-generated-code"></a></h3>
+   <h3 class="heading settled" data-level="5.3" id="linking-eval"><span class="secno">5.3. </span><span class="content">Linking eval’d code to named generated code</span><a class="self-link" href="#linking-eval"></a></h3>
    <p>There is an existing convention that should be supported for the use of source maps with
 eval’d code, it has the following form:</p>
 <pre class="highlight"><c- c1>//# sourceURL=foo.js</c->
 </pre>
    <p>It is described in <a data-link-type="biblio" href="#biblio-evalsourceurl" title="Give your eval a name with //@ sourceURL">[EvalSourceURL]</a>.</p>
-   <h2 class="heading settled" data-level="6" id="language-neutral-stack-mapping-notes"><span class="secno">6. </span><span class="content">Language Neutral Stack Mapping Notes</span><a class="self-link" href="#language-neutral-stack-mapping-notes"></a></h2>
+   <h2 class="heading settled" data-level="6" id="language-neutral-mapping"><span class="secno">6. </span><span class="content">Language Neutral Stack Mapping Notes</span><a class="self-link" href="#language-neutral-mapping"></a></h2>
    <p>Stack tracing mapping without knowledge of the source language is not covered by this document.</p>
-   <h2 class="heading settled" data-level="7" id="multi-level-mapping-notes"><span class="secno">7. </span><span class="content">Multi-level Mapping Notes</span><a class="self-link" href="#multi-level-mapping-notes"></a></h2>
+   <h2 class="heading settled" data-level="7" id="multi-level-mapping"><span class="secno">7. </span><span class="content">Multi-level Mapping Notes</span><a class="self-link" href="#multi-level-mapping"></a></h2>
    <p>It is getting more common to have tools generate sources from some DSL (templates) or compile
 TypeScript -> JavaScript -> minified JavaScript, resulting in multiple translations before the
 final source map is created.  This problem can be handled in one of two ways.  The easy but
@@ -3366,7 +3366,7 @@ starting with the string <code class="highlight"><c- p>)]}</c->'</code> to the s
    <li><a href="#decoded-source-ignored">ignored</a><span>, in § 3</span>
    <li><a href="#decode-source-map-sources-ignoredsources">ignoredSources</a><span>, in § 3.2</span>
    <li><a href="#json-ignorelist">ignoreList</a><span>, in § 3</span>
-   <li><a href="#map">map</a><span>, in § 4.1</span>
+   <li><a href="#index-map-map">map</a><span>, in § 4.1</span>
    <li>
     mappings
     <ul>
@@ -3382,7 +3382,7 @@ starting with the string <code class="highlight"><c- p>)]}</c->'</code> to the s
      <li><a href="#decode-source-map-mappings-names">dfn for decode source map mappings</a><span>, in § 3.1</span>
      <li><a href="#json-names">dfn for json</a><span>, in § 3</span>
     </ul>
-   <li><a href="#offset">offset</a><span>, in § 4.1</span>
+   <li><a href="#index-map-offset">offset</a><span>, in § 4.1</span>
    <li><a href="#optionally-get-a-list-of-array-indexes">optionally get a list of array indexes</a><span>, in § 3</span>
    <li><a href="#optionally-get-a-list-of-optional-strings">optionally get a list of optional strings</a><span>, in § 3</span>
    <li><a href="#optionally-get-a-list-of-strings">optionally get a list of strings</a><span>, in § 3</span>
@@ -3392,7 +3392,7 @@ starting with the string <code class="highlight"><c- p>)]}</c->'</code> to the s
    <li><a href="#decoded-mapping-originalline">originalLine</a><span>, in § 3.1</span>
    <li><a href="#original-source">Original Source</a><span>, in § 2</span>
    <li><a href="#decoded-mapping-originalsource">originalSource</a><span>, in § 3.1</span>
-   <li><a href="#sections">sections</a><span>, in § 4</span>
+   <li><a href="#index-map-sections">sections</a><span>, in § 4</span>
    <li><a href="#source-mapping-url">Source Mapping URL</a><span>, in § 2</span>
    <li><a href="#source-origin">source origin</a><span>, in § 5.2</span>
    <li>
@@ -3482,6 +3482,7 @@ starting with the string <code class="highlight"><c- p>)]}</c->'</code> to the s
      <li><span class="dfn-paneled" id="16d07e10">for each</span>
      <li><span class="dfn-paneled" id="36333997">length</span>
      <li><span class="dfn-paneled" id="649608b9">list</span>
+     <li><span class="dfn-paneled" id="3fca5a9e">map</span>
      <li><span class="dfn-paneled" id="5ff3a316">parse a json string to an infra value</span>
      <li><span class="dfn-paneled" id="6a24df10">parsing json bytes to a javascript value</span>
      <li><span class="dfn-paneled" id="75bee4d5">position variable</span>
@@ -3764,6 +3765,7 @@ let dfnPanelData = {
 "3bb1c900": {"dfnID":"3bb1c900","dfnText":"punctuator","external":true,"refSections":[{"refs":[{"id":"ref-for-prod-Punctuator"}],"title":"3.1.1. Mappings for generated JavaScript code"}],"url":"https://tc39.es/ecma262/#prod-Punctuator"},
 "3c380f81": {"dfnID":"3c380f81","dfnText":"module_decode","external":true,"refSections":[{"refs":[{"id":"ref-for-embed-module-decode"}],"title":"5.2.2.3. Extraction methods for WebAssembly binaries"}],"url":"https://webassembly.github.io/spec/core/appendix/embedding.html#embed-module-decode"},
 "3de9e659": {"dfnID":"3de9e659","dfnText":"byte sequence","external":true,"refSections":[{"refs":[{"id":"ref-for-byte-sequence"}],"title":"5.2.2.3. Extraction methods for WebAssembly binaries"},{"refs":[{"id":"ref-for-byte-sequence\u2460"}],"title":"8. Fetching Source Maps"}],"url":"https://infra.spec.whatwg.org/#byte-sequence"},
+"3fca5a9e": {"dfnID":"3fca5a9e","dfnText":"map","external":true,"refSections":[{"refs":[{"id":"ref-for-ordered-map"},{"id":"ref-for-ordered-map\u2460"},{"id":"ref-for-ordered-map\u2461"},{"id":"ref-for-ordered-map\u2462"},{"id":"ref-for-ordered-map\u2463"},{"id":"ref-for-ordered-map\u2464"}],"title":"3. Source Map Format"}],"url":"https://infra.spec.whatwg.org/#ordered-map"},
 "4a3bf5fb": {"dfnID":"4a3bf5fb","dfnText":"concatenate","external":true,"refSections":[{"refs":[{"id":"ref-for-string-concatenate"}],"title":"3.2. Resolving Sources"}],"url":"https://infra.spec.whatwg.org/#string-concatenate"},
 "53275e46": {"dfnID":"53275e46","dfnText":"append","external":true,"refSections":[{"refs":[{"id":"ref-for-list-append"},{"id":"ref-for-list-append\u2460"},{"id":"ref-for-list-append\u2461"}],"title":"3. Source Map Format"},{"refs":[{"id":"ref-for-list-append\u2462"}],"title":"3.2. Resolving Sources"}],"url":"https://infra.spec.whatwg.org/#list-append"},
 "55213b5b": {"dfnID":"55213b5b","dfnText":"request","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-request"}],"title":"8. Fetching Source Maps"}],"url":"https://fetch.spec.whatwg.org/#concept-request"},
@@ -3806,7 +3808,7 @@ let dfnPanelData = {
 "decode-a-source-map": {"dfnID":"decode-a-source-map","dfnText":"decode a source map","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-a-source-map"}],"title":"3. Source Map Format"}],"url":"#decode-a-source-map"},
 "decode-a-source-map-from-a-json-string": {"dfnID":"decode-a-source-map-from-a-json-string","dfnText":"decode a source map from a JSON string","external":false,"refSections":[],"url":"#decode-a-source-map-from-a-json-string"},
 "decode-source-map-mappings": {"dfnID":"decode-source-map-mappings","dfnText":"decode source map mappings","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-source-map-mappings"}],"title":"3. Source Map Format"}],"url":"#decode-source-map-mappings"},
-"decode-source-map-mappings-mappings": {"dfnID":"decode-source-map-mappings-mappings","dfnText":"mappings","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-source-map-mappings-mappings"}],"title":"3. Source Map Format"},{"refs":[{"id":"ref-for-decode-source-map-mappings-mappings\u2460"}],"title":"3.1.1. Mappings for generated JavaScript code"}],"url":"#decode-source-map-mappings-mappings"},
+"decode-source-map-mappings-mappings": {"dfnID":"decode-source-map-mappings-mappings","dfnText":"mappings","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-source-map-mappings-mappings"}],"title":"3. Source Map Format"}],"url":"#decode-source-map-mappings-mappings"},
 "decode-source-map-mappings-names": {"dfnID":"decode-source-map-mappings-names","dfnText":"names","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-source-map-mappings-names"}],"title":"3. Source Map Format"}],"url":"#decode-source-map-mappings-names"},
 "decode-source-map-mappings-sources": {"dfnID":"decode-source-map-mappings-sources","dfnText":"sources","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-source-map-mappings-sources"}],"title":"3. Source Map Format"}],"url":"#decode-source-map-mappings-sources"},
 "decode-source-map-sources": {"dfnID":"decode-source-map-sources","dfnText":"decode source map sources","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-source-map-sources"}],"title":"3. Source Map Format"}],"url":"#decode-source-map-sources"},
@@ -3814,7 +3816,7 @@ let dfnPanelData = {
 "decode-source-map-sources-sourceroot": {"dfnID":"decode-source-map-sources-sourceroot","dfnText":"sourceRoot","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-source-map-sources-sourceroot"}],"title":"3. Source Map Format"}],"url":"#decode-source-map-sources-sourceroot"},
 "decode-source-map-sources-sources": {"dfnID":"decode-source-map-sources-sources","dfnText":"sources","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-source-map-sources-sources"}],"title":"3. Source Map Format"}],"url":"#decode-source-map-sources-sources"},
 "decode-source-map-sources-sourcescontent": {"dfnID":"decode-source-map-sources-sourcescontent","dfnText":"sourcesContent","external":false,"refSections":[{"refs":[{"id":"ref-for-decode-source-map-sources-sourcescontent"}],"title":"3. Source Map Format"}],"url":"#decode-source-map-sources-sourcescontent"},
-"decoded-mapping": {"dfnID":"decoded-mapping","dfnText":"decoded mapping","external":false,"refSections":[{"refs":[{"id":"ref-for-decoded-mapping"}],"title":"3. Source Map Format"},{"refs":[{"id":"ref-for-decoded-mapping\u2460"}],"title":"3.1. Mappings Structure"}],"url":"#decoded-mapping"},
+"decoded-mapping": {"dfnID":"decoded-mapping","dfnText":"decoded mapping","external":false,"refSections":[{"refs":[{"id":"ref-for-decoded-mapping"}],"title":"3. Source Map Format"},{"refs":[{"id":"ref-for-decoded-mapping\u2460"}],"title":"3.1. Mappings Structure"},{"refs":[{"id":"ref-for-decoded-mapping\u2461"},{"id":"ref-for-decoded-mapping\u2462"},{"id":"ref-for-decoded-mapping\u2463"}],"title":"3.1.1. Mappings for generated JavaScript code"}],"url":"#decoded-mapping"},
 "decoded-mapping-generatedcolumn": {"dfnID":"decoded-mapping-generatedcolumn","dfnText":"generatedColumn","external":false,"refSections":[{"refs":[{"id":"ref-for-decoded-mapping-generatedcolumn"}],"title":"3.1. Mappings Structure"}],"url":"#decoded-mapping-generatedcolumn"},
 "decoded-mapping-generatedline": {"dfnID":"decoded-mapping-generatedline","dfnText":"generatedLine","external":false,"refSections":[{"refs":[{"id":"ref-for-decoded-mapping-generatedline"}],"title":"3.1. Mappings Structure"}],"url":"#decoded-mapping-generatedline"},
 "decoded-mapping-name": {"dfnID":"decoded-mapping-name","dfnText":"name","external":false,"refSections":[{"refs":[{"id":"ref-for-decoded-mapping-name"},{"id":"ref-for-decoded-mapping-name\u2460"}],"title":"3.1. Mappings Structure"}],"url":"#decoded-mapping-name"},
@@ -3843,6 +3845,9 @@ let dfnPanelData = {
 "f5354b9d": {"dfnID":"f5354b9d","dfnText":"byte","external":true,"refSections":[{"refs":[{"id":"ref-for-byte"},{"id":"ref-for-byte\u2460"}],"title":"3.1. Mappings Structure"}],"url":"https://infra.spec.whatwg.org/#byte"},
 "f73c7a1b": {"dfnID":"f73c7a1b","dfnText":"whitespace","external":true,"refSections":[{"refs":[{"id":"ref-for-prod-WhiteSpace"}],"title":"3.1.1. Mappings for generated JavaScript code"}],"url":"https://tc39.es/ecma262/#prod-WhiteSpace"},
 "generated-code": {"dfnID":"generated-code","dfnText":"Generated Code","external":false,"refSections":[{"refs":[{"id":"ref-for-generated-code"}],"title":"2. Terms and definitions"}],"url":"#generated-code"},
+"index-map-map": {"dfnID":"index-map-map","dfnText":"map","external":false,"refSections":[],"url":"#index-map-map"},
+"index-map-offset": {"dfnID":"index-map-offset","dfnText":"offset","external":false,"refSections":[],"url":"#index-map-offset"},
+"index-map-sections": {"dfnID":"index-map-sections","dfnText":"sections","external":false,"refSections":[{"refs":[{"id":"ref-for-index-map-sections"},{"id":"ref-for-index-map-sections\u2460"}],"title":"4. Index Map"}],"url":"#index-map-sections"},
 "json-file": {"dfnID":"json-file","dfnText":"file","external":false,"refSections":[{"refs":[{"id":"ref-for-json-file"}],"title":"4. Index Map"}],"url":"#json-file"},
 "json-ignorelist": {"dfnID":"json-ignorelist","dfnText":"ignoreList","external":false,"refSections":[{"refs":[{"id":"ref-for-json-ignorelist"}],"title":"3. Source Map Format"}],"url":"#json-ignorelist"},
 "json-mappings": {"dfnID":"json-mappings","dfnText":"mappings","external":false,"refSections":[{"refs":[{"id":"ref-for-json-mappings"},{"id":"ref-for-json-mappings\u2460"}],"title":"3. Source Map Format"},{"refs":[{"id":"ref-for-json-mappings\u2461"}],"title":"3.1. Mappings Structure"}],"url":"#json-mappings"},
@@ -3851,16 +3856,13 @@ let dfnPanelData = {
 "json-sources": {"dfnID":"json-sources","dfnText":"sources","external":false,"refSections":[{"refs":[{"id":"ref-for-json-sources"},{"id":"ref-for-json-sources\u2460"},{"id":"ref-for-json-sources\u2461"},{"id":"ref-for-json-sources\u2462"}],"title":"3. Source Map Format"},{"refs":[{"id":"ref-for-json-sources\u2463"}],"title":"3.1. Mappings Structure"}],"url":"#json-sources"},
 "json-sourcescontent": {"dfnID":"json-sourcescontent","dfnText":"sourcesContent","external":false,"refSections":[{"refs":[{"id":"ref-for-json-sourcescontent"}],"title":"5.2. Linking generated code to source maps"}],"url":"#json-sourcescontent"},
 "json-version": {"dfnID":"json-version","dfnText":"version","external":false,"refSections":[{"refs":[{"id":"ref-for-json-version"}],"title":"4. Index Map"}],"url":"#json-version"},
-"map": {"dfnID":"map","dfnText":"map","external":false,"refSections":[{"refs":[{"id":"ref-for-map"},{"id":"ref-for-map\u2460"},{"id":"ref-for-map\u2461"},{"id":"ref-for-map\u2462"},{"id":"ref-for-map\u2463"},{"id":"ref-for-map\u2464"}],"title":"3. Source Map Format"}],"url":"#map"},
 "match-a-source-map-url-in-a-comment": {"dfnID":"match-a-source-map-url-in-a-comment","dfnText":"match a Source Map URL in a comment","external":false,"refSections":[{"refs":[{"id":"ref-for-match-a-source-map-url-in-a-comment"},{"id":"ref-for-match-a-source-map-url-in-a-comment\u2460"},{"id":"ref-for-match-a-source-map-url-in-a-comment\u2461"}],"title":"5.2.2.1. Extraction methods for JavaScript sources"}],"url":"#match-a-source-map-url-in-a-comment"},
-"offset": {"dfnID":"offset","dfnText":"offset","external":false,"refSections":[],"url":"#offset"},
 "optionally-get-a-list-of-array-indexes": {"dfnID":"optionally-get-a-list-of-array-indexes","dfnText":"optionally get a list of array indexes","external":false,"refSections":[{"refs":[{"id":"ref-for-optionally-get-a-list-of-array-indexes"}],"title":"3. Source Map Format"}],"url":"#optionally-get-a-list-of-array-indexes"},
 "optionally-get-a-list-of-optional-strings": {"dfnID":"optionally-get-a-list-of-optional-strings","dfnText":"optionally get a list of optional strings","external":false,"refSections":[{"refs":[{"id":"ref-for-optionally-get-a-list-of-optional-strings"},{"id":"ref-for-optionally-get-a-list-of-optional-strings\u2460"}],"title":"3. Source Map Format"}],"url":"#optionally-get-a-list-of-optional-strings"},
 "optionally-get-a-list-of-strings": {"dfnID":"optionally-get-a-list-of-strings","dfnText":"optionally get a list of strings","external":false,"refSections":[{"refs":[{"id":"ref-for-optionally-get-a-list-of-strings"}],"title":"3. Source Map Format"}],"url":"#optionally-get-a-list-of-strings"},
 "optionally-get-a-string": {"dfnID":"optionally-get-a-string","dfnText":"optionally get a string","external":false,"refSections":[{"refs":[{"id":"ref-for-optionally-get-a-string"},{"id":"ref-for-optionally-get-a-string\u2460"}],"title":"3. Source Map Format"}],"url":"#optionally-get-a-string"},
 "optionally-report-an-error": {"dfnID":"optionally-report-an-error","dfnText":"optionally report an error","external":false,"refSections":[{"refs":[{"id":"ref-for-optionally-report-an-error"},{"id":"ref-for-optionally-report-an-error\u2460"},{"id":"ref-for-optionally-report-an-error\u2461"},{"id":"ref-for-optionally-report-an-error\u2462"},{"id":"ref-for-optionally-report-an-error\u2463"},{"id":"ref-for-optionally-report-an-error\u2464"},{"id":"ref-for-optionally-report-an-error\u2465"},{"id":"ref-for-optionally-report-an-error\u2466"}],"title":"3. Source Map Format"},{"refs":[{"id":"ref-for-optionally-report-an-error\u2467"},{"id":"ref-for-optionally-report-an-error\u2468"},{"id":"ref-for-optionally-report-an-error\u2460\u24ea"},{"id":"ref-for-optionally-report-an-error\u2460\u2460"},{"id":"ref-for-optionally-report-an-error\u2460\u2461"},{"id":"ref-for-optionally-report-an-error\u2460\u2462"}],"title":"3.1. Mappings Structure"},{"refs":[{"id":"ref-for-optionally-report-an-error\u2460\u2463"}],"title":"3.2. Resolving Sources"}],"url":"#optionally-report-an-error"},
 "original-source": {"dfnID":"original-source","dfnText":"Original Source","external":false,"refSections":[{"refs":[{"id":"ref-for-original-source"}],"title":"3. Source Map Format"}],"url":"#original-source"},
-"sections": {"dfnID":"sections","dfnText":"sections","external":false,"refSections":[{"refs":[{"id":"ref-for-sections"},{"id":"ref-for-sections\u2460"}],"title":"4. Index Map"}],"url":"#sections"},
 "source-mapping-url": {"dfnID":"source-mapping-url","dfnText":"Source Mapping URL","external":false,"refSections":[{"refs":[{"id":"ref-for-source-mapping-url"},{"id":"ref-for-source-mapping-url\u2460"}],"title":"5.2. Linking generated code to source maps"}],"url":"#source-mapping-url"},
 "source-origin": {"dfnID":"source-origin","dfnText":"source origin","external":false,"refSections":[{"refs":[{"id":"ref-for-source-origin"},{"id":"ref-for-source-origin\u2460"},{"id":"ref-for-source-origin\u2461"},{"id":"ref-for-source-origin\u2462"},{"id":"ref-for-source-origin\u2463"}],"title":"5.2. Linking generated code to source maps"}],"url":"#source-origin"},
 "unambiguously-links-to-a-source-map": {"dfnID":"unambiguously-links-to-a-source-map","dfnText":"unambiguously links to a source map","external":false,"refSections":[{"refs":[{"id":"ref-for-unambiguously-links-to-a-source-map"},{"id":"ref-for-unambiguously-links-to-a-source-map\u2460"},{"id":"ref-for-unambiguously-links-to-a-source-map\u2461"}],"title":"5.2.2. Linking through inline annotations"}],"url":"#unambiguously-links-to-a-source-map"},
@@ -4284,6 +4286,7 @@ let refsData = {
 "#extract-a-source-map-url-from-javascript-through-parsing": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"extract a source map url from javascript through parsing","type":"dfn","url":"#extract-a-source-map-url-from-javascript-through-parsing"},
 "#extract-a-source-map-url-from-javascript-without-parsing": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"extract a source map url from javascript without parsing","type":"dfn","url":"#extract-a-source-map-url-from-javascript-without-parsing"},
 "#generated-code": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"generated code","type":"dfn","url":"#generated-code"},
+"#index-map-sections": {"export":true,"for_":["index-map"],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"sections","type":"dfn","url":"#index-map-sections"},
 "#json-file": {"export":true,"for_":["json"],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"file","type":"dfn","url":"#json-file"},
 "#json-ignorelist": {"export":true,"for_":["json"],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"ignorelist","type":"dfn","url":"#json-ignorelist"},
 "#json-mappings": {"export":true,"for_":["json"],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"mappings","type":"dfn","url":"#json-mappings"},
@@ -4292,7 +4295,6 @@ let refsData = {
 "#json-sources": {"export":true,"for_":["json"],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"sources","type":"dfn","url":"#json-sources"},
 "#json-sourcescontent": {"export":true,"for_":["json"],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"sourcescontent","type":"dfn","url":"#json-sourcescontent"},
 "#json-version": {"export":true,"for_":["json"],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"version","type":"dfn","url":"#json-version"},
-"#map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"map","type":"dfn","url":"#map"},
 "#match-a-source-map-url-in-a-comment": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"match a source map url in a comment","type":"dfn","url":"#match-a-source-map-url-in-a-comment"},
 "#optionally-get-a-list-of-array-indexes": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"optionally get a list of array indexes","type":"dfn","url":"#optionally-get-a-list-of-array-indexes"},
 "#optionally-get-a-list-of-optional-strings": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"optionally get a list of optional strings","type":"dfn","url":"#optionally-get-a-list-of-optional-strings"},
@@ -4300,7 +4302,6 @@ let refsData = {
 "#optionally-get-a-string": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"optionally get a string","type":"dfn","url":"#optionally-get-a-string"},
 "#optionally-report-an-error": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"optionally report an error","type":"dfn","url":"#optionally-report-an-error"},
 "#original-source": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"original source","type":"dfn","url":"#original-source"},
-"#sections": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"sections","type":"dfn","url":"#sections"},
 "#source-mapping-url": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"source mapping url","type":"dfn","url":"#source-mapping-url"},
 "#source-origin": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"source origin","type":"dfn","url":"#source-origin"},
 "#unambiguously-links-to-a-source-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"source-map","spec":"source-map","status":"local","text":"unambiguously links to a source map","type":"dfn","url":"#unambiguously-links-to-a-source-map"},
@@ -4332,6 +4333,7 @@ let refsData = {
 "https://infra.spec.whatwg.org/#list-iterate": {"export":true,"for_":["list","set"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"for each","type":"dfn","url":"https://infra.spec.whatwg.org/#list-iterate"},
 "https://infra.spec.whatwg.org/#list-size": {"export":true,"for_":["list","stack","queue","set"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"size","type":"dfn","url":"https://infra.spec.whatwg.org/#list-size"},
 "https://infra.spec.whatwg.org/#map-exists": {"export":true,"for_":["map"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"exist","type":"dfn","url":"https://infra.spec.whatwg.org/#map-exists"},
+"https://infra.spec.whatwg.org/#ordered-map": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"map","type":"dfn","url":"https://infra.spec.whatwg.org/#ordered-map"},
 "https://infra.spec.whatwg.org/#parse-a-json-string-to-an-infra-value": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"parse a json string to an infra value","type":"dfn","url":"https://infra.spec.whatwg.org/#parse-a-json-string-to-an-infra-value"},
 "https://infra.spec.whatwg.org/#parse-json-bytes-to-a-javascript-value": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"parsing json bytes to a javascript value","type":"dfn","url":"https://infra.spec.whatwg.org/#parse-json-bytes-to-a-javascript-value"},
 "https://infra.spec.whatwg.org/#strictly-split": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"strictly split","type":"dfn","url":"https://infra.spec.whatwg.org/#strictly-split"},
