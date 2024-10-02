@@ -8,6 +8,10 @@ Source maps proposal at stage 2 of the process, see [Our process document](https
 
 Tobias Koppers
 
+* Stage: 2
+* Author: Tobias Koppers
+* Date: November, 2023
+
 ## Motiviation
 
 Currently mappings map locations in the source code to other locations in the source code.
@@ -44,15 +48,15 @@ This means all chars in the generated code that is covered by the range mapping,
 
 Generated Code:
 
-```js
+``` js
 console.log("hello world");
 ```
 
 Original Code:
 
-```js
-// Copyright 2023
-console.log("hello world");
+``` js
+  // Copyright 2023
+  console.log("hello world");
 ```
 
 With a normal mapping:
@@ -62,7 +66,7 @@ Source Map:
 Generate Line 1 Column 0 -> Original Line 2 Column 2
 ```
 
-```js
+``` js
 console.log("hello world");
 ^       ^   ^
 |       |   + maps to Original Line 2 Column 2
@@ -77,7 +81,7 @@ Source Map:
 Generate Line 1 Column 0 -> Original Line 2 Column 2 (range mapping)
 ```
 
-```js
+``` js
 console.log("hello world");
 ^       ^   ^
 |       |   + maps to Original Line 2 Column 14
