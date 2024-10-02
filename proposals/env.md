@@ -1,11 +1,12 @@
 # Proposal for Encoding Source-Level Environment Information Within Source Maps
 
-Author: Nick Fitzgerald <fitzgen@mozilla.com>, Mozilla
+## Current Status
 
-Date: July, 2015
+Source maps proposal at stage 1 of the process, see [Our process document](https://github.com/tc39/source-map/blob/main/PROCESS.md)
 
-This work is licensed under a
-[Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/).
+## Author
+
+Nick Fitzgerald
 
 ## Abstract
 
@@ -43,13 +44,13 @@ compilation target.
 2. Locating a source-level binding's JavaScript value. This encompasses
    situations where:
 
-    * The binding was renamed in the compiled JS. For example, the binding is
-      named `atom?` in the original source and renamed to `atom_question` in the
-      compiled JavaScript. Or a minifier renames `getLatestFooWidget` to `aF`.
+   - The binding was renamed in the compiled JS. For example, the binding is
+     named `atom?` in the original source and renamed to `atom_question` in the
+     compiled JavaScript. Or a minifier renames `getLatestFooWidget` to `aF`.
 
-    * The binding does not have a corresponding binding in the compiled
-      JavaScript. For example, the compiler inlined the binding's value after
-      recognizing that the binding was never mutated.
+   - The binding does not have a corresponding binding in the compiled
+     JavaScript. For example, the compiler inlined the binding's value after
+     recognizing that the binding was never mutated.
 
 3. Remain backwards compatible with the current source map revision 3 format.
 
@@ -60,7 +61,7 @@ compilation target.
 
 #### Non-Goals
 
-* Custom formatting of source-level values within JavaScript debuggers beyond
+- Custom formatting of source-level values within JavaScript debuggers beyond
   giving the debugger an arbitrary JavaScript value for a given binding. This is
   outside of the scope of this proposal.
 
@@ -573,19 +574,19 @@ source map extension in a branch of the `source-map` library:
 
 Note that it uses `"x_env"` instead of `"env"`.
 
-* Constant tag definitions:
+- Constant tag definitions:
   <https://github.com/fitzgen/source-map/blob/0c768e6/lib/source-map/tags.js>
 
-* Serializing scopes and bindings:
+- Serializing scopes and bindings:
   <https://github.com/fitzgen/source-map/blob/0c768e6/lib/source-map/source-map-generator.js#L565-L670>
   and
   <https://github.com/fitzgen/source-map/blob/0c768e6/lib/source-map/source-map-generator.js#L698-L755>
 
-* Deserializing scopes and bindings:
+- Deserializing scopes and bindings:
   <https://github.com/fitzgen/source-map/blob/0c768e6/lib/source-map/source-map-consumer.js#L884-L995>
 
-* Some initial tests:
+- Some initial tests:
   <https://github.com/fitzgen/source-map/blob/0c768e6/test/source-map/test-env.js>
 
-* Here is the full commit that adds serializing and deserializing the `"env"` property:
+- Here is the full commit that adds serializing and deserializing the `"env"` property:
   <https://github.com/fitzgen/source-map/commit/0c768e6>
