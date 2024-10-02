@@ -75,8 +75,11 @@ urlPrefix:https://tc39.es/ecma262/#; type:dfn; spec:ecmascript
     url:prod-Expression; text:Expression
     url:prod-AsyncFunctionDeclaration; text:AsyncFunctionDeclaration
     url:prod-AsyncFunctionExpression; text:AsyncFunctionExpression
+    url:prod-ArrowFormalParameters; text:ArrowFormalParameters
     url:prod-ArrowFunction; text:ArrowFunction
+    url:prod-ArrowParameters; text:ArrowParameters
     url:prod-AsyncArrowFunction; text:AsyncArrowFunction
+    url:prod-AsyncArrowBindingIdentifier; text:AsyncArrowBindingIdentifier
     url:prod-GeneratorDeclaration; text:GeneratorDeclaration
     url:prod-GeneratorExpression; text:GeneratorExpression
     url:prod-MethodDefinition; text:MethodDefinition
@@ -625,8 +628,8 @@ Then the [=decoded mapping/name=] of the [=decoded mapping|mapping=] entry shoul
 the name of the original source language construct. A [=decoded mapping|mapping=] with
 a non-null [=decoded mapping/name=] is called a <dfn>named mapping</dfn>.
 
-Example: A TypeScript function compiled to a JavaScript arrow function, or a
-local variable that was renamed.
+Example: A minifier renaming functions and variables or removing function names
+from immediately invoked function expressions.
 
 The following enumeration lists productions of the ECMAScript [=Syntactic Grammar=]
 and the respective token or non-terminal (on the right-hand side of the production)
@@ -653,13 +656,18 @@ encoded as 0 (`A`).
     Source map generators may chose to emit a [=named mapping=] on the opening parenthesis regardless of
     the presence of the [=BindingIdentifier=].
 
-1. The [=BindingIdentifier=] for [=ArrowFunction=], and [=AsyncArrowFunction=] if it
-    exists, or the opening parenthesis `(` of the [=Arguments=] production otherwise.
-    For single argument (async) arrow functions that have neither a [=BindingIdentifier=]
-    nor [=Arguments=], generators should emit a named [=decoded mapping|mappings=] for the `=>` token.
+1. For an [=ArrowFunction=] or [=AsyncArrowFunction=]:
+    1. The `=>` token where [=ArrowFunction=] is produced with a single [=BindingIdentifier=] for
+        [=ArrowParameters=]. Or [=AsyncArrowFunction=] is produced with an [=AsyncArrowBindingIdentifier=].
 
-    Source map generators may chose to emit a named [=decoded mapping|mapping=] on the opening parenthesis regardless of
-    the presence of the [=BindingIdentifier=].
+        Note: This describes the case of (async) arrow functions with a single parameter, where
+            that single parameter is not wrapped in parenthesis.
+
+    1. The opening parenthesis `(` where [=ArrowFunction=] or [=AsyncArrowFunction=] is produced
+        with [=ArrowFormalParameters=].
+
+        Source map generators may chose to additionally emit a named [=decoded mapping|mapping=]
+        on the `=>` token for consistency with (1).
 
 1. The [=ClassElementName=] for [=MethodDefinition=]. This includes generators, async
     methods, async generators and accessors. For [=MethodDefinition=] where
