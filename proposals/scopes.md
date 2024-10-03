@@ -11,7 +11,7 @@ Source maps proposal at stage 3 of the process, see [Our process document](https
 
 ## Author
 
-Holger Benl\
+Holger Benl
 Simon Zünd
 
 ## Abstract
