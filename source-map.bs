@@ -690,25 +690,16 @@ Section objects have the following fields:
 The sections must be sorted by starting position and the represented sections
 must not overlap.
 
-Conventions {#conventions}
-==========================
-
-The following conventions should be followed when working with source maps or
-when generating them.
-
-Source Map Naming {#source-map-naming}
---------------------------------------
-
-Commonly, a source map will have the same name as the generated file but with a `.map`
-extension.  For example, for `page.js` a source map named `page.js.map` would be generated. 
+Retrieving Source Maps {#linking-and-fetching}
+========================================================
 
 Linking generated code to source maps {#linking-generated-code}
 ---------------------------------------------------------------
 
 While the source map format is intended to be language and platform agnostic, it is useful
-to have some conventions for the expected use-case of web server-hosted JavaScript.
+to define how to reference to them for the expected use-case of web server-hosted JavaScript.
 
-There are two suggested ways to link source maps to the output.  The first requires server
+There are two possible ways to link source maps to the output.  The first requires server
 support in order to add an HTTP header and the second requires an annotation in the source.
 
 Source maps are linked through URLs as defined in [[URL]]; in particular,
@@ -921,6 +912,51 @@ Since WebAssembly is not a textual format and it does not support comments, it s
 The URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=]. It is invalid for
 tools that generate WebAssembly code to generate two or more [=custom section|custom sections=] with the "sourceMappingURL" name.
 
+Fetching Source Maps {#fetching-source-maps}
+--------------------------------------------
+
+To fetch a source map given a [=/URL=] |url|, run the following steps:
+
+1. Let |promise| be [=a new promise=].
+1. Let |request| be a new [=request=] whose [=request/URL=] is |url|.
+1. [=Fetch=] |request| with [=processResponseConsumeBody=] set to the following steps given [=response=] <var ignore>response</var> and null, failure, or a [=byte sequence=] |bodyBytes|:
+    1. If |bodyBytes| is null or failure, [=reject=] |promise| with a {{TypeError}} and abort these steps.
+    1. If |url|'s [=url/scheme=] is an [=HTTP(S) scheme=] and |bodyBytes| [=byte sequence/starts with=] \`<code>)]}'</code>\`, then:
+        1. [=While=] |bodyBytes|'s [=byte sequence/length=] is not 0 and |bodyBytes|'s 0th byte is not an [=HTTP newline byte=]:
+            1. remove the 0th byte from |bodyBytes|.
+
+            <div class="note">
+            <span class="marker">Note:</span> For historic reasons, when delivering source maps over HTTP(S), servers may prepend a line
+            starting with the string `)]}'` to the source map.
+
+            ```
+            )]}'garbage here
+            {"version": 3, ...}
+            ```
+
+            is interpreted as
+
+            ```
+            {"version": 3, ...}
+            ```
+            </div>
+    1. Let |sourceMap| be the result of [=parsing JSON bytes to a JavaScript value=] given |bodyBytes|.
+    1. If the previous step threw an error, [=reject=] |promise| with that error.
+    1. Otherwise, [=resolve=] |promise| with |sourceMap|.
+1. Return |promise|.
+
+Conventions {#conventions}
+==========================
+
+The following conventions should be followed when working with source maps or
+when generating them.
+
+Source Map Naming {#source-map-naming}
+--------------------------------------
+
+Commonly, a source map will have the same name as the generated file but with a `.map`
+extension.  For example, for `page.js` a source map named `page.js.map` would be generated. 
+
 Linking eval'd code to named generated code {#linking-eval}
 -----------------------------------------------------------
 
@@ -954,39 +990,6 @@ the choice of using that as well.
 However, It is unclear what a "source map reference" looks like in anything other than JavaScript.
 More specifically, what a source map reference looks like in a language that doesn't support
 JavaScript-style single-line comments.
-
-Fetching Source Maps {#fetching-source-maps}
-============================================
-
-To fetch a source map given a [=/URL=] |url|, run the following steps:
-
-1. Let |promise| be [=a new promise=].
-1. Let |request| be a new [=request=] whose [=request/URL=] is |url|.
-1. [=Fetch=] |request| with [=processResponseConsumeBody=] set to the following steps given [=response=] <var ignore>response</var> and null, failure, or a [=byte sequence=] |bodyBytes|:
-    1. If |bodyBytes| is null or failure, [=reject=] |promise| with a {{TypeError}} and abort these steps.
-    1. If |url|'s [=url/scheme=] is an [=HTTP(S) scheme=] and |bodyBytes| [=byte sequence/starts with=] \`<code>)]}'</code>\`, then:
-        1. [=While=] |bodyBytes|'s [=byte sequence/length=] is not 0 and |bodyBytes|'s 0th byte is not an [=HTTP newline byte=]:
-            1. remove the 0th byte from |bodyBytes|.
-
-            <div class="note">
-            <span class="marker">Note:</span> For historic reasons, when delivering source maps over HTTP(S), servers may prepend a line
-            starting with the string `)]}'` to the source map.
-
-            ```
-            )]}'garbage here
-            {"version": 3, ...}
-            ```
-
-            is interpreted as
-
-            ```
-            {"version": 3, ...}
-            ```
-            </div>
-    1. Let |sourceMap| be the result of [=parsing JSON bytes to a JavaScript value=] given |bodyBytes|.
-    1. If the previous step threw an error, [=reject=] |promise| with that error.
-    1. Otherwise, [=resolve=] |promise| with |sourceMap|.
-1. Return |promise|.
 
 License {#license}
 ==================
