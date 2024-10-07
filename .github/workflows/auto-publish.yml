@@ -14,4 +14,4 @@ jobs:
           GH_PAGES_BRANCH: gh-pages
           TOOLCHAIN: bikeshed
           SOURCE: source-map.bs
-          DESTINATION: ${{ github.ref == "refs/heads/2024" && "2024/index.html" || "index.html" }}
+          DESTINATION: ${{ github.ref == 'refs/heads/2024' && '2024/index.html' || 'index.html' }}
