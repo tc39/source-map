@@ -1,11 +1,12 @@
 # Proposal for Encoding Source-Level Environment Information Within Source Maps
 
-Author: Nick Fitzgerald <fitzgen@mozilla.com>, Mozilla
+## Current Status
 
-Date: July, 2015
+Source maps proposal at stage 1 of the process, see [Our process document](https://github.com/tc39/source-map/blob/main/PROCESS.md)
 
-This work is licensed under a
-[Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/).
+## Author
+
+Nick Fitzgerald
 
 ## Abstract
 

@@ -1,11 +1,18 @@
 # Proposal for adding information about scopes and their bindings to source maps
 
-* **Author**: Holger Benl
-* **Date**: September, 2023
 * **Prototype**: https://github.com/hbenl/tc39-proposal-scope-mapping/
 * **Related**: https://github.com/tc39/source-map-rfc/blob/main/proposals/env.md
 
 Discussion of this proposal is placed at [#37](https://github.com/tc39/source-map-rfc/issues/37)
+
+## Current Status
+
+Source maps proposal at stage 3 of the process, see [Our process document](https://github.com/tc39/source-map/blob/main/PROCESS.md)
+
+## Author
+
+Holger Benl
+Simon Zünd
 
 ## Abstract
 

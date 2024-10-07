@@ -3,6 +3,14 @@
 This document presents a proposal to add globally unique build or debug IDs to
 source maps and generated code, making build artifacts self-identifying.
 
+## Current Status
+
+Source maps proposal at stage 1 of the process, see [Our process document](https://github.com/tc39/source-map/blob/main/PROCESS.md)
+
+## Author
+
+Luca Forstner
+
 ## Background
 
 Source maps play a crucial role in debugging by

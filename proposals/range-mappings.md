@@ -1,5 +1,13 @@
 # Range Mappings
 
+## Current Status
+
+Source maps proposal at stage 2 of the process, see [Our process document](https://github.com/tc39/source-map/blob/main/PROCESS.md)
+
+## Author
+
+Tobias Koppers
+
 * Stage: 2
 * Author: Tobias Koppers
 * Date: November, 2023

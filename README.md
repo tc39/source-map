@@ -32,6 +32,15 @@ Older revisions:
 2. Run `pipx run bikeshed` from this repository's root folder
 3. Open source-map.html in your browser
 
+## Current Proposals
+
+| Proposal                                                                                   | Author                  | Stage   |
+| ------------------------------------------------------------------------------------------ | ----------------------- | ------- |
+| [Scopes](https://github.com/tc39/source-map/blob/main/proposals/scopes.md)                 | Holger Benl, Simon Zünd | Stage 3 |
+| [Range Mappings](https://github.com/tc39/source-map/blob/main/proposals/range-mappings.md) | Tobias Koppers          | Stage 2 |
+| [Debug ID](https://github.com/tc39/source-map/blob/main/proposals/debug-id.md)             | Luca Forstner           | Stage 1 |
+| [Env](https://github.com/tc39/source-map/blob/main/proposals/env.md)                       | Nick Fitzgerald         | Stage 1 |
+
 ## License
 
 The source map specifications are published under CC BY-SA 3.0.
