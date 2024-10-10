@@ -786,7 +786,7 @@ that they will give the same result.
 
 A fix to this problem is worked on, and will likely involve early returning
 from the below algorithms whenever there is a comment (or comment-like) that
-contain the characters U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the the
+contains the characters U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the the
 sequence U+002A U+002F (*/).
 </div>
 
