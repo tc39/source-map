@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 6270e4735, updated Tue Aug 6 12:12:30 2024 -0700" name="generator">
   <link href="https://tc39.es/source-map/" rel="canonical">
-  <meta content="6ff3410a8c04facc858ba9dd26e7bda69e43ae62" name="revision">
+  <meta content="0142f27abbbae54fc9802080112e2531d4013bf8" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2172,7 +2172,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">Source Map</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-10-07">7 October 2024</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-10-10">10 October 2024</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2183,6 +2183,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
      <dd><a href="https://github.com/tc39/source-map-tests">https://github.com/tc39/source-map-tests</a>
      <dt>Issue Tracking:
      <dd><a href="https://github.com/tc39/source-map/issues">GitHub Issues</a>
+     <dd><a href="#issues-index">Inline In Spec</a>
      <dt class="editor">Editor:
      <dd class="editor p-author h-card vcard"><span class="p-name fn">Asumu Takikawa</span> (<span class="p-org org">Igalia</span>)
      <dt class="editor">Former Editors:
@@ -2254,6 +2255,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
       <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
      </ol>
+    <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
    </ol>
   </nav>
   <main>
@@ -2959,6 +2961,17 @@ produces an output file that links to a source map, it must do so <a data-link-t
 </pre>
     <p>Extracing a Source Map URL from it <a data-link-type="dfn" href="#extract-a-source-map-url-from-javascript-through-parsing" id="ref-for-extract-a-source-map-url-from-javascript-through-parsing">through parsing</a> gives null, while <a data-link-type="dfn" href="#extract-a-source-map-url-from-javascript-without-parsing" id="ref-for-extract-a-source-map-url-from-javascript-without-parsing">without parsing</a> gives <code class="highlight">foo<c- p>.</c->js<c- p>.</c->map</code>.</p>
    </div>
+   <div class="issue" id="issue-d4e08569">
+    <a class="self-link" href="#issue-d4e08569"></a> Having multiple ways to extract a source map URL, that can lead to different
+results, can have negative security and privacy implications. Implementations
+that need to detect which source maps are potentially going to be loaded are
+strongly encouraged to always apply both algorithms, rather than just assuming
+that they will give the same result. 
+    <p>A fix to this problem is being worked on, and will likely involve early returning
+from the below algorithms whenever there is a comment (or comment-like) that
+contains the characters U+0060 (`), U+0022 ("), or U+0027 ('), or the the
+sequence U+002A U+002F (*/).</p>
+   </div>
    <h5 class="heading settled" data-level="5.1.2.1" id="extraction-javascript"><span class="secno">5.1.2.1. </span><span class="content">Extraction methods for JavaScript sources</span><a class="self-link" href="#extraction-javascript"></a></h5>
    <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="extract-a-source-map-url-from-javascript-through-parsing">extract a Source Map URL from JavaScript through parsing</dfn> a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string①⑨">string</a> <var>source</var>,
 run the following steps:</p>
@@ -3552,6 +3565,21 @@ JavaScript-style single-line comments.</p>
    <dt id="biblio-wasmnamesbinaryformat">[WasmNamesBinaryFormat]
    <dd><a href="https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2"><cite>WebAssembly Names binary format</cite></a>. Living Standard. URL: <a href="https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2">https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2</a>
   </dl>
+  <h2 class="no-num no-ref heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
+  <div style="counter-reset:issue">
+   <div class="issue">
+     Having multiple ways to extract a source map URL, that can lead to different
+results, can have negative security and privacy implications. Implementations
+that need to detect which source maps are potentially going to be loaded are
+strongly encouraged to always apply both algorithms, rather than just assuming
+that they will give the same result. 
+    <p>A fix to this problem is being worked on, and will likely involve early returning
+from the below algorithms whenever there is a comment (or comment-like) that
+contains the characters U+0060 (`), U+0022 ("), or U+0027 ('), or the the
+sequence U+002A U+002F (*/).</p>
+     <a class="issue-return" href="#issue-d4e08569" title="Jump to section">↵</a>
+   </div>
+  </div>
 <script>/* Boilerplate: script-dom-helper */
 "use strict";
 function query(sel) { return document.querySelector(sel); }
