@@ -777,6 +777,19 @@ without parsing|without parsing=] gives `foo.js.map`.
 
 </div>
 
+<div class="issue">
+Having multiple ways to extract a source map URL, that can lead to different
+results, can have negative security and privacy implications. Implementations
+that need to detect which source maps are potentially going to be loaded are
+strongly encouraged to always apply both algorithms, rather than just assuming
+that they will give the same result.
+
+A fix to this problem is worked on, and will likely involve early returning
+from the below algorithms whenever there is a comment (or comment-like) that
+contain the characters U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the the
+sequence U+002A U+002F (*/).
+</div>
+
 #### Extraction methods for JavaScript sources #### {#extraction-javascript}
 
 To <dfn export>extract a Source Map URL from JavaScript through parsing</dfn> a [=string=] |source|,
