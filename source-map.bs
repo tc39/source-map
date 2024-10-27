@@ -213,9 +213,9 @@ optional).
 
 A conforming source map consumer should implement the algorithms specified in this
 specification for retrieving (where applicable) and decoding source map documents.
-A conforming consumer is permitted to accept non-conforming source map documents,
-and is permitted to ignore errors or report them without terminating where the
-specification indicates that an algorithm may [=optionally report an error=].
+A conforming consumer is permitted to ignore errors or report them without
+terminating where the specification indicates that an algorithm may
+[=optionally report an error=].
 
 References {#references}
 ========================
