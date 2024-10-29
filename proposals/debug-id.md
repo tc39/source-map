@@ -1,6 +1,6 @@
 # Source Map Debug ID Proposal
 
-This document presents a proposal to add globally unique build or debug IDs to source maps and generated code, making build artifacts self-identifying.
+This document presents a proposal to add globally unique build or debug IDs to source maps and generated code, making build artifacts self-identifying and facilitating bidirectional references between Source Maps and generated code.
 
 ## Current Status
 
@@ -14,7 +14,7 @@ Luca Forstner
 
 Source maps play a crucial role in debugging by providing a mapping between generated code and the original source code.
 However, the current source map specification lacks important properties such as self-describing and self-identifying capabilities for both the generated code as well as the source map.
-This results in a subpar user experience and numerous practical problems.
+This results in a subpar user experience and numerous practical problems, most prominently making it difficult to associate Source Maps with the corresponding generated code.
 To address these issues, we propose an extension to the source map format: the addition of globally unique Debug IDs.
 
 ## Objective and Benefits
