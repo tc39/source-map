@@ -66,6 +66,30 @@ urlPrefix:https://tc39.es/ecma262/#; type:dfn; spec:ecmascript
     url:prod-TemplateSubstitutionTail; text:TemplateSubstitutionTail
     url:prod-WhiteSpace; text:WhiteSpace
     url:sec-ecmascript-language-lexical-grammar; text:ECMAScript Lexical Grammar
+    url:prod-Arguments; text:Arguments
+    url:prod-BindingIdentifier; text:BindingIdentifier
+    url:prod-ClassElementName; text:ClassElementName
+    url:prod-FormalParameters; text:FormalParameters
+    url:prod-FunctionDeclaration; text:FunctionDeclaration
+    url:prod-FunctionExpression; text:FunctionExpression
+    url:prod-Expression; text:Expression
+    url:prod-AsyncFunctionDeclaration; text:AsyncFunctionDeclaration
+    url:prod-AsyncFunctionExpression; text:AsyncFunctionExpression
+    url:prod-ArrowFormalParameters; text:ArrowFormalParameters
+    url:prod-ArrowFunction; text:ArrowFunction
+    url:prod-ArrowParameters; text:ArrowParameters
+    url:prod-AsyncArrowFunction; text:AsyncArrowFunction
+    url:prod-AsyncArrowBindingIdentifier; text:AsyncArrowBindingIdentifier
+    url:prod-GeneratorDeclaration; text:GeneratorDeclaration
+    url:prod-GeneratorExpression; text:GeneratorExpression
+    url:prod-MethodDefinition; text:MethodDefinition
+    url:prod-AsyncGeneratorDeclaration; text:AsyncGeneratorDeclaration
+    url:prod-AsyncGeneratorExpression; text:AsyncGeneratorExpression
+    url:prod-IdentifierReference; text:IdentifierReference
+    url:prod-LexicalDeclaration; text:LexicalDeclaration
+    url:prod-VariableStatement; text:VariableStatement
+    url:sec-parameter-lists; text:Parameter List
+    url:sec-syntactic-grammar; text:Syntactic Grammar
 
 urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
     url:binary/modules.html#binary-customsec; text:custom section
@@ -589,6 +613,70 @@ as per [=ECMAScript Lexical Grammar=]. [=decoded mapping|Mapping=] entries must 
 1. any code point of the source text matched by
     [=Comment=], [=HashbangComment=], [=StringLiteral=], [=Template=],
     [=TemplateSubstitutionTail=], [=WhiteSpace=] and [=LineTerminator=].
+
+### [=decoded mapping/Names=] for generated JavaScript code
+
+Source map generators should create a [=decoded mapping|mapping=] entry with a
+[=decoded mapping/name=] field for a JavaScript token, if
+
+1. The original source language construct maps semantically to the generated
+    JavaScript code.
+
+1. The original source language construct has a name.
+
+Then the [=decoded mapping/name=] of the [=decoded mapping|mapping=] entry should be
+the name of the original source language construct. A [=decoded mapping|mapping=] with
+a non-null [=decoded mapping/name=] is called a <dfn>named mapping</dfn>.
+
+Example: A minifier renaming functions and variables or removing function names
+from immediately invoked function expressions.
+
+The following enumeration lists productions of the ECMAScript [=Syntactic Grammar=]
+and the respective token or non-terminal (on the right-hand side of the production)
+for which source map generators should emit a [=named mapping=].
+The [=decoded mapping|mapping=] entry created for such tokens must follow [[#mappings-javascript]].
+
+The enumeration should be understood as the "minimum". In general,
+source map generators are free to emit any additional [=named mappings=].
+
+Note: The enumeration also lists tokens where generators "may" emit named [=decoded mapping|mappings=] in addition
+to the tokens where they "should". These reflect the reality where existing tooling emits or
+expects [=named mappings=]. The duplicated [=named mapping=] is comparably cheap: Indices into
+[=json/names=] are encoded relative to each other so subsequent mappings to the same name are
+encoded as 0 (`A`).
+
+1. The [=BindingIdentifier=](s) for [=LexicalDeclaration=], [=VariableStatement=]
+    and [=Parameter List=].
+
+1. The [=BindingIdentifier=] for [=FunctionDeclaration=], [=FunctionExpression=],
+    [=AsyncFunctionDeclaration=], [=AsyncFunctionExpression=], [=GeneratorDeclaration=],
+    [=GeneratorExpression=], [=AsyncGeneratorDeclaration=], and [=AsyncGeneratorExpression=] if it
+    exists, or the opening parenthesis `(` preceding the [=FormalParameters=] otherwise.
+
+    Source map generators may chose to emit a [=named mapping=] on the opening parenthesis regardless of
+    the presence of the [=BindingIdentifier=].
+
+1. For an [=ArrowFunction=] or [=AsyncArrowFunction=]:
+    1. The `=>` token where [=ArrowFunction=] is produced with a single [=BindingIdentifier=] for
+        [=ArrowParameters=]. Or [=AsyncArrowFunction=] is produced with an [=AsyncArrowBindingIdentifier=].
+
+        Note: This describes the case of (async) arrow functions with a single parameter, where
+            that single parameter is not wrapped in parenthesis.
+
+    1. The opening parenthesis `(` where [=ArrowFunction=] or [=AsyncArrowFunction=] is produced
+        with [=ArrowFormalParameters=].
+
+        Source map generators may chose to additionally emit a named [=decoded mapping|mapping=]
+        on the `=>` token for consistency with (1).
+
+1. The [=ClassElementName=] for [=MethodDefinition=]. This includes generators, async
+    methods, async generators and accessors. For [=MethodDefinition=] where
+    [=ClassElementName=] is "constructor", the [=decoded mapping/name=] should be the original
+    class name if applicable.
+
+    Source map generators may chose to additionally emit a named [=decoded mapping|mapping=] on the opening parenthesis `(`.
+
+1. Source map generators may emit named [=decoded mapping|mappings=] for [=IdentifierReference=] in [=Expression=].
 
 Resolving Sources {#resolving-sources}
 --------------------------------------
