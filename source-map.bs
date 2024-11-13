@@ -616,7 +616,7 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
                 be the result.
             1. If |relativeNameIndex| is not null, then:
                 1. Increase |nameIndex| by |relativeNameIndex|.
-                1. If |nameIndex| is negative or greater than |names|'s [=list/size=], [=optionally
+                1. If |nameIndex| is negative or greater than or equal to |names|'s [=list/size=], [=optionally
                     report an error=].
                 1. Else, set |decodedMapping|'s [=decoded mapping/name=] to |names|[|nameIndex|].
             1. If |position| does not point to the end of |segment|, [=optionally report an
