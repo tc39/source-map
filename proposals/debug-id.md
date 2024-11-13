@@ -151,6 +151,24 @@ Note: While polyfilling is possible and is in wide production use already[^1], w
 - The polyfills inflate bundle-size more than necessary
 - Chicken-and-egg situations with [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)
 
+## Implementors
+
+The following Source Map **Generators** have implemented Debug IDs as proposed:
+
+- Rollup ([`output.sourcemapDebugIds` option](https://rollupjs.org/configuration-options/#output-sourcemapdebugids))
+- Oxc ([`debug_id` API](https://docs.rs/oxc/latest/oxc/sourcemap/struct.JSONSourceMap.html#structfield.debug_id))
+- Expo ([Injected by default](https://docs.expo.dev/versions/latest/config/metro/#source-map-debug-id))
+- Rolldown ([`output.sourcemapDebugIds` option](https://github.com/rolldown/rolldown/pull/2516))
+
+The following Source Map **Consumers/Debuggers** have implemented Debug IDs:
+
+- Sentry.io ([Docs](https://docs.sentry.io/platforms/javascript/sourcemaps/troubleshooting_js/artifact-bundles/#artifact-bundles))
+
+The following implementations are work-in-progress:
+- **Generator:** Webpack ([PR to extend `devtool` option](https://github.com/webpack/webpack/pull/18947))
+- **Generator:** Turbopack (underlying `sourcemap` Rust crate has been updated)
+- **Consumer:** V8 ([CL to extend `Error.prepareStackTrace`](https://chromium-review.googlesource.com/c/v8/v8/+/5979833), is awaiting for proposal to reach stage 3)
+
 ## Questions
 
 - How should the `//# debugId=...` comment be parsed by consuming tools and JavaScript engines?
