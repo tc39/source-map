@@ -132,9 +132,15 @@ interface SourceMap {
 interface OriginalScope {
   start: OriginalPosition;
   end: OriginalPosition;
-  kind: string;
+  /** Serves as a label in source-map consumers */
+  kind?: string;
   /** Class/module/function name. Can be used for stack traces or naming scopes in a debugger's scope view */
   name?: string;
+  /**
+   * Whether this scope corresponds to the semantic equivalent of a function call in
+   * the authored language, and as such can show up in stack traces.
+   */
+  isStackFrame: boolean;
   /** Symbols defined in this scope */
   variables?: string[];
   children?: OriginalScope[];
@@ -143,7 +149,18 @@ interface OriginalScope {
 interface GeneratedRange {
   start: GeneratedPosition;
   end: GeneratedPosition;
-  isScope: boolean;
+  /**
+   * Whether this range is a JavaScript function/method/generator/constructor and can show
+   * up in Error.stack as a stack frame.
+   */
+  isStackFrame: boolean;
+  /**
+   * Whether calls to this range should be removed from stack traces.
+   * Intended for outlined functions or transpiler inserted function that correspond
+   * to an original scope, but should be hidden from stack traces (e.g. an original block
+   * scope outlined into a function).
+   */
+  isHidden: boolean;
   originalScope?: OriginalScope;
   /** If this scope corresponds to an inlined function body, record the callsite of the inlined function in the original code */
   callsite?: OriginalPosition;
@@ -199,17 +216,20 @@ Note: Each DATA represents one VLQ number.
   * Note: this is the point in the original code where the scope starts. `line` is relative to the `line` of the preceding "start/end original scope" item.
 * DATA column in the original code
   * Note: Column is always absolute.
-* DATA kind offset into `names` field
-  * Note: This offset is relative to the offset of the last `kind` or absolute if this is the first `kind`.
-  * Note: This is type of the scope.
-  * Note: JavaScript implementations should use `'global'`, `'class'`, `'function'`, and `'block'`.
-* DATA field flags
+* DATA flags
   * Note: binary flags that specify if a field is used for this scope.
   * Note: Unknown flags would skip the whole scope.
   * 0x1 has name
+  * 0x2 has kind
+  * 0x4 is stack frame
 * name: (only exists if `has name` flag is set)
   * DATA offset into `names` field
   * Note: This name should be shown as function name in the stack trace for function scopes.
+* kind: (only exists if `has kind` flag is set)
+  * DATA offset into `names` field
+  * Note: This offset is relative to the offset of the last `kind` or absolute if this is the first `kind`.
+  * Note: This is type of the scope.
+  * Note: JavaScript implementations should use `'global'`, `'class'`, `'function'`, and `'block'`.
 * variables:
   * for each variable:
     * DATA offset into `names` field for the original symbol name defined in this scope
@@ -231,7 +251,8 @@ Note: Each DATA represents one VLQ number.
   * Note: Unknown flags would skip the whole scope.
   * 0x1 has definition
   * 0x2 has callsite
-  * 0x4 is scope
+  * 0x4 is stack frame
+  * 0x8 is hidden
 * definition: (only existing if `has definition` flag is set)
   * DATA offset into `sources`
     * Note: This offset is relative to the offset of the last definition or absolute if this is the first definition
