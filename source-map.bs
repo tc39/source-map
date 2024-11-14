@@ -1,5 +1,5 @@
 <pre class='metadata'>
-Title: Source Map
+Title: Source Map Format Specification
 H1: Source Map
 Shortname: source-map
 Level: none
@@ -19,6 +19,7 @@ Abstract: This Ecma standard defines the Source Map format, used for mapping tra
 No Abstract: true
 Markup Shorthands: markdown yes
 Group: tc39
+Boilerplate: references no
 </pre>
 
 <!-- Uncomment the next line when generating the PDF version of the spec -->
@@ -66,6 +67,30 @@ urlPrefix:https://tc39.es/ecma262/#; type:dfn; spec:ecmascript
     url:prod-TemplateSubstitutionTail; text:TemplateSubstitutionTail
     url:prod-WhiteSpace; text:WhiteSpace
     url:sec-ecmascript-language-lexical-grammar; text:ECMAScript Lexical Grammar
+    url:prod-Arguments; text:Arguments
+    url:prod-BindingIdentifier; text:BindingIdentifier
+    url:prod-ClassElementName; text:ClassElementName
+    url:prod-FormalParameters; text:FormalParameters
+    url:prod-FunctionDeclaration; text:FunctionDeclaration
+    url:prod-FunctionExpression; text:FunctionExpression
+    url:prod-Expression; text:Expression
+    url:prod-AsyncFunctionDeclaration; text:AsyncFunctionDeclaration
+    url:prod-AsyncFunctionExpression; text:AsyncFunctionExpression
+    url:prod-ArrowFormalParameters; text:ArrowFormalParameters
+    url:prod-ArrowFunction; text:ArrowFunction
+    url:prod-ArrowParameters; text:ArrowParameters
+    url:prod-AsyncArrowFunction; text:AsyncArrowFunction
+    url:prod-AsyncArrowBindingIdentifier; text:AsyncArrowBindingIdentifier
+    url:prod-GeneratorDeclaration; text:GeneratorDeclaration
+    url:prod-GeneratorExpression; text:GeneratorExpression
+    url:prod-MethodDefinition; text:MethodDefinition
+    url:prod-AsyncGeneratorDeclaration; text:AsyncGeneratorDeclaration
+    url:prod-AsyncGeneratorExpression; text:AsyncGeneratorExpression
+    url:prod-IdentifierReference; text:IdentifierReference
+    url:prod-LexicalDeclaration; text:LexicalDeclaration
+    url:prod-VariableStatement; text:VariableStatement
+    url:sec-parameter-lists; text:Parameter List
+    url:sec-syntactic-grammar; text:Syntactic Grammar
 
 urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
     url:binary/modules.html#binary-customsec; text:custom section
@@ -120,15 +145,6 @@ urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
 }
 </pre>
 
-<h2 class="no-num no-toc" id="about">About this Specification</h2>
-
-The document at [https://tc39.es/source-map/](https://tc39.es/source-map/) is the most accurate and
-up-to-date source map specification. It contains the content of the most recently published snapshot
-plus any modifications that will be included in the next snapshot.
-
-If you want to get involved you will find more information at the [specification
-repository](https://github.com/tc39/source-map).
-
 <h2 class="no-num" id="intro">Introduction</h2>
 
 This Ecma Standard defines the Source Map Format, used for mapping transpiled source code back to the original sources.
@@ -136,6 +152,13 @@ This Ecma Standard defines the Source Map Format, used for mapping transpiled so
 The source map format has the following goals:
 * Support source-level debugging allowing bidirectional mapping
 * Support server-side stack trace deobfuscation
+
+The document at [https://tc39.es/source-map/](https://tc39.es/source-map/) is the most accurate and
+up-to-date source map specification. It contains the content of the most recently published snapshot
+plus any modifications that will be included in the next snapshot.
+
+If you want to get involved you will find more information at the [specification
+repository](https://github.com/tc39/source-map).
 
 The original source map format (v1) was created by Joseph Schorr for use by
 Closure Inspector to enable source-level debugging of optimized JavaScript code
@@ -197,7 +220,74 @@ IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.</p>
 Scope {#scope}
 ==============
 
-This Standard defines the Source Map Format.
+This Standard defines the source map format, used by different types of
+developer tools to improve the debugging experience of code compiled to
+JavaScript, WebAssembly, and CSS.
+
+Conformance {#conformance}
+==========================
+
+A conforming source map document is a JSON document that conforms to the
+structure detailed in this specification.
+
+A conforming source map generator should generate documents which are
+conforming source map documents, and can be decoded by the algorithms in this
+specification without reporting any errors (even those which are specified as
+optional).
+
+A conforming source map consumer should implement the algorithms specified in this
+specification for retrieving (where applicable) and decoding source map documents.
+A conforming consumer is permitted to ignore errors or report them without
+terminating where the specification indicates that an algorithm may
+[=optionally report an error=].
+
+References {#references}
+========================
+
+<!--
+  NOTE: This references section is manually generated because bikeshed assumes
+        that the references section should be un-numbered and we want to include
+        it as a numbered section. To generate it, use the following and then
+        copy the inner HTML contents:
+
+        <div data-fill-with="references"></div>
+
+        and replace [ with \[ to escape macros. Also add data-no-self-link="" to
+        each <dt> entry.
+-->
+
+<h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+<div class="no-ref">
+<dl>
+ <dt id="biblio-ecmascript" data-no-self-link="">\[ECMASCRIPT]
+ </dt><dd><a href="https://tc39.es/ecma262/multipage/"><cite>ECMAScript Language Specification</cite></a>. URL: <a href="https://tc39.es/ecma262/multipage/">https://tc39.es/ecma262/multipage/</a>
+ </dd><dt id="biblio-encoding" data-no-self-link="">\[ENCODING]
+ </dt><dd>Anne van Kesteren. <a href="https://encoding.spec.whatwg.org/"><cite>Encoding Standard</cite></a>. Living Standard. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a>
+ </dd><dt id="biblio-fetch" data-no-self-link="">\[FETCH]
+ </dt><dd>Anne van Kesteren. <a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
+ </dd><dt id="biblio-infra" data-no-self-link="">\[INFRA]
+ </dt><dd>Anne van Kesteren; Domenic Denicola. <a href="https://infra.spec.whatwg.org/"><cite>Infra Standard</cite></a>. Living Standard. URL: <a href="https://infra.spec.whatwg.org/">https://infra.spec.whatwg.org/</a>
+ </dd><dt id="biblio-url" data-no-self-link="">\[URL]
+ </dt><dd><a href="https://url.spec.whatwg.org/"><cite>URL Standard</cite></a>. Living Standard. URL: <a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>
+ </dd><dt id="biblio-webidl" data-no-self-link="">\[WEBIDL]
+ </dt><dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
+</dd></dl>
+<h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+<dl>
+ <dt id="biblio-base64" data-no-self-link="">\[BASE64]
+ </dt><dd><a href="https://www.ietf.org/rfc/rfc4648.txt"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. Standards Track. URL: <a href="https://www.ietf.org/rfc/rfc4648.txt">https://www.ietf.org/rfc/rfc4648.txt</a>
+ </dd><dt id="biblio-ecma-262" data-no-self-link="">\[ECMA-262]
+ </dt><dd><a href="https://tc39.es/ecma262/"><cite>ECMAScript® Language Specification</cite></a>. Standards Track. URL: <a href="https://tc39.es/ecma262/">https://tc39.es/ecma262/</a>
+ </dd><dt id="biblio-evalsourceurl" data-no-self-link="">\[EvalSourceURL]
+ </dt><dd><a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/"><cite>Give your eval a name with //@ sourceURL</cite></a>. archive. URL: <a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/">https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/</a>
+ </dd><dt id="biblio-v2format" data-no-self-link="">\[V2Format]
+ </dt><dd><a href="https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US"><cite>Source Map Revision 2 Proposal</cite></a>. URL: <a href="https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US">https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US</a>
+ </dd><dt id="biblio-vlq" data-no-self-link="">\[VLQ]
+ </dt><dd><a href="https://en.wikipedia.org/wiki/Variable-length_quantity"><cite>Variable-length quantity</cite></a>. reference article. URL: <a href="https://en.wikipedia.org/wiki/Variable-length_quantity">https://en.wikipedia.org/wiki/Variable-length_quantity</a>
+ </dd><dt id="biblio-wasmnamesbinaryformat" data-no-self-link="">\[WasmNamesBinaryFormat]
+ </dt><dd><a href="https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2"><cite>WebAssembly Names binary format</cite></a>. Living Standard. URL: <a href="https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2">https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2</a>
+</dd></dl>
+</div>
 
 Terms and definitions {#terminology}
 ====================================
@@ -589,6 +679,70 @@ as per [=ECMAScript Lexical Grammar=]. [=decoded mapping|Mapping=] entries must 
 1. any code point of the source text matched by
     [=Comment=], [=HashbangComment=], [=StringLiteral=], [=Template=],
     [=TemplateSubstitutionTail=], [=WhiteSpace=] and [=LineTerminator=].
+
+### [=decoded mapping/Names=] for generated JavaScript code
+
+Source map generators should create a [=decoded mapping|mapping=] entry with a
+[=decoded mapping/name=] field for a JavaScript token, if
+
+1. The original source language construct maps semantically to the generated
+    JavaScript code.
+
+1. The original source language construct has a name.
+
+Then the [=decoded mapping/name=] of the [=decoded mapping|mapping=] entry should be
+the name of the original source language construct. A [=decoded mapping|mapping=] with
+a non-null [=decoded mapping/name=] is called a <dfn>named mapping</dfn>.
+
+Example: A minifier renaming functions and variables or removing function names
+from immediately invoked function expressions.
+
+The following enumeration lists productions of the ECMAScript [=Syntactic Grammar=]
+and the respective token or non-terminal (on the right-hand side of the production)
+for which source map generators should emit a [=named mapping=].
+The [=decoded mapping|mapping=] entry created for such tokens must follow [[#mappings-javascript]].
+
+The enumeration should be understood as the "minimum". In general,
+source map generators are free to emit any additional [=named mappings=].
+
+Note: The enumeration also lists tokens where generators "may" emit named [=decoded mapping|mappings=] in addition
+to the tokens where they "should". These reflect the reality where existing tooling emits or
+expects [=named mappings=]. The duplicated [=named mapping=] is comparably cheap: Indices into
+[=json/names=] are encoded relative to each other so subsequent mappings to the same name are
+encoded as 0 (`A`).
+
+1. The [=BindingIdentifier=](s) for [=LexicalDeclaration=], [=VariableStatement=]
+    and [=Parameter List=].
+
+1. The [=BindingIdentifier=] for [=FunctionDeclaration=], [=FunctionExpression=],
+    [=AsyncFunctionDeclaration=], [=AsyncFunctionExpression=], [=GeneratorDeclaration=],
+    [=GeneratorExpression=], [=AsyncGeneratorDeclaration=], and [=AsyncGeneratorExpression=] if it
+    exists, or the opening parenthesis `(` preceding the [=FormalParameters=] otherwise.
+
+    Source map generators may chose to emit a [=named mapping=] on the opening parenthesis regardless of
+    the presence of the [=BindingIdentifier=].
+
+1. For an [=ArrowFunction=] or [=AsyncArrowFunction=]:
+    1. The `=>` token where [=ArrowFunction=] is produced with a single [=BindingIdentifier=] for
+        [=ArrowParameters=]. Or [=AsyncArrowFunction=] is produced with an [=AsyncArrowBindingIdentifier=].
+
+        Note: This describes the case of (async) arrow functions with a single parameter, where
+            that single parameter is not wrapped in parenthesis.
+
+    1. The opening parenthesis `(` where [=ArrowFunction=] or [=AsyncArrowFunction=] is produced
+        with [=ArrowFormalParameters=].
+
+        Source map generators may chose to additionally emit a named [=decoded mapping|mapping=]
+        on the `=>` token for consistency with (1).
+
+1. The [=ClassElementName=] for [=MethodDefinition=]. This includes generators, async
+    methods, async generators and accessors. For [=MethodDefinition=] where
+    [=ClassElementName=] is "constructor", the [=decoded mapping/name=] should be the original
+    class name if applicable.
+
+    Source map generators may chose to additionally emit a named [=decoded mapping|mapping=] on the opening parenthesis `(`.
+
+1. Source map generators may emit named [=decoded mapping|mappings=] for [=IdentifierReference=] in [=Expression=].
 
 Resolving Sources {#resolving-sources}
 --------------------------------------
