@@ -56,17 +56,24 @@ In the context of this document:
 
 ## Debug IDs
 
-Debug IDs are globally unique identifiers for build artifacts. They are specified to be UUIDs.
+Debug IDs are globally unique identifiers for build artifacts.
+They are specified to be UUIDs.
 In the context of this proposal, they are represented in hexadecimal characters.
 When comparing debug IDs they must be normalized.
 This means that `85314830-023f-4cf1-a267-535f4e37bb17` and `85314830023F4CF1A267535F4E37BB17` are equivalent but the former representation is the canonical format.
 
-The way a debug ID is generated is specific to the toolchain and no requirements are placed on it.
-It is however recommended to generate deterministic debug IDs (UUID v3 or v5) so that rebuilding the same artifacts yields stable IDs.
-
 Debug IDs are embedded in both source maps and transformed files, allowing a bidirectional mapping between them.
 The linking of source maps and transformed files via HTTP headers is explicitly not desired.
 A file identified by a Debug ID must have that Debug ID embedded to ensure the file is self-identifying.
+
+### Generating Debug IDs
+
+The way a Debug ID is generated is specific to the toolchain and the only proposed requirement is that Debug IDs are 128-bit values.
+We propose this requirement to ensure consistency and promote simplicity across the ecosystem.
+
+Since Debug IDs are embedded in build artifacts, it is recommended that tools generated deterministic Debug IDs (e.g. UUIDv3, UUIDv5) whenever possible, so that the produced artifacts are stable across builds.
+Specification-wise, Debug IDs do not need to be deterministic.
+Determinism is not enforced so that tools can employ non-deterministic fallback mechanisms in case of colliding Debug IDs between two different generated artifacts.
 
 ### Debug IDs in Source Maps
 
