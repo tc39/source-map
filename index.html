@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 742f3d674, updated Mon Nov 4 14:56:54 2024 -0800" name="generator">
   <link href="https://tc39.es/source-map/" rel="canonical">
-  <meta content="51c6bdb37aa75c66ad5e9b70a77702f3300bda27" name="revision">
+  <meta content="c335aceeb2ee550084560defc21461ad69f0651b" name="revision">
   <meta content="dark light" name="color-scheme">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
@@ -2172,7 +2172,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">Source Map Format Specification</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-11-13">13 November 2024</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-11-15">15 November 2024</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -3059,16 +3059,16 @@ produces an output file that links to a source map, it must do so <a data-link-t
 </pre>
     <p>Extracing a Source Map URL from it <a data-link-type="dfn" href="#extract-a-source-map-url-from-javascript-through-parsing" id="ref-for-extract-a-source-map-url-from-javascript-through-parsing">through parsing</a> gives null, while <a data-link-type="dfn" href="#extract-a-source-map-url-from-javascript-without-parsing" id="ref-for-extract-a-source-map-url-from-javascript-without-parsing">without parsing</a> gives <code class="highlight">foo<c- p>.</c->js<c- p>.</c->map</code>.</p>
    </div>
-   <div class="issue" id="issue-d4e08569">
-    <a class="self-link" href="#issue-d4e08569"></a> Having multiple ways to extract a source map URL, that can lead to different
+   <div class="issue" id="issue-f38c30b3">
+    <a class="self-link" href="#issue-f38c30b3"></a> Having multiple ways to extract a source map URL, that can lead to different
 results, can have negative security and privacy implications. Implementations
 that need to detect which source maps are potentially going to be loaded are
 strongly encouraged to always apply both algorithms, rather than just assuming
 that they will give the same result. 
-    <p>A fix to this problem is being worked on, and will likely involve early returning
-from the below algorithms whenever there is a comment (or comment-like) that
-contains the characters U+0060 (`), U+0022 ("), or U+0027 ('), or the the
-sequence U+002A U+002F (*/).</p>
+    <p>A fix to this problem is being worked on, and is expected to be included in a future
+version of the standard. It will likely involve early returning from the below
+algorithms whenever there is a comment (or comment-like) that contains the characters
+U+0060 (`), U+0022 ("), or U+0027 ('), or the the sequence U+002A U+002F (*/).</p>
    </div>
    <h5 class="heading settled" data-level="7.1.2.1" id="extraction-javascript"><span class="secno">7.1.2.1. </span><span class="content">Extraction methods for JavaScript sources</span><a class="self-link" href="#extraction-javascript"></a></h5>
    <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="extract-a-source-map-url-from-javascript-through-parsing">extract a Source Map URL from JavaScript through parsing</dfn> a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string①⑨">string</a> <var>source</var>,
@@ -3624,7 +3624,7 @@ JavaScript-style single-line comments.</p>
      <li><span class="dfn-paneled" id="649608b9">list</span>
      <li><span class="dfn-paneled" id="3fca5a9e">map</span>
      <li><span class="dfn-paneled" id="5ff3a316">parse a JSON string to an Infra value</span>
-     <li><span class="dfn-paneled" id="6a24df10">parsing JSON bytes to a JavaScript value</span>
+     <li><span class="dfn-paneled" id="83c1dbea">parse JSON bytes to a JavaScript value</span>
      <li><span class="dfn-paneled" id="75bee4d5">position variable</span>
      <li><span class="dfn-paneled" id="0204d188">size</span>
      <li><span class="dfn-paneled" id="904cdc91">starts with</span>
@@ -3664,11 +3664,11 @@ results, can have negative security and privacy implications. Implementations
 that need to detect which source maps are potentially going to be loaded are
 strongly encouraged to always apply both algorithms, rather than just assuming
 that they will give the same result. 
-    <p>A fix to this problem is being worked on, and will likely involve early returning
-from the below algorithms whenever there is a comment (or comment-like) that
-contains the characters U+0060 (`), U+0022 ("), or U+0027 ('), or the the
-sequence U+002A U+002F (*/).</p>
-     <a class="issue-return" href="#issue-d4e08569" title="Jump to section">↵</a>
+    <p>A fix to this problem is being worked on, and is expected to be included in a future
+version of the standard. It will likely involve early returning from the below
+algorithms whenever there is a comment (or comment-like) that contains the characters
+U+0060 (`), U+0022 ("), or U+0027 ('), or the the sequence U+002A U+002F (*/).</p>
+     <a class="issue-return" href="#issue-f38c30b3" title="Jump to section">↵</a>
    </div>
   </div>
 <script>/* Boilerplate: script-dom-helper */
@@ -3905,13 +3905,13 @@ let dfnPanelData = {
 "5a25aef5": {"dfnID":"5a25aef5","dfnText":"Comment","external":true,"refSections":[{"refs":[{"id":"ref-for-prod-Comment"}],"title":"5.1.1. Mappings for generated JavaScript code"}],"url":"https://tc39.es/ecma262/#prod-Comment"},
 "5ff3a316": {"dfnID":"5ff3a316","dfnText":"parse a JSON string to an Infra value","external":true,"refSections":[{"refs":[{"id":"ref-for-parse-a-json-string-to-an-infra-value"}],"title":"5. Source Map Format"}],"url":"https://infra.spec.whatwg.org/#parse-a-json-string-to-an-infra-value"},
 "649608b9": {"dfnID":"649608b9","dfnText":"list","external":true,"refSections":[{"refs":[{"id":"ref-for-list"},{"id":"ref-for-list\u2460"},{"id":"ref-for-list\u2461"},{"id":"ref-for-list\u2462"},{"id":"ref-for-list\u2463"},{"id":"ref-for-list\u2464"},{"id":"ref-for-list\u2465"},{"id":"ref-for-list\u2466"},{"id":"ref-for-list\u2467"},{"id":"ref-for-list\u2468"},{"id":"ref-for-list\u2460\u24ea"},{"id":"ref-for-list\u2460\u2460"},{"id":"ref-for-list\u2460\u2461"},{"id":"ref-for-list\u2460\u2462"},{"id":"ref-for-list\u2460\u2463"}],"title":"5. Source Map Format"},{"refs":[{"id":"ref-for-list\u2460\u2464"},{"id":"ref-for-list\u2460\u2465"},{"id":"ref-for-list\u2460\u2466"}],"title":"5.1. Mappings Structure"},{"refs":[{"id":"ref-for-list\u2460\u2467"},{"id":"ref-for-list\u2460\u2468"},{"id":"ref-for-list\u2461\u24ea"},{"id":"ref-for-list\u2461\u2460"}],"title":"5.2. Resolving Sources"},{"refs":[{"id":"ref-for-list\u2461\u2461"}],"title":"7.1.2.1. Extraction methods for JavaScript sources"}],"url":"https://infra.spec.whatwg.org/#list"},
-"6a24df10": {"dfnID":"6a24df10","dfnText":"parsing JSON bytes to a JavaScript value","external":true,"refSections":[{"refs":[{"id":"ref-for-parse-json-bytes-to-a-javascript-value"}],"title":"7.2. Fetching Source Maps"}],"url":"https://infra.spec.whatwg.org/#parse-json-bytes-to-a-javascript-value"},
 "75bee4d5": {"dfnID":"75bee4d5","dfnText":"position variable","external":true,"refSections":[{"refs":[{"id":"ref-for-string-position-variable"},{"id":"ref-for-string-position-variable\u2460"},{"id":"ref-for-string-position-variable\u2461"}],"title":"5.1. Mappings Structure"},{"refs":[{"id":"ref-for-string-position-variable\u2462"}],"title":"7.1.2.1. Extraction methods for JavaScript sources"}],"url":"https://infra.spec.whatwg.org/#string-position-variable"},
 "7b0d918d": {"dfnID":"7b0d918d","dfnText":"break","external":true,"refSections":[{"refs":[{"id":"ref-for-iteration-break"},{"id":"ref-for-iteration-break\u2460"}],"title":"7.1.2.1. Extraction methods for JavaScript sources"}],"url":"https://infra.spec.whatwg.org/#iteration-break"},
 "808e1390": {"dfnID":"808e1390","dfnText":"GeneratorExpression","external":true,"refSections":[{"refs":[{"id":"ref-for-prod-GeneratorExpression"}],"title":"5.1.2. Names for generated JavaScript code"}],"url":"https://tc39.es/ecma262/#prod-GeneratorExpression"},
 "829dd253": {"dfnID":"829dd253","dfnText":"ArrowFunction","external":true,"refSections":[{"refs":[{"id":"ref-for-prod-ArrowFunction"},{"id":"ref-for-prod-ArrowFunction\u2460"},{"id":"ref-for-prod-ArrowFunction\u2461"}],"title":"5.1.2. Names for generated JavaScript code"}],"url":"https://tc39.es/ecma262/#prod-ArrowFunction"},
 "82ca3efc": {"dfnID":"82ca3efc","dfnText":"TypeError","external":true,"refSections":[{"refs":[{"id":"ref-for-exceptiondef-typeerror"}],"title":"7.2. Fetching Source Maps"}],"url":"https://webidl.spec.whatwg.org/#exceptiondef-typeerror"},
 "8378e5fc": {"dfnID":"8378e5fc","dfnText":"ArrowFormalParameters","external":true,"refSections":[{"refs":[{"id":"ref-for-prod-ArrowFormalParameters"}],"title":"5.1.2. Names for generated JavaScript code"}],"url":"https://tc39.es/ecma262/#prod-ArrowFormalParameters"},
+"83c1dbea": {"dfnID":"83c1dbea","dfnText":"parse JSON bytes to a JavaScript value","external":true,"refSections":[{"refs":[{"id":"ref-for-parse-json-bytes-to-a-javascript-value"}],"title":"7.2. Fetching Source Maps"}],"url":"https://infra.spec.whatwg.org/#parse-json-bytes-to-a-javascript-value"},
 "849cbafc": {"dfnID":"849cbafc","dfnText":"RightBracePunctuator","external":true,"refSections":[{"refs":[{"id":"ref-for-prod-RightBracePunctuator"}],"title":"5.1.1. Mappings for generated JavaScript code"}],"url":"https://tc39.es/ecma262/#prod-RightBracePunctuator"},
 "8af2d814": {"dfnID":"8af2d814","dfnText":"StringLiteral","external":true,"refSections":[{"refs":[{"id":"ref-for-prod-StringLiteral"}],"title":"5.1.1. Mappings for generated JavaScript code"}],"url":"https://tc39.es/ecma262/#prod-StringLiteral"},
 "8afe8386": {"dfnID":"8afe8386","dfnText":"LineTerminator","external":true,"refSections":[{"refs":[{"id":"ref-for-prod-LineTerminator"}],"title":"5.1.1. Mappings for generated JavaScript code"}],"url":"https://tc39.es/ecma262/#prod-LineTerminator"},
@@ -4484,7 +4484,7 @@ let refsData = {
 "https://infra.spec.whatwg.org/#map-exists": {"displayText":"exist","export":true,"for_":["map"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"exist","type":"dfn","url":"https://infra.spec.whatwg.org/#map-exists"},
 "https://infra.spec.whatwg.org/#ordered-map": {"displayText":"map","export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"map","type":"dfn","url":"https://infra.spec.whatwg.org/#ordered-map"},
 "https://infra.spec.whatwg.org/#parse-a-json-string-to-an-infra-value": {"displayText":"parse a JSON string to an Infra value","export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"parse a json string to an infra value","type":"dfn","url":"https://infra.spec.whatwg.org/#parse-a-json-string-to-an-infra-value"},
-"https://infra.spec.whatwg.org/#parse-json-bytes-to-a-javascript-value": {"displayText":"parsing JSON bytes to a JavaScript value","export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"parsing json bytes to a javascript value","type":"dfn","url":"https://infra.spec.whatwg.org/#parse-json-bytes-to-a-javascript-value"},
+"https://infra.spec.whatwg.org/#parse-json-bytes-to-a-javascript-value": {"displayText":"parse JSON bytes to a JavaScript value","export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"parse json bytes to a javascript value","type":"dfn","url":"https://infra.spec.whatwg.org/#parse-json-bytes-to-a-javascript-value"},
 "https://infra.spec.whatwg.org/#strictly-split": {"displayText":"strictly split","export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"strictly split","type":"dfn","url":"https://infra.spec.whatwg.org/#strictly-split"},
 "https://infra.spec.whatwg.org/#string": {"displayText":"string","export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"string","type":"dfn","url":"https://infra.spec.whatwg.org/#string"},
 "https://infra.spec.whatwg.org/#string-concatenate": {"displayText":"concatenate","export":true,"for_":["string"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"concatenate","type":"dfn","url":"https://infra.spec.whatwg.org/#string-concatenate"},
