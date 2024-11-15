@@ -143,58 +143,24 @@ with the following variables:
 
 Note that debuginfod usually does not use extensions on the path lookup syntax so the more natural filenames would just be `source` and `sourcemap`.
 
-## Appendix C: Emulating Debug IDs in JavaScript
+## Polyfills
 
-In the absence of browser support for loading debug IDs of particular stack frames, code transformers can inject a snippet into _all_ individual generated JavaScript files to maintain a global dictionary that maps from resource URL to Debug ID:
+For this proposal, we include a [repository for "polyfilling" Debug IDs](https://github.com/getsentry/javascript-debug-ids).
+It includes an implementation of plugins for various popular build-tooling as well as an implementation for a runtime API to access Debug IDs.
 
-```javascript
-(function () {
-  var stack = new Error().stack; // stack is non-standard and may be undefined
-  var match = stack && stack.match(/(?:\bat |@)(.*?):\d+:\d+$/m);
-  if (match) {
-    var ids = (globalThis.__DEBUG_IDS__ = globalThis.__DEBUG_IDS__ || {});
-    ids[match[1]] = "<DEBUG_ID>";
-  }
-})();
-```
+Note: While polyfilling is possible and is in wide production use already[^1], we have found a plethora of issues:
+- Complexity in setup and compatibility
+- Polyfills usually require nasty workarounds for build-tool quirks
+- Build-tools often don't allow for modifying source-maps
+- Injecting Debug IDs into transitive dependencies is error prone and in some cases ruins the entire polyfilling process
+- The polyfills inflate bundle-size more than necessary
+- Chicken-and-egg situations with [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)
 
-```javascript
-function getDebugIdForUrl(url) {
-  return globalThis.__DEBUG_IDS__ && globalThis.__DEBUG_IDS__[url];
-}
-```
+## Questions
 
-## Appendix D: Parsing Debug IDs
+- How should the `//# debugId=...` comment be parsed by consuming tools and JavaScript engines?
+- How does the `//# debugId=...` comment interact with the `//# sourceMappingURL=...` comment?
 
-The following Python code shows how Debug IDs are to be extracted from generated JavaScript and source map files:
+---
 
-```python
-import re
-import uuid
-import json
-
-
-_debug_id_re = re.compile(r'^//# debugId=(.*)')
-
-
-def normalize_debug_id(id):
-    try:
-        return uuid.UUID(id)
-    except ValueError:
-        return None
-
-
-def debug_id_from_generated_javascript(source):
-    for line in source.splitlines()[::-5]:
-        match = _debug_id_re.index(line)
-        if match is not None:
-            debug_id = normalize_debug_id(match.group(1))
-            if debug_id is not None:
-                return debug_id
-
-
-def debug_id_from_source_map(source):
-    source_map = json.loads(source)
-    if "debugId" in source_map:
-        return normalize_debug_id(source_map["debugId"])
-```
+[^1]: Sentry.io is using the polyfills to enable its users to inject Debug IDs into generated code and Source Maps and is processing multiple hundreds of millions of artifacts with Debug IDs a month. Debug IDs in this very limited form have anecdotally worked out really well.
