@@ -616,7 +616,7 @@ sources=] <dfn for="decode source map mappings">|sources|</dfn>, run the followi
                 be the result.
             1. If |relativeNameIndex| is not null, then:
                 1. Increase |nameIndex| by |relativeNameIndex|.
-                1. If |nameIndex| is negative or greater than |names|'s [=list/size=], [=optionally
+                1. If |nameIndex| is negative or greater than or equal to |names|'s [=list/size=], [=optionally
                     report an error=].
                 1. Else, set |decodedMapping|'s [=decoded mapping/name=] to |names|[|nameIndex|].
             1. If |position| does not point to the end of |segment|, [=optionally report an
@@ -938,10 +938,10 @@ that need to detect which source maps are potentially going to be loaded are
 strongly encouraged to always apply both algorithms, rather than just assuming
 that they will give the same result.
 
-A fix to this problem is being worked on, and will likely involve early returning
-from the below algorithms whenever there is a comment (or comment-like) that
-contains the characters U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the the
-sequence U+002A U+002F (*/).
+A fix to this problem is being worked on, and is expected to be included in a future
+version of the standard. It will likely involve early returning from the below
+algorithms whenever there is a comment (or comment-like) that contains the characters
+U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the the sequence U+002A U+002F (*/).
 </div>
 
 #### Extraction methods for JavaScript sources #### {#extraction-javascript}
