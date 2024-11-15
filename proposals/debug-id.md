@@ -1,6 +1,6 @@
 # Source Map Debug ID Proposal
 
-This document presents a proposal to add globally unique build or debug IDs to source maps and generated code, making build artifacts self-identifying.
+This document presents a proposal to add globally unique build or debug IDs to source maps and generated code, making build artifacts self-identifying and facilitating bidirectional references between Source Maps and generated code.
 
 ## Current Status
 
@@ -14,7 +14,7 @@ Luca Forstner
 
 Source maps play a crucial role in debugging by providing a mapping between generated code and the original source code.
 However, the current source map specification lacks important properties such as self-describing and self-identifying capabilities for both the generated code as well as the source map.
-This results in a subpar user experience and numerous practical problems.
+This results in a subpar user experience and numerous practical problems, most prominently making it difficult to associate Source Maps with the corresponding generated code.
 To address these issues, we propose an extension to the source map format: the addition of globally unique Debug IDs.
 
 ## Objective and Benefits
@@ -56,22 +56,27 @@ In the context of this document:
 
 ## Debug IDs
 
-Debug IDs are globally unique identifiers for build artifacts. They are specified to be UUIDs.
-In the context of this proposal, they are represented in hexadecimal characters.
-When comparing debug IDs they must be normalized.
-This means that `85314830-023f-4cf1-a267-535f4e37bb17` and `85314830023F4CF1A267535F4E37BB17` are equivalent but the former representation is the canonical format.
-
-The way a debug ID is generated is specific to the toolchain and no requirements are placed on it.
-It is however recommended to generate deterministic debug IDs (UUID v3 or v5) so that rebuilding the same artifacts yields stable IDs.
+Debug IDs are globally unique identifiers for build artifacts.
+They are specified to be UUIDs in the format of `85314830-023f-4cf1-a267-535f4e37bb17`.
+The format is intentionally chosen to be strict to ensure consistency and simplicity in generating and consuming tooling.
 
 Debug IDs are embedded in both source maps and transformed files, allowing a bidirectional mapping between them.
 The linking of source maps and transformed files via HTTP headers is explicitly not desired.
 A file identified by a Debug ID must have that Debug ID embedded to ensure the file is self-identifying.
 
+### Generating Debug IDs
+
+The way a Debug ID is generated is specific to the toolchain and the only proposed requirement is that Debug IDs are 128-bit values.
+We propose this requirement to ensure consistency and promote simplicity across the ecosystem.
+
+Since Debug IDs are embedded in build artifacts, it is recommended that tools generated deterministic Debug IDs (e.g. UUIDv3, UUIDv5) whenever possible, so that the produced artifacts are stable across builds.
+Specification-wise, Debug IDs do not need to be deterministic.
+Determinism is not enforced so that tools can employ non-deterministic fallback mechanisms in case of colliding Debug IDs between two different generated artifacts.
+
 ### Debug IDs in Source Maps
 
 We propose adding a `debugId` property to the source map at the top level of the source map object.
-This property should be a string value representing the Debug ID in hexadecimal characters, preferably in the canonical UUID format:
+This property must be a string value representing the Debug ID in hexadecimal characters, using the canonical UUID format:
 
 ```json
 {
@@ -86,7 +91,7 @@ This property should be a string value representing the Debug ID in hexadecimal 
 
 ### Debug IDs in JavaScript Artifacts
 
-Generated JavaScript files containing a Debug ID must embed the ID near the end of the source, ideally on the last line, in the format `//# debugId=<DEBUG_ID>`:
+Generated JavaScript files containing a Debug ID must embed the ID near the end of the source, ideally on the last line, in the format `//# debugId=<DEBUG_ID>` using the canonical UUID format:
 
 ```javascript
 //# debugId=85314830-023f-4cf1-a267-535f4e37bb17
@@ -119,7 +124,7 @@ Although solving this issue is beyond the scope of this document, addressing it 
 Nevertheless, we recommend that tools utilize the following heuristics to determine self-identifying JavaScript files and source maps:
 
 - A JSON file containing a top-level object with the keys `mapping`, `version`, `debugId` and `sourcesContent` should be considered to be a self-identifying source map.
-- A UTF-8 encoded text file matching the regular expression `(?m)^//# debugId=([a-fA-F0-9-]{12,})$` should be considered a generated JavaScript file.
+- A UTF-8 encoded text file matching the regular expression `(?m)^//# debugId=([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$` should be considered a generated JavaScript file.
 
 ## Appendix B: Symbol Server Support
 
@@ -163,11 +168,6 @@ The following Source Map **Generators** have implemented Debug IDs as proposed:
 The following Source Map **Consumers/Debuggers** have implemented Debug IDs:
 
 - Sentry.io ([Docs](https://docs.sentry.io/platforms/javascript/sourcemaps/troubleshooting_js/artifact-bundles/#artifact-bundles))
-
-The following implementations are work-in-progress:
-- **Generator:** Webpack ([PR to extend `devtool` option](https://github.com/webpack/webpack/pull/18947))
-- **Generator:** Turbopack (underlying `sourcemap` Rust crate has been updated)
-- **Consumer:** V8 ([CL to extend `Error.prepareStackTrace`](https://chromium-review.googlesource.com/c/v8/v8/+/5979833), is awaiting for proposal to reach stage 3)
 
 ## Questions
 
