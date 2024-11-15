@@ -938,10 +938,10 @@ that need to detect which source maps are potentially going to be loaded are
 strongly encouraged to always apply both algorithms, rather than just assuming
 that they will give the same result.
 
-A fix to this problem is being worked on, and will likely involve early returning
-from the below algorithms whenever there is a comment (or comment-like) that
-contains the characters U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the the
-sequence U+002A U+002F (*/).
+A fix to this problem is being worked on, and is expected to be included in a future
+version of the standard. It will likely involve early returning from the below
+algorithms whenever there is a comment (or comment-like) that contains the characters
+U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the the sequence U+002A U+002F (*/).
 </div>
 
 #### Extraction methods for JavaScript sources #### {#extraction-javascript}
