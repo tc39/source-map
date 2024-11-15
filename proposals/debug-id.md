@@ -57,10 +57,8 @@ In the context of this document:
 ## Debug IDs
 
 Debug IDs are globally unique identifiers for build artifacts.
-They are specified to be UUIDs.
-In the context of this proposal, they are represented in hexadecimal characters.
-When comparing debug IDs they must be normalized.
-This means that `85314830-023f-4cf1-a267-535f4e37bb17` and `85314830023F4CF1A267535F4E37BB17` are equivalent but the former representation is the canonical format.
+They are specified to be UUIDs in the format of `85314830-023f-4cf1-a267-535f4e37bb17`.
+The format is intentionally chosen to be strict to ensure consistency and simplicity in generating and consuming tooling.
 
 Debug IDs are embedded in both source maps and transformed files, allowing a bidirectional mapping between them.
 The linking of source maps and transformed files via HTTP headers is explicitly not desired.
@@ -78,7 +76,7 @@ Determinism is not enforced so that tools can employ non-deterministic fallback 
 ### Debug IDs in Source Maps
 
 We propose adding a `debugId` property to the source map at the top level of the source map object.
-This property should be a string value representing the Debug ID in hexadecimal characters, preferably in the canonical UUID format:
+This property must be a string value representing the Debug ID in hexadecimal characters, using the canonical UUID format:
 
 ```json
 {
@@ -93,7 +91,7 @@ This property should be a string value representing the Debug ID in hexadecimal 
 
 ### Debug IDs in JavaScript Artifacts
 
-Generated JavaScript files containing a Debug ID must embed the ID near the end of the source, ideally on the last line, in the format `//# debugId=<DEBUG_ID>`:
+Generated JavaScript files containing a Debug ID must embed the ID near the end of the source, ideally on the last line, in the format `//# debugId=<DEBUG_ID>` using the canonical UUID format:
 
 ```javascript
 //# debugId=85314830-023f-4cf1-a267-535f4e37bb17
@@ -126,7 +124,7 @@ Although solving this issue is beyond the scope of this document, addressing it 
 Nevertheless, we recommend that tools utilize the following heuristics to determine self-identifying JavaScript files and source maps:
 
 - A JSON file containing a top-level object with the keys `mapping`, `version`, `debugId` and `sourcesContent` should be considered to be a self-identifying source map.
-- A UTF-8 encoded text file matching the regular expression `(?m)^//# debugId=([a-fA-F0-9-]{12,})$` should be considered a generated JavaScript file.
+- A UTF-8 encoded text file matching the regular expression `(?m)^//# debugId=([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})$` should be considered a generated JavaScript file.
 
 ## Appendix B: Symbol Server Support
 
