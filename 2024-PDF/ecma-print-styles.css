@@ -1,0 +1,813 @@
+/**
+* TODO: 
+* - set string variable for year
+* - copyright notice   letter-spacing: 0.3pt;
+*
+*
+*
+*
+*
+*/
+
+@font-face {
+  font-family: "Arial Plus";
+  src: local("Arial");
+}
+
+@font-face {
+  font-family: "Arial Plus";
+  unicode-range: U+30;
+  font-style: normal;
+  font-weight: 400;
+  src: url("fonts/IBMPlexMono-Regular-SlashedZero.woff2"), local("IBM Plex Mono Regular"), local(IBMPlexMono-Regular);
+}
+
+@font-face {
+  font-family: "Arial Plus";
+  unicode-range: U+221e;
+  font-style: normal;
+  font-weight: 400;
+  src: local("DejaVu Math TeX Gyre");
+}
+
+@font-face {
+  font-family: "Arial Plus";
+  unicode-range: U+30;
+  font-style: normal;
+  font-weight: 700;
+  src: url("fonts/IBMPlexMono-Bold-SlashedZero.woff2"), local("IBM Plex Mono Bold"), local(IBMPlexMono-Bold);
+}
+
+@font-face {
+  font-family: "Arial Plus";
+  unicode-range: U+221e;
+  font-style: normal;
+  font-weight: 700;
+  src: local("DejaVu Math TeX Gyre");
+}
+
+@font-face {
+  font-family: "Arial Plus";
+  unicode-range: U+30;
+  font-style: italic;
+  font-weight: 400;
+  src: url("fonts/IBMPlexMono-Italic-SlashedZero.woff2"), local("IBM Plex Mono Italic"), local(IBMPlexMono-Italic);
+}
+
+@font-face {
+  font-family: "Arial Plus";
+  unicode-range: U+221e;
+  font-style: italic;
+  font-weight: 400;
+  src: local("DejaVu Math TeX Gyre");
+}
+
+@font-face {
+  font-family: "Arial Plus";
+  unicode-range: U+30;
+  font-style: italic;
+  font-weight: 700;
+  src: url("fonts/IBMPlexMono-BoldItalic-SlashedZero.woff2"), local("IBM Plex Mono Bold Italic"), local(IBMPlexMono-BoldItalic);
+}
+
+@font-face {
+  font-family: "Arial Plus";
+  unicode-range: U+221e;
+  font-style: italic;
+  font-weight: 700;
+  src: local("DejaVu Math TeX Gyre");
+}
+
+:root {
+  --page-number-style: decimal;
+}
+
+@page {
+  size: A4;
+  margin-top: 28mm;
+  margin-bottom: 20mm;
+  margin-inside: 19mm;
+  margin-outside: 13mm;
+  -prince-page-fill: prefer-fill;
+
+  /* Uncomment when producing WIP versions of final standards */
+  /*
+  @prince-overlay {
+    color: rgba(0,0,0,0.15);
+    content: "WORK IN PROGRESS";
+    font-family: Arial;
+    font-weight: bolder;
+    font-size: 100pt;
+    transform: rotate(-60deg);
+  }
+  */
+
+  @bottom-left {
+    font-family: Arial;
+  }
+
+  @bottom-right {
+    font-family: Arial;
+  }
+}
+
+@page :verso {
+  @top-left {
+    content: url("img/ecma-header.svg");
+    padding-top: 5mm;
+  }
+
+  @bottom-left {
+    content: counter(page, var(--page-number-style));
+    font-size: 10pt;
+  }
+
+  @bottom-right {
+    content: "© Ecma International " string(year, first);
+    font-size: 8pt;
+  }
+}
+
+@page :recto {
+  @top-right {
+    content: url("img/ecma-header.svg");
+    padding-top: 5mm;
+  }
+
+  @bottom-left {
+    content: "© Ecma International " string(year, first);
+    font-size: 8pt;
+  }
+
+  @bottom-right {
+    content: counter(page, var(--page-number-style));
+    font-size: 10pt;
+  }
+}
+
+@page :first, :nth(2) {
+  margin: 0;
+
+  @top-left {
+    content: none;
+  }
+
+  @top-right {
+    content: none;
+  }
+
+  @bottom-left {
+    content: none;
+  }
+
+  @bottom-right {
+    content: none;
+  }
+}
+
+@page toc, copyright, intro {
+  --page-number-style: lower-roman;
+}
+
+@page :blank {
+  @bottom-left {
+    content: none;
+  }
+
+  @bottom-right {
+    content: none;
+  }
+}
+
+@page front-cover {
+  background-image: url("img/print-front-cover.svg");
+}
+
+@page inside-cover {
+  background-image: url("img/print-inside-cover.svg");
+}
+
+@page front-cover, inside-cover {
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;
+  page-break-after: always;
+}
+
+html, body {
+  background-color: initial;
+}
+
+body {
+  color: #000;
+  counter-reset: example figure issue;
+  font-family: "Arial Plus", Arial, Helvetica, sans-serif, "DejaVu Math TeX Gyre", Symbola, monospace;
+  font-size: 10pt;
+  line-height: 1.15;
+  margin: 0;
+  text-align: justify;
+}
+
+body > emu-clause {
+  -prince-pdf-tag-type: Part;
+}
+
+h1 {
+  font-size: 12pt;
+  line-height: 1.09375;
+  margin-top: 20pt;
+  margin-bottom: 19pt;
+}
+
+h2 {
+  font-size: 11pt;
+  -prince-bookmark-state: closed;
+}
+
+h3, h4, h5, h6 {
+  font-size: 10pt;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  -prince-bookmark-label: content();
+}
+
+h1.shortname, h1.version, h1.title {
+  -prince-bookmark-level: none;
+}
+
+h1.shortname {
+  top: 86mm;
+  font-weight: 400;
+  font-size: 21pt;
+  right: 31mm;
+  text-align: right;
+  margin-top: 0;
+}
+
+h1.shortname a:link,
+h1.shortname a:visited,
+h1.shortname a:hover,
+h1.shortname a:active {
+  color: black;
+}
+
+h1.shortname .status {
+  display: inline-block;
+  margin-right: 7em;
+  text-transform: capitalize;
+}
+
+h1.version {
+  font-size: 9.7pt;
+  font-weight: normal;
+  margin-top: 0;
+  text-align: right;
+  top: 96mm;
+  left: 139mm;
+  string-set: year attr(data-year);
+}
+
+#front-cover {
+  page: front-cover;
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+}
+
+#front-cover h1 {
+  color: black;
+  display: block;
+  font-family: Verdana;
+  position: absolute;
+}
+
+#front-cover h1.title {
+  font-weight: bold;
+  font-size: 20pt;
+  line-height: 1.2;
+  top: 109mm;
+  right: 15mm;
+  width: 95mm;
+  text-align: left;
+}
+
+#inside-cover {
+  page: inside-cover;
+}
+
+#inside-cover address {
+  color: black;
+  font-size: 12pt;
+  font-style: normal;
+  position: relative;
+  left: 72mm;
+  top: 82mm;
+}
+
+.copyright-notice + h1.title {
+  break-before: recto;
+  counter-reset: page 1;
+  font-size: 16pt;
+  margin-bottom: 38pt;
+}
+
+.copyright-notice { /* ecma mandated */
+  font-style: italic;
+  border: 1px solid black;
+  padding: 1em;
+  page: copyright;
+  page-break-before: always;
+  page-break-after: always;
+}
+
+.full-page-svg {
+  color: rgba(255, 255, 255, 0);
+}
+
+a {
+  text-decoration: none;
+  color: #206ca7;
+}
+
+a:visited {
+  color: #206ca7;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #239dee;
+}
+
+cite { font-style: italic; }
+
+p {
+  text-align: justify;
+  text-rendering: optimizeLegibility;
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  orphans: 2;
+  widows: 2;
+  margin: 0 0 12pt;
+}
+
+#toc,
+#spec-container > emu-intro,
+#spec-container > emu-annex {
+  break-before: recto;
+  break-after: page;
+}
+
+#toc {
+  page: toc;
+  counter-reset: page 1;
+}
+
+#toc h2 {
+  font-size: 12pt;
+  margin-bottom: 1.5ex;
+}
+
+#toc > h2 {
+  -prince-bookmark-level: 1;
+}
+
+#toc > h2::after {
+  content: "page";
+  float: right;
+  font-size: 10pt;
+  text-align: right;
+}
+
+#toc a {
+  color: #000;
+}
+
+#toc a[href]::after {
+  content: leader(dotted)  target-counter(attr(href), page);
+}
+
+#toc > ol.toc {
+  margin-top: 0;
+}
+
+/* skip the Introduction since it's before the first emu-clause (and therefore doesn't have a proper page number) */
+#toc > ol > li:first-child {
+  display: none;
+}
+
+#toc > ol > li {
+  margin-top: 0.75ex;
+}
+
+ol.toc {
+  font-weight: bold;
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+  -prince-pdf-tag-type: TOC;
+}
+
+ol.toc .secnum {
+  display: inline-block;
+  min-width: 3.25em;
+}
+
+ol.toc li {
+  text-indent: 35pt hanging;
+  -prince-pdf-tag-type: TOCI;
+}
+
+ol.toc span.info {
+  font-weight: normal;
+}
+
+a[data-print-href]::after {
+  content: " <" attr(href) ">";
+  color: initial;
+}
+
+.secnum {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 .secnum {
+  text-decoration: none;
+  margin-right: 5px;
+}
+
+h1 .secnum:empty {
+  margin: 0;
+  padding: 0;
+}
+
+dl {
+  text-align: left;
+}
+
+dt, dfn { 
+  font-weight: bold;
+  break-after: avoid;
+}
+
+dd {
+  break-inside: avoid;
+  margin: 0 0 .5em 2em;
+}
+
+emu-intro, emu-clause, emu-annex {
+  display: block;
+  margin-top: 4ex;
+}
+
+emu-intro {
+  -prince-pdf-tag-type: Part;
+  page: intro;
+}
+
+emu-clause { prince-pdf-tag-type: Art; }
+
+emu-clause p:first-of-type {
+  margin-bottom: 0;
+  orphans: 3;
+  break-after: avoid-page;
+}
+
+emu-clause p:last-child {
+  break-after: auto;
+  margin-bottom: 0;
+}
+
+emu-clause > p:only-of-type {
+  break-after: auto;
+}
+
+emu-clause > p:first-of-type + emu-alg {
+  break-before: avoid;
+}
+
+emu-intro emu-intro, emu-clause emu-clause, emu-annex emu-annex {
+  margin-top: 3.5ex;
+}
+
+emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex,
+emu-intro emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex emu-annex,
+emu-intro emu-intro emu-intro emu-intro emu-intro,
+emu-clause emu-clause emu-clause emu-clause emu-clause,
+emu-annex emu-annex emu-annex emu-annex emu-annex {
+  margin-top: 3.2ex;
+}
+
+emu-intro h1, emu-clause h1 , emu-annex h1 {
+  break-after: avoid;
+  font-size: 12pt;
+  -prince-bookmark-level: 1;
+  -prince-bookmark-label: content();
+}
+
+emu-clause emu-clause h1, emu-annex emu-annex h1 {
+  -prince-bookmark-level: 2;
+  -prince-bookmark-state: closed;
+}
+
+emu-clause emu-clause h1, emu-annex emu-annex h1,
+emu-intro h2, emu-clause h2, emu-annex h2 {
+  font-size: 11pt;
+}
+
+emu-clause ol, emu-clause ul, emu-clause dl, emu-annex ol, emu-annex ul, emu-annex dl {
+  margin-left: 0;
+  padding-left: 1.75em;
+}
+
+emu-clause ol ol, emu-clause ul ul {
+  padding-left: 2em;
+}
+
+emu-annex header h1, emu-annex header h2, emu-annex header p {
+  font-size: 14pt;
+  font-weight: bold;
+  text-align: center;
+}
+
+emu-annex header em {
+  font-style: normal;
+  font-weight: normal;
+}
+
+a[href^="#"]{
+  -prince-pdf-tag-type: Reference;
+}
+
+emu-note {
+  margin: 1em 0;
+  display: flex;
+  flex-direction: row;
+  color: inherit;
+  padding: 10px 10px 10px 0;
+  overflow-x: auto;
+  -prince-pdf-tag-type: Sect;
+}
+
+emu-note {
+  border-left: 5px solid #52e052;
+  background: #e9fbe9;
+  gap: initial;
+}
+
+emu-note::before {
+  content: "NOTE ";
+  flex: 0 0 4.5em;
+  font-size: 9pt;
+  margin-top: 0.125em;
+  padding-left: 0.5em;
+  text-align: left;
+}
+
+emu-note, emu-note  p{
+  break-inside: avoid;
+}
+
+emu-note p {
+  text-align: left;
+  hyphens: manual;
+  overflow: hidden;
+}
+
+emu-note > span.note {
+  white-space: nowrap;
+  flex-grow: 0;
+  flex-shrink: 1;
+  text-transform: uppercase;
+  padding-left: 5px;
+}
+
+emu-note[issue] {
+  border-left-color: #962626;
+  background-color: #f1d1d1;
+  string-set: issues content()
+}
+
+emu-note[issue]::before, emu-note[example]::before { flex-basis: 5.5em; }
+
+emu-note[issue]::before {
+  content: "Issue " counter(issue);
+  counter-increment: issue;
+}
+
+emu-note[example] {
+  background-color: #ffeedd;
+  border-left-color: #ff6600;
+}
+
+emu-note[example]::before {
+  content: "Example " counter(example);
+  counter-increment: example;
+}
+
+emu-note[example] figure {
+  margin: 0;
+}
+
+emu-note > div.note-contents {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: auto;
+}
+
+emu-note > div.note-contents > p:first-of-type {
+  margin-top: 0;
+}
+
+emu-note > div.note-contents > p:last-of-type {
+  margin-bottom: 0;
+}
+
+emu-figure figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  break-inside: avoid;
+  counter-increment: figure;
+}
+
+figure figcaption {
+  display: block;
+  color: #555555;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* depth 1 */
+emu-alg ol,
+  /* depth 4 */
+emu-alg ol ol ol ol,
+emu-alg ol.nested-thrice,
+emu-alg ol.nested-twice ol,
+emu-alg ol.nested-once ol ol {
+  list-style-type: decimal;
+}
+
+/* depth 2 */
+emu-alg ol ol,
+emu-alg ol.nested-once,
+  /* depth 5 */
+emu-alg ol ol ol ol ol,
+emu-alg ol.nested-four-times,
+emu-alg ol.nested-thrice ol,
+emu-alg ol.nested-twice ol ol,
+emu-alg ol.nested-once ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+/* depth 3 */
+emu-alg ol ol ol,
+emu-alg ol.nested-twice,
+emu-alg ol.nested-once ol,
+  /* depth 6 */
+emu-alg ol ol ol ol ol ol,
+emu-alg ol.nested-lots,
+emu-alg ol.nested-four-times ol,
+emu-alg ol.nested-thrice ol ol,
+emu-alg ol.nested-twice ol ol ol,
+emu-alg ol.nested-once ol ol ol ol,
+  /* depth 7+ */
+emu-alg ol.nested-lots ol {
+  list-style-type: lower-roman;
+}
+
+emu-alg ul {
+  list-style-type: square;
+}
+
+emu-alg li {
+  orphans: 2;
+  widows: 2;
+}
+
+emu-alg > ol > li:first-child {
+  break-after: avoid-page;
+}
+
+emu-alg ol li:last-child {
+  break-before: avoid;
+  break-after: initial; /* it's okay to break after the last item in a list, even if it's also the first item in the list */
+}
+
+emu-clause > p:first-of-type + emu-alg {
+  break-before: avoid;
+}
+
+.index {
+  columns: 3;
+  column-gap: 5%;
+  text-align: left;
+  -prince-pdf-tag-type: Index;
+}
+
+.index > li {
+  margin: 1em 0 .5em;
+}
+
+#issues-index {
+  counter-reset: issue;
+}
+
+pre, code {
+  font-family: "Comic Code", "IBM Plex Mono", monospace;
+  white-space: pre;
+}
+
+code {
+  font-weight: bold;
+}
+
+code.highlight {
+  padding: .1em;
+  border-radius: .3em;
+  display: inline-block;
+}
+
+code.highlight > * {
+  display: inline; 
+}
+
+pre.highlight, pre > code.highlight { 
+  display: block;
+  padding: 1em;
+  margin: .5em 0;
+  overflow: auto; 
+  border-radius: 0;
+}
+
+.highlight { background: rgba(0, 0, 0, .03); }
+
+var {
+  border-radius: 5px;
+  color: #218379;
+  transition: all 0.25s ease-out;
+  cursor: pointer;
+  padding: 0 4px;
+  margin: 0 -4px;
+  mix-blend-mode: multiply;
+}
+
+c-[a] { color: #990055 } /* Keyword.Declaration */
+c-[b] { color: #990055 } /* Keyword.Type */
+c-[c] { color: #708090 } /* Comment */
+c-[d] { color: #708090 } /* Comment.Multiline */
+c-[e] { color: #0077aa } /* Name.Attribute */
+c-[f] { color: #669900 } /* Name.Tag */
+c-[g] { color: #222222 } /* Name.Variable */
+c-[k] { color: #990055 } /* Keyword */
+c-[l] { color: #000000 } /* Literal */
+c-[m] { color: #000000 } /* Literal.Number */
+c-[n] { color: #0077aa } /* Name */
+c-[o] { color: #999999 } /* Operator */
+c-[p] { color: #999999 } /* Punctuation */
+c-[s] { color: #a67f59 } /* Literal.String */
+c-[t] { color: #a67f59 } /* Literal.String.Single */
+c-[u] { color: #a67f59 } /* Literal.String.Double */
+c-[cp] { color: #708090 } /* Comment.Preproc */
+c-[c1] { color: #708090 } /* Comment.Single */
+c-[cs] { color: #708090 } /* Comment.Special */
+c-[kc] { color: #990055 } /* Keyword.Constant */
+c-[kn] { color: #990055 } /* Keyword.Namespace */
+c-[kp] { color: #990055 } /* Keyword.Pseudo */
+c-[kr] { color: #990055 } /* Keyword.Reserved */
+c-[ld] { color: #000000 } /* Literal.Date */
+c-[nc] { color: #0077aa } /* Name.Class */
+c-[no] { color: #0077aa } /* Name.Constant */
+c-[nd] { color: #0077aa } /* Name.Decorator */
+c-[ni] { color: #0077aa } /* Name.Entity */
+c-[ne] { color: #0077aa } /* Name.Exception */
+c-[nf] { color: #0077aa } /* Name.Function */
+c-[nl] { color: #0077aa } /* Name.Label */
+c-[nn] { color: #0077aa } /* Name.Namespace */
+c-[py] { color: #0077aa } /* Name.Property */
+c-[ow] { color: #999999 } /* Operator.Word */
+c-[mb] { color: #000000 } /* Literal.Number.Bin */
+c-[mf] { color: #000000 } /* Literal.Number.Float */
+c-[mh] { color: #000000 } /* Literal.Number.Hex */
+c-[mi] { color: #000000 } /* Literal.Number.Integer */
+c-[mo] { color: #000000 } /* Literal.Number.Oct */
+c-[sb] { color: #a67f59 } /* Literal.String.Backtick */
+c-[sc] { color: #a67f59 } /* Literal.String.Char */
+c-[sd] { color: #a67f59 } /* Literal.String.Doc */
+c-[se] { color: #a67f59 } /* Literal.String.Escape */
+c-[sh] { color: #a67f59 } /* Literal.String.Heredoc */
+c-[si] { color: #a67f59 } /* Literal.String.Interpol */
+c-[sx] { color: #a67f59 } /* Literal.String.Other */
+c-[sr] { color: #a67f59 } /* Literal.String.Regex */
+c-[ss] { color: #a67f59 } /* Literal.String.Symbol */
+c-[vc] { color: #0077aa } /* Name.Variable.Class */
+c-[vg] { color: #0077aa } /* Name.Variable.Global */
+c-[vi] { color: #0077aa } /* Name.Variable.Instance */
+c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
