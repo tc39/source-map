@@ -1,14 +1,3 @@
-/**
-* TODO: 
-* - set string variable for year
-* - copyright notice   letter-spacing: 0.3pt;
-*
-*
-*
-*
-*
-*/
-
 @font-face {
   font-family: "Arial Plus";
   src: local("Arial");
@@ -425,6 +414,10 @@ ol.toc span.info {
   font-weight: normal;
 }
 
+.toc .toc .toc {
+  display: none;
+}
+
 a[data-print-href]::after {
   content: " <" attr(href) ">";
   color: initial;
@@ -722,6 +715,7 @@ emu-clause > p:first-of-type + emu-alg {
 
 pre, code {
   font-family: "Comic Code", "IBM Plex Mono", monospace;
+  break-inside: avoid;
   white-space: pre;
 }
 

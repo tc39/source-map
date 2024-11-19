@@ -86,7 +86,7 @@
           <li><a href="#index-defined-elsewhere" title="Terms defined by reference">Annex A.2 Terms defined by reference</a></li>
         </ol>
       </li>
-      <li><a href="#issues-index" title="Issues Index">Annex B <span class="info">(normative)</span> Issues Index</a></li>
+      <li><a href="#issues-index" title="Issues Index">Annex B <span class="info">(informative)</span> Issues Index</a></li>
     </ol>
   </nav>
 
@@ -147,13 +147,14 @@
     <h2>Normative References</h2>
     
       <dl>
-        <dt>[ECMASCRIPT]</dt>
+        <dt id="biblio-ecma-262">[ECMA-262]</dt>
         <dd>
-          <a data-print-href href="https://tc39.es/ecma262/multipage/"><cite>ECMAScript Language Specification</cite></a>.
+          <a data-print-href href="https://tc39.es/ecma262/multipage/"><cite>ECMAScript&reg; Language Specification</cite></a>.
         </dd>
         <dt id="biblio-encoding">[ENCODING]</dt>
         <dd>
           Anne van Kesteren. <a data-print-href href="https://encoding.spec.whatwg.org/"><cite>Encoding Standard</cite></a>. Living Standard.
+        </dd>
         <dt id="biblio-fetch">[FETCH]</dt>
         <dd>
           Anne van Kesteren. <a data-print-href href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. Living Standard.</dd>
@@ -177,10 +178,6 @@
         <dt id="biblio-base64">[BASE64]</dt>
         <dd>
           <a data-print-href href="https://www.ietf.org/rfc/rfc4648.txt"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. Standards Track.
-        </dd>
-        <dt id="biblio-ecma-262">[ECMA-262]</dt>
-        <dd>
-          <a data-print-href href="https://tc39.es/ecma262/"><cite>ECMAScript&reg; Language Specification</cite></a>. Standards Track.
         </dd>
         <dt id="biblio-evalsourceurl">[EvalSourceURL]</dt>
         <dd>
@@ -573,7 +570,7 @@
 
     <emu-alg>
       <ol>
-        <li>If <var>groupings</var> is not an ASCII string, throw an error.
+        <li>If <var>groupings</var> is not an ASCII string, throw an error.</li>
         <li>
           If <var>groupings</var> contains any code unit other than:
           <ul>
@@ -583,16 +580,18 @@
             <li>U+0061 (a) to U+007A (z);</li>
             <li>U+002B (+), U+002F (/)</li>
           </ul>
-        <emu-note>
-          <div class="note-contents">
-            <p>These are the valid <a href="#biblio-base64" title="The Base16, Base32, and Base64 Data Encodings">[base64]</a> characters (excluding the padding character <code class="highlight"><c- o>=</c-></code>), together with <code class="highlight"><c- p>,</c-></code> and <code class="highlight"><c- p>;</c-></code>. then throw an error.</p>
-          </div>
-        </emu-note>
-      </li>
+          <emu-note>
+            <div class="note-contents">
+              <p>These are the valid <a href="#biblio-base64" title="The Base16, Base32, and Base64 Data Encodings">[base64]</a> characters (excluding the padding character <code class="highlight"><c- o>=</c-></code>), together with <code class="highlight"><c- p>,</c-></code> and <code class="highlight"><c- p>;</c-></code>.</p>
+            </div>
+          </emu-note>
+        </li>
+        <li>then throw an error.</li>
       </ol>
     </emu-alg>
       
     <p>To <dfn id="decode-a-base64-vlq">decode a base64 VLQ</dfn> from a string <var>segment</var> given a position variable <var>position</var>, run the following steps:</p>
+
     <emu-alg>
       <ol>
         <li>If <var>position</var> points to the end of <var>segment</var>, return null.</li>
@@ -1251,45 +1250,114 @@
 
       <ul class="index">
         <li>
-          [<a href="https://tc39.es/ecma262/multipage/">ECMASCRIPT</a>] defines the following terms:
+          [<a href="https://tc39.es/ecma262/multipage/">ECMA-262</a>] defines the following terms:
           <ul>
-            <li>comment</li>
-            <li>divpunctuator</li>
-            <li>ecmascript lexical grammar</li>
-            <li>hashbangcomment</li>
-            <li>identifiername</li>
+            <li>Comment</li>
+            <li>DivPunctuator</li>
+            <li>ECMAScript Lexical Grammar</li>
+            <li>HashbangComment</li>
+            <li>IdentifierName</li>
             <li>line terminator code points</li>
-            <li>lineterminator</li>
+            <li>LineTerminator</li>
             <li>multi-line comment</li>
-            <li>numericliteral</li>
-            <li>privateidentifier</li>
-            <li>punctuator</li>
-            <li>regexpbuiltinexec</li>
-            <li>regularexpressionliteral</li>
-            <li>rightbracepunctuator</li>
+            <li>NumericLiteral</li>
+            <li>PrivateIdentifier</li>
+            <li>Punctuator</li>
+            <li>RegExpBuiltinExec</li>
+            <li>RegularExpressionLiteral</li>
+            <li>RightBracePunctuator</li>
             <li>single-line comment</li>
-            <li>stringliteral</li>
-            <li>template</li>
-            <li>templatesubstitutiontail</li>
+            <li>StringLiteral</li>
+            <li>Template</li>
+            <li>TemplateSubstitutionTail</li>
             <li>tokens</li>
             <li>white space code points</li>
-            <li>whitespace</li>
+            <li>WhiteSpace</li>
           </ul>
         </li>
-        <li>[<a href="https://www.w3.org/TR/wasm-core-2/">WASM</a>] defines the following terms:
+        <li>
+          [<a href="https://encoding.spec.whatwg.org/">ENCODING</a>] defines the following terms:
+          <ul>
+            <li>UTF-8 decode without BOM or fail</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://fetch.spec.whatwg.org/">FETCH</a>] defines the following terms:
+          <ul>
+            <li>fetch</li>
+            <li>HTTP newline byte</li>
+            <li>HTTP(S) scheme</li>
+            <li>processResponseConsumeBody</li>
+            <li>request</li>
+            <li>response</li>
+            <li>URL</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://infra.spec.whatwg.org/">INFRA</a>] defines the following terms:
+          <ul>
+            <li>append</li>
+            <li>ASCII string</li>
+            <li>boolean</li>
+            <li>break</li>
+            <li>byte</li>
+            <li>byte sequence</li>
+            <li>code point</li>
+            <li>code point substring</li>
+            <li>code unit</li>
+            <li>code unit substring</li>
+            <li>collect a sequence of code points</li>
+            <li>concatenate</li>
+            <li>exist</li>
+            <li>for each</li>
+            <li>length</li>
+            <li>list</li>
+            <li>map</li>
+            <li>parse a JSON string to an Infra value</li>
+            <li>parse JSON bytes to a JavaScript value</li>
+            <li>position variable</li>
+            <li>size</li>
+            <li>starts with</li>
+            <li>strictly split</li>
+            <li>string</li>
+            <li>struct</li>
+            <li>value</li>
+            <li>while</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://url.spec.whatwg.org/">URL</a>] defines the following terms:
+          <ul>
+            <li>scheme</li>
+            <li>URL</li>
+            <li>URL parser</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://www.w3.org/TR/wasm-core-2/">WASM</a>] defines the following terms:
           <ul>
             <li>custom section</li>
             <li>module_decode</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://webidl.spec.whatwg.org/">WEBIDL</a>] defines the following terms:
+          <ul>
+            <li>TypeError</li>
+            <li>a new promise</li>
+            <li>reject</li>
+            <li>resolve</li>
           </ul>
         </li>
       </ul>
     </emu-annex>
   </emu-annex>
 
-  <emu-annex id="issues-index" normative>
+  <emu-annex id="issues-index">
     <header>
       <p>Annex B<br />
-        <em>(Normative)</em></p>
+        <em>(Informative)</em>
+      </p>
       <h1>Issues Index</h1>
     </header>
 
@@ -1299,7 +1367,6 @@
         <p>A fix to this problem is being worked on, and is expected to be included in a future version of the standard. It will likely involve early returning from the below algorithms whenever there is a comment (or comment-like) that contains the characters U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the sequence U+002A U+002F (*/).</p>
       </div>
     </emu-note>
-
   </emu-annex>
 </main>
 </body>
