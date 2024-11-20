@@ -44,7 +44,7 @@ spec:infra; type:dfn;
     for:list; text:for each
 </pre>
 <pre class="anchors">
-urlPrefix:https://tc39.es/ecma262/#; type:dfn; spec:ecmascript
+urlPrefix:https://tc39.es/ecma262/#; type:dfn; spec:ECMA-262
     url:sec-lexical-and-regexp-grammars; text:tokens
     url:table-line-terminator-code-points; text:line terminator code points
     url:sec-white-space; text: white space code points
@@ -123,13 +123,6 @@ urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
     "publisher": "Firebug",
     "status": "archive",
     "title": "Give your eval a name with //@ sourceURL"
-  },
-  "ECMA-262": {
-    "href": "https://tc39.es/ecma262/",
-    "id": "esma262",
-    "publisher": "ECMA",
-    "status": "Standards Track",
-    "title": "ECMAScript® Language Specification"
   },
   "V2Format": {
     "href": "https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US",
@@ -259,8 +252,8 @@ References {#references}
 <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
 <div class="no-ref">
 <dl>
- <dt id="biblio-ecmascript" data-no-self-link="">\[ECMASCRIPT]
- </dt><dd><a href="https://tc39.es/ecma262/multipage/"><cite>ECMAScript Language Specification</cite></a>. URL: <a href="https://tc39.es/ecma262/multipage/">https://tc39.es/ecma262/multipage/</a>
+ </dd><dt id="biblio-ecma-262" data-no-self-link="">\[ECMA-262]
+ </dt><dd><a href="https://tc39.es/ecma262/"><cite>ECMAScript® Language Specification</cite></a>. Standards Track. URL: <a href="https://tc39.es/ecma262/">https://tc39.es/ecma262/</a>
  </dd><dt id="biblio-encoding" data-no-self-link="">\[ENCODING]
  </dt><dd>Anne van Kesteren. <a href="https://encoding.spec.whatwg.org/"><cite>Encoding Standard</cite></a>. Living Standard. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a>
  </dd><dt id="biblio-fetch" data-no-self-link="">\[FETCH]
@@ -276,8 +269,6 @@ References {#references}
 <dl>
  <dt id="biblio-base64" data-no-self-link="">\[BASE64]
  </dt><dd><a href="https://www.ietf.org/rfc/rfc4648.txt"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. Standards Track. URL: <a href="https://www.ietf.org/rfc/rfc4648.txt">https://www.ietf.org/rfc/rfc4648.txt</a>
- </dd><dt id="biblio-ecma-262" data-no-self-link="">\[ECMA-262]
- </dt><dd><a href="https://tc39.es/ecma262/"><cite>ECMAScript® Language Specification</cite></a>. Standards Track. URL: <a href="https://tc39.es/ecma262/">https://tc39.es/ecma262/</a>
  </dd><dt id="biblio-evalsourceurl" data-no-self-link="">\[EvalSourceURL]
  </dt><dd><a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/"><cite>Give your eval a name with //@ sourceURL</cite></a>. archive. URL: <a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/">https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/</a>
  </dd><dt id="biblio-v2format" data-no-self-link="">\[V2Format]
