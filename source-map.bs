@@ -138,6 +138,17 @@ urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
 }
 </pre>
 
+<style>
+  /* match list styles of ecmarkup */
+  ol > li { list-style-type: decimal; }                       /* depth 1 */
+  ol ol > li { list-style-type: lower-alpha; }                /* depth 2 */
+  ol ol ol > li { list-style-type: lower-roman; }             /* depth 3 */
+  ol ol ol ol > li { list-style-type: decimal; }              /* depth 4 */
+  ol ol ol ol ol > li { list-style-type: lower-alpha; }       /* depth 5 */
+  ol ol ol ol ol ol > li { list-style-type: lower-roman; }    /* depth 6 */
+  ol ol ol ol ol ol ol > li { list-style-type: lower-roman; } /* depth 7+ is lower-roman */
+</style>
+
 <h2 class="no-num" id="intro">Introduction</h2>
 
 This Ecma Standard defines the Source Map Format, used for mapping transpiled source code back to the original sources.
