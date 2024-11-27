@@ -38,7 +38,7 @@ Older revisions:
 | ------------------------------------------------------------------------------------------ | ----------------------- | ------- |
 | [Scopes](https://github.com/tc39/source-map/blob/main/proposals/scopes.md)                 | Holger Benl, Simon Zünd | Stage 3 |
 | [Range Mappings](https://github.com/tc39/source-map/blob/main/proposals/range-mappings.md) | Tobias Koppers          | Stage 2 |
-| [Debug ID](https://github.com/tc39/source-map/blob/main/proposals/debug-id.md)             | Luca Forstner           | Stage 1 |
+| [Debug ID](https://github.com/tc39/source-map/blob/main/proposals/debug-id.md)             | Luca Forstner           | Stage 2 |
 | [Env](https://github.com/tc39/source-map/blob/main/proposals/env.md)                       | Nick Fitzgerald         | Stage 1 |
 
 ## License
