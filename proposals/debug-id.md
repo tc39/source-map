@@ -4,7 +4,7 @@ This document presents a proposal to add globally unique build or debug IDs to s
 
 ## Current Status
 
-Source maps proposal at stage 1 of the process, see [Our process document](https://github.com/tc39/source-map/blob/main/PROCESS.md)
+Source maps proposal at stage 2 of the process, see [Our process document](https://github.com/tc39/source-map/blob/main/PROCESS.md)
 
 ## Author
 
