@@ -181,7 +181,7 @@ In 2023-2024, the source map format was developed into a more precise Ecma stand
 with significant contributions from many people. Further iteration on the source map
 format is expected to come from TC39-TG4.
 
-Asumu Takikawa, Nicolò Ribaudo, Jon Kuperman
+Asumu Takikawa, Nicolò Ribaudo, Jon Kuperman<br/>
 ECMA-426, 1<sup>st</sup> edition, Project Editors
 
 <div style="display: none" id="copyright-before"></div>
