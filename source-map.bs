@@ -177,6 +177,11 @@ Pavel Podivilov (Google).
 The source map format does not have version numbers anymore, and it is instead
 hard-coded to always be "3".
 
+In 2023-2024, the source map format was developed into a more precise Ecma standard,
+with significant contributions from many people, including Asumu Takikawa, Nicolò
+Ribaudo, and Jon Kuperman. Further iteration on the source map format is expected
+to come from TC39-TG4.
+
 <div style="display: none" id="copyright-before"></div>
 <div style="display: none" id="copyright">
 <p>COPYRIGHT NOTICE</p>
