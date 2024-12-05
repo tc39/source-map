@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: node scripts/ipr-check.js tc39/source-map ${{ github.event.pull_request.head.sha || 'HEAD' }}
+      - run: node scripts/ipr-check.js tc39/ecma426 ${{ github.event.pull_request.head.sha || 'HEAD' }}
         env:
           # This is a classic token with 'read:org' permission
           GH_TOKEN: ${{ secrets.GH_IPR_TOKEN }}
