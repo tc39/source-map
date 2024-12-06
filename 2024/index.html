@@ -1490,8 +1490,18 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 742f3d674, updated Mon Nov 4 14:56:54 2024 -0800" name="generator">
   <link href="https://tc39.es/source-map/" rel="canonical">
-  <meta content="5ab46d5f373a2af5b843be9eb74656d490a98a61" name="revision">
+  <meta content="2c35da2c2e9bf5a4d73a8524681f83ccca53f18f" name="revision">
   <meta content="dark light" name="color-scheme">
+<style>
+  /* match list styles of ecmarkup */
+  ol > li { list-style-type: decimal; }                       /* depth 1 */
+  ol ol > li { list-style-type: lower-alpha; }                /* depth 2 */
+  ol ol ol > li { list-style-type: lower-roman; }             /* depth 3 */
+  ol ol ol ol > li { list-style-type: decimal; }              /* depth 4 */
+  ol ol ol ol ol > li { list-style-type: lower-alpha; }       /* depth 5 */
+  ol ol ol ol ol ol > li { list-style-type: lower-roman; }    /* depth 6 */
+  ol ol ol ol ol ol ol > li { list-style-type: lower-roman; } /* depth 7+ is lower-roman */
+</style>
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
@@ -2172,7 +2182,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">Source Map Format Specification</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-11-15">15 November 2024</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Stage 0: Strawman, <time class="dt-updated" datetime="2024-12-06">6 December 2024</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2285,6 +2295,10 @@ limiting its usefulness.  The v3 format is based on suggestions made by
 Pavel Podivilov (Google).</p>
    <p>The source map format does not have version numbers anymore, and it is instead
 hard-coded to always be "3".</p>
+   <p>In 2023-2024, the source map format was developed into a more precise Ecma standard,
+with significant contributions from many people. Further iteration on the source map
+format is expected to come from TC39-TG4.</p>
+   <p>Asumu Takikawa, Nicolò Ribaudo, Jon Kuperman<br> ECMA-426, 1<sup>st</sup> edition, Project Editors</p>
    <div id="copyright-before" style="display: none"></div>
    <div id="copyright" style="display: none">
     <p>COPYRIGHT NOTICE</p>
@@ -2340,8 +2354,8 @@ terminating where the specification indicates that an algorithm may <a data-link
    <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a><a class="self-link" href="#normative"></a></h3>
    <div class="no-ref">
     <dl>
-     <dt id="biblio-ecmascript">[ECMASCRIPT] 
-     <dd><a href="https://tc39.es/ecma262/multipage/"><cite>ECMAScript Language Specification</cite></a>. URL: <a href="https://tc39.es/ecma262/multipage/">https://tc39.es/ecma262/multipage/</a> 
+     <dt id="biblio-ecma-262">[ECMA-262] 
+     <dd><a href="https://tc39.es/ecma262/"><cite>ECMAScript® Language Specification</cite></a>. Standards Track. URL: <a href="https://tc39.es/ecma262/">https://tc39.es/ecma262/</a> 
      <dt id="biblio-encoding">[ENCODING] 
      <dd>Anne van Kesteren. <a href="https://encoding.spec.whatwg.org/"><cite>Encoding Standard</cite></a>. Living Standard. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a> 
      <dt id="biblio-fetch">[FETCH] 
@@ -2357,8 +2371,6 @@ terminating where the specification indicates that an algorithm may <a data-link
     <dl>
      <dt id="biblio-base64">[BASE64] 
      <dd><a href="https://www.ietf.org/rfc/rfc4648.txt"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. Standards Track. URL: <a href="https://www.ietf.org/rfc/rfc4648.txt">https://www.ietf.org/rfc/rfc4648.txt</a> 
-     <dt id="biblio-ecma-262">[ECMA-262] 
-     <dd><a href="https://tc39.es/ecma262/"><cite>ECMAScript® Language Specification</cite></a>. Standards Track. URL: <a href="https://tc39.es/ecma262/">https://tc39.es/ecma262/</a> 
      <dt id="biblio-evalsourceurl">[EvalSourceURL] 
      <dd><a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/"><cite>Give your eval a name with //@ sourceURL</cite></a>. archive. URL: <a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/">https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/</a> 
      <dt id="biblio-v2format">[V2Format] 
@@ -3023,7 +3035,7 @@ U+0060 (`), U+0022 ("), or U+0027 ('), or the the sequence U+002A U+002F (*/).</
 run the following steps:</p>
    <ol>
     <li data-md>
-     <p>Let <var>tokens</var> be the <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list②②">list</a> of <a data-link-type="dfn" href="https://tc39.es/ecma262/#sec-lexical-and-regexp-grammars" id="ref-for-sec-lexical-and-regexp-grammars">tokens</a> obtained by parsing <var>source</var> according to <a data-link-type="biblio" href="#biblio-ecma-262" title="ECMAScript® Language Specification">[ECMA-262]</a>.</p>
+     <p>Let <var>tokens</var> be the <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list②②">list</a> of <a data-link-type="dfn" href="https://tc39.es/ecma262/#sec-lexical-and-regexp-grammars" id="ref-for-sec-lexical-and-regexp-grammars">tokens</a> obtained by parsing <var>source</var> according to <a data-link-type="biblio" href="#biblio-ecma-262" title="ECMAScript Language Specification">[ECMA-262]</a>.</p>
     <li data-md>
      <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list-iterate" id="ref-for-list-iterate⑤">For each</a> <var>token</var> in <var>tokens</var>, in reverse order:</p>
      <ol>
@@ -3487,7 +3499,7 @@ JavaScript-style single-line comments.</p>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
    <li>
-    <a data-link-type="biblio">[ECMASCRIPT]</a> defines the following terms:
+    <a data-link-type="biblio">[ECMA-262]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="5a25aef5">Comment</span>
      <li><span class="dfn-paneled" id="b184d4e1">DivPunctuator</span>
@@ -4389,27 +4401,27 @@ let refsData = {
 "https://infra.spec.whatwg.org/#string-concatenate": {"displayText":"concatenate","export":true,"for_":["string"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"concatenate","type":"dfn","url":"https://infra.spec.whatwg.org/#string-concatenate"},
 "https://infra.spec.whatwg.org/#string-position-variable": {"displayText":"position variable","export":true,"for_":["string"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"position variable","type":"dfn","url":"https://infra.spec.whatwg.org/#string-position-variable"},
 "https://infra.spec.whatwg.org/#struct": {"displayText":"struct","export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"struct","type":"dfn","url":"https://infra.spec.whatwg.org/#struct"},
-"https://tc39.es/ecma262/#prod-Comment": {"displayText":"Comment","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"comment","type":"dfn","url":"https://tc39.es/ecma262/#prod-Comment"},
-"https://tc39.es/ecma262/#prod-DivPunctuator": {"displayText":"DivPunctuator","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"divpunctuator","type":"dfn","url":"https://tc39.es/ecma262/#prod-DivPunctuator"},
-"https://tc39.es/ecma262/#prod-HashbangComment": {"displayText":"HashbangComment","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"hashbangcomment","type":"dfn","url":"https://tc39.es/ecma262/#prod-HashbangComment"},
-"https://tc39.es/ecma262/#prod-IdentifierName": {"displayText":"IdentifierName","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"identifiername","type":"dfn","url":"https://tc39.es/ecma262/#prod-IdentifierName"},
-"https://tc39.es/ecma262/#prod-LineTerminator": {"displayText":"LineTerminator","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"lineterminator","type":"dfn","url":"https://tc39.es/ecma262/#prod-LineTerminator"},
-"https://tc39.es/ecma262/#prod-MultiLineComment": {"displayText":"multi-line comment","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"multi-line comment","type":"dfn","url":"https://tc39.es/ecma262/#prod-MultiLineComment"},
-"https://tc39.es/ecma262/#prod-NumericLiteral": {"displayText":"NumericLiteral","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"numericliteral","type":"dfn","url":"https://tc39.es/ecma262/#prod-NumericLiteral"},
-"https://tc39.es/ecma262/#prod-PrivateIdentifier": {"displayText":"PrivateIdentifier","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"privateidentifier","type":"dfn","url":"https://tc39.es/ecma262/#prod-PrivateIdentifier"},
-"https://tc39.es/ecma262/#prod-Punctuator": {"displayText":"Punctuator","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"punctuator","type":"dfn","url":"https://tc39.es/ecma262/#prod-Punctuator"},
-"https://tc39.es/ecma262/#prod-RegularExpressionLiteral": {"displayText":"RegularExpressionLiteral","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"regularexpressionliteral","type":"dfn","url":"https://tc39.es/ecma262/#prod-RegularExpressionLiteral"},
-"https://tc39.es/ecma262/#prod-RightBracePunctuator": {"displayText":"RightBracePunctuator","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"rightbracepunctuator","type":"dfn","url":"https://tc39.es/ecma262/#prod-RightBracePunctuator"},
-"https://tc39.es/ecma262/#prod-SingleLineComment": {"displayText":"single-line comment","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"single-line comment","type":"dfn","url":"https://tc39.es/ecma262/#prod-SingleLineComment"},
-"https://tc39.es/ecma262/#prod-StringLiteral": {"displayText":"StringLiteral","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"stringliteral","type":"dfn","url":"https://tc39.es/ecma262/#prod-StringLiteral"},
-"https://tc39.es/ecma262/#prod-Template": {"displayText":"Template","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"template","type":"dfn","url":"https://tc39.es/ecma262/#prod-Template"},
-"https://tc39.es/ecma262/#prod-TemplateSubstitutionTail": {"displayText":"TemplateSubstitutionTail","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"templatesubstitutiontail","type":"dfn","url":"https://tc39.es/ecma262/#prod-TemplateSubstitutionTail"},
-"https://tc39.es/ecma262/#prod-WhiteSpace": {"displayText":"WhiteSpace","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"whitespace","type":"dfn","url":"https://tc39.es/ecma262/#prod-WhiteSpace"},
-"https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar": {"displayText":"ECMAScript Lexical Grammar","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"ecmascript lexical grammar","type":"dfn","url":"https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar"},
-"https://tc39.es/ecma262/#sec-lexical-and-regexp-grammars": {"displayText":"tokens","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"tokens","type":"dfn","url":"https://tc39.es/ecma262/#sec-lexical-and-regexp-grammars"},
-"https://tc39.es/ecma262/#sec-regexpbuiltinexec": {"displayText":"RegExpBuiltinExec","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"regexpbuiltinexec","type":"dfn","url":"https://tc39.es/ecma262/#sec-regexpbuiltinexec"},
-"https://tc39.es/ecma262/#sec-white-space": {"displayText":"white space code points","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"white space code points","type":"dfn","url":"https://tc39.es/ecma262/#sec-white-space"},
-"https://tc39.es/ecma262/#table-line-terminator-code-points": {"displayText":"line terminator code points","export":true,"for_":[],"level":"","normative":true,"shortname":"ecmascript","spec":"ecmascript","status":"anchor-block","text":"line terminator code points","type":"dfn","url":"https://tc39.es/ecma262/#table-line-terminator-code-points"},
+"https://tc39.es/ecma262/#prod-Comment": {"displayText":"Comment","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"comment","type":"dfn","url":"https://tc39.es/ecma262/#prod-Comment"},
+"https://tc39.es/ecma262/#prod-DivPunctuator": {"displayText":"DivPunctuator","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"divpunctuator","type":"dfn","url":"https://tc39.es/ecma262/#prod-DivPunctuator"},
+"https://tc39.es/ecma262/#prod-HashbangComment": {"displayText":"HashbangComment","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"hashbangcomment","type":"dfn","url":"https://tc39.es/ecma262/#prod-HashbangComment"},
+"https://tc39.es/ecma262/#prod-IdentifierName": {"displayText":"IdentifierName","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"identifiername","type":"dfn","url":"https://tc39.es/ecma262/#prod-IdentifierName"},
+"https://tc39.es/ecma262/#prod-LineTerminator": {"displayText":"LineTerminator","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"lineterminator","type":"dfn","url":"https://tc39.es/ecma262/#prod-LineTerminator"},
+"https://tc39.es/ecma262/#prod-MultiLineComment": {"displayText":"multi-line comment","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"multi-line comment","type":"dfn","url":"https://tc39.es/ecma262/#prod-MultiLineComment"},
+"https://tc39.es/ecma262/#prod-NumericLiteral": {"displayText":"NumericLiteral","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"numericliteral","type":"dfn","url":"https://tc39.es/ecma262/#prod-NumericLiteral"},
+"https://tc39.es/ecma262/#prod-PrivateIdentifier": {"displayText":"PrivateIdentifier","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"privateidentifier","type":"dfn","url":"https://tc39.es/ecma262/#prod-PrivateIdentifier"},
+"https://tc39.es/ecma262/#prod-Punctuator": {"displayText":"Punctuator","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"punctuator","type":"dfn","url":"https://tc39.es/ecma262/#prod-Punctuator"},
+"https://tc39.es/ecma262/#prod-RegularExpressionLiteral": {"displayText":"RegularExpressionLiteral","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"regularexpressionliteral","type":"dfn","url":"https://tc39.es/ecma262/#prod-RegularExpressionLiteral"},
+"https://tc39.es/ecma262/#prod-RightBracePunctuator": {"displayText":"RightBracePunctuator","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"rightbracepunctuator","type":"dfn","url":"https://tc39.es/ecma262/#prod-RightBracePunctuator"},
+"https://tc39.es/ecma262/#prod-SingleLineComment": {"displayText":"single-line comment","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"single-line comment","type":"dfn","url":"https://tc39.es/ecma262/#prod-SingleLineComment"},
+"https://tc39.es/ecma262/#prod-StringLiteral": {"displayText":"StringLiteral","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"stringliteral","type":"dfn","url":"https://tc39.es/ecma262/#prod-StringLiteral"},
+"https://tc39.es/ecma262/#prod-Template": {"displayText":"Template","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"template","type":"dfn","url":"https://tc39.es/ecma262/#prod-Template"},
+"https://tc39.es/ecma262/#prod-TemplateSubstitutionTail": {"displayText":"TemplateSubstitutionTail","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"templatesubstitutiontail","type":"dfn","url":"https://tc39.es/ecma262/#prod-TemplateSubstitutionTail"},
+"https://tc39.es/ecma262/#prod-WhiteSpace": {"displayText":"WhiteSpace","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"whitespace","type":"dfn","url":"https://tc39.es/ecma262/#prod-WhiteSpace"},
+"https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar": {"displayText":"ECMAScript Lexical Grammar","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"ecmascript lexical grammar","type":"dfn","url":"https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar"},
+"https://tc39.es/ecma262/#sec-lexical-and-regexp-grammars": {"displayText":"tokens","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"tokens","type":"dfn","url":"https://tc39.es/ecma262/#sec-lexical-and-regexp-grammars"},
+"https://tc39.es/ecma262/#sec-regexpbuiltinexec": {"displayText":"RegExpBuiltinExec","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"regexpbuiltinexec","type":"dfn","url":"https://tc39.es/ecma262/#sec-regexpbuiltinexec"},
+"https://tc39.es/ecma262/#sec-white-space": {"displayText":"white space code points","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"white space code points","type":"dfn","url":"https://tc39.es/ecma262/#sec-white-space"},
+"https://tc39.es/ecma262/#table-line-terminator-code-points": {"displayText":"line terminator code points","export":true,"for_":[],"level":"262","normative":true,"shortname":"ecma","spec":"ecma-262","status":"anchor-block","text":"line terminator code points","type":"dfn","url":"https://tc39.es/ecma262/#table-line-terminator-code-points"},
 "https://url.spec.whatwg.org/#concept-url": {"displayText":"URL","export":true,"for_":[],"level":"1","normative":true,"shortname":"url","spec":"url","status":"current","text":"url","type":"dfn","url":"https://url.spec.whatwg.org/#concept-url"},
 "https://url.spec.whatwg.org/#concept-url-parser": {"displayText":"URL parser","export":true,"for_":[],"level":"1","normative":true,"shortname":"url","spec":"url","status":"current","text":"url parser","type":"dfn","url":"https://url.spec.whatwg.org/#concept-url-parser"},
 "https://url.spec.whatwg.org/#concept-url-scheme": {"displayText":"scheme","export":true,"for_":["url"],"level":"1","normative":true,"shortname":"url","spec":"url","status":"current","text":"scheme","type":"dfn","url":"https://url.spec.whatwg.org/#concept-url-scheme"},
