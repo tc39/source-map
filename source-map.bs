@@ -1,6 +1,6 @@
 <pre class='metadata'>
-Title: Source Map Format Specification
-H1: Source Map
+Title: Source map format specification
+H1: Source map
 Shortname: source-map
 Level: none
 Status: STAGE0
@@ -15,7 +15,7 @@ Former Editor: John Lenz, Google
 Former Editor: Nick Fitzgerald, Mozilla
 Previous Version: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#
 Repository: source-map/source-map-spec
-Abstract: This Ecma standard defines the Source Map format, used for mapping transpiled source code back to the original sources.
+Abstract: This Ecma standard defines the Source map format, used for mapping transpiled source code back to the original sources.
 No Abstract: true
 Markup Shorthands: markdown yes
 Group: tc39
@@ -110,7 +110,7 @@ urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
     "id": "rfc4648",
     "publisher": "IETF",
     "status": "Standards Track",
-    "title": "The Base16, Base32, and Base64 Data Encodings"
+    "title": "IETF RFC 4648, The Base16, Base32, and Base64 Data Encodings"
   },
   "URL": {
     "href": "https://url.spec.whatwg.org/",
@@ -151,7 +151,7 @@ urlPrefix:https://webassembly.github.io/spec/core/; type:dfn; spec:wasm
 
 <h2 class="no-num" id="intro">Introduction</h2>
 
-This Ecma Standard defines the Source Map Format, used for mapping transpiled source code back to the original sources.
+This Ecma Standard defines the Source map format, used for mapping transpiled source code back to the original sources.
 
 The source map format has the following goals:
 * Support source-level debugging allowing bidirectional mapping
@@ -256,47 +256,30 @@ References {#references}
 ========================
 
 <!--
-  NOTE: This references section is manually generated because bikeshed assumes
-        that the references section should be un-numbered and we want to include
-        it as a numbered section. To generate it, use the following and then
-        copy the inner HTML contents:
-
-        <div data-fill-with="references"></div>
-
-        and replace [ with \[ to escape macros. Also add data-no-self-link="" to
-        each <dt> entry.
+  NOTE: This references section is manually generated because ECMA requirements
+        are not compatible with automatic bikeshed bibliography generation.
 -->
 
-<h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+The following documents are referred to in the text in such a way that some or all of their content constitutes
+requirements of this document. For dated references, only the edition cited applies. For undated references, the
+latest edition of the referenced document (including any amendments) applies.
+
+<h3 class="no-ref" id="normative"><span class="content">Normative references</span></h3>
 <div class="no-ref">
 <dl>
  </dd><dt id="biblio-ecma-262" data-no-self-link="">\[ECMA-262]
  </dt><dd><a href="https://tc39.es/ecma262/"><cite>ECMAScript® Language Specification</cite></a>. Standards Track. URL: <a href="https://tc39.es/ecma262/">https://tc39.es/ecma262/</a>
- </dd><dt id="biblio-encoding" data-no-self-link="">\[ENCODING]
- </dt><dd>Anne van Kesteren. <a href="https://encoding.spec.whatwg.org/"><cite>Encoding Standard</cite></a>. Living Standard. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a>
- </dd><dt id="biblio-fetch" data-no-self-link="">\[FETCH]
- </dt><dd>Anne van Kesteren. <a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
- </dd><dt id="biblio-infra" data-no-self-link="">\[INFRA]
- </dt><dd>Anne van Kesteren; Domenic Denicola. <a href="https://infra.spec.whatwg.org/"><cite>Infra Standard</cite></a>. Living Standard. URL: <a href="https://infra.spec.whatwg.org/">https://infra.spec.whatwg.org/</a>
- </dd><dt id="biblio-url" data-no-self-link="">\[URL]
- </dt><dd><a href="https://url.spec.whatwg.org/"><cite>URL Standard</cite></a>. Living Standard. URL: <a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>
- </dd><dt id="biblio-webidl" data-no-self-link="">\[WEBIDL]
- </dt><dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
+ </dd><dt id="biblio-json" data-no-self-link="">\[JSON]
+ </dt><dd><a href="https://tc39.es/ecma404/"><cite>The JSON data interchange syntax</cite></a>. Standards Track. URL: <a href="https://tc39.es/ecma404/">https://tc39.es/ecma404/</a>
 </dd></dl>
-<h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+
+<h3 class="no-ref" id="informative"><span class="content">Informative references</span></h3>
 <dl>
  <dt id="biblio-base64" data-no-self-link="">\[BASE64]
- </dt><dd><a href="https://www.ietf.org/rfc/rfc4648.txt"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. Standards Track. URL: <a href="https://www.ietf.org/rfc/rfc4648.txt">https://www.ietf.org/rfc/rfc4648.txt</a>
- </dd><dt id="biblio-evalsourceurl" data-no-self-link="">\[EvalSourceURL]
- </dt><dd><a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/"><cite>Give your eval a name with //@ sourceURL</cite></a>. archive. URL: <a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/">https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/</a>
- </dd><dt id="biblio-v2format" data-no-self-link="">\[V2Format]
- </dt><dd><a href="https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US"><cite>Source Map Revision 2 Proposal</cite></a>. URL: <a href="https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US">https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US</a>
- </dd><dt id="biblio-vlq" data-no-self-link="">\[VLQ]
- </dt><dd><a href="https://en.wikipedia.org/wiki/Variable-length_quantity"><cite>Variable-length quantity</cite></a>. reference article. URL: <a href="https://en.wikipedia.org/wiki/Variable-length_quantity">https://en.wikipedia.org/wiki/Variable-length_quantity</a>
+ </dt><dd><a href="https://www.ietf.org/rfc/rfc4648.txt"><cite>IETF RFC 4648, The Base16, Base32, and Base64 Data Encodings</cite></a>. Standards Track. URL: <a href="https://www.ietf.org/rfc/rfc4648.txt">https://www.ietf.org/rfc/rfc4648.txt</a>
  </dd><dt id="biblio-wasmnamesbinaryformat" data-no-self-link="">\[WasmNamesBinaryFormat]
  </dt><dd><a href="https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2"><cite>WebAssembly Names binary format</cite></a>. Living Standard. URL: <a href="https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2">https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2</a>
-</dd></dl>
-</div>
+</dl>
 
 Terms and definitions {#terminology}
 ====================================
@@ -343,7 +326,7 @@ For the purposes of this document, the following terms and definitions apply.
     and "🔥" (`FIRE`) measures as 2 code units. Source maps for other content types
     may diverge from this.
 
-Source Map Format {#source-map-format}
+Source map format {#source-map-format}
 ======================================
 
 A source map is a JSON document containing a top-level JSON object with the
@@ -362,7 +345,7 @@ following structure:
 }
 ```
 
-* <dfn for="json"><code>version</code></dfn> is the version field which must always be the number
+* <dfn for="json"><code>version</code></dfn> is the version field which shall always be the number
     `3` as an integer. The source map may be rejected if the field has any other value.
 * <dfn for="json"><code>file</code></dfn> is an optional name of the generated code
     that this source map is associated with. It's not specified if this can
@@ -499,7 +482,7 @@ To <dfn>optionally report an error</dfn>, implementations can choose to:
 - Report an error to the user, and continue processing.
 - Throw an error to abort the running algorithm. ([[Infra#algorithm-control-flow]])
 
-Mappings Structure {#mappings-structure}
+Mappings structure {#mappings-structure}
 ----------------------------------------
 
 The [=json/mappings=] data is broken down as follows:
@@ -522,12 +505,12 @@ The fields in each segment are:
 
 3. If present, the zero-based starting line in the original source.  This field contains a
     [=Base64 VLQ=] relative to the previous occurrence of this field, unless it is the first
-    occurrence of this field, in which case the whole value is represented.  Must be present if there
+    occurrence of this field, in which case the whole value is represented.  Shall be present if there
     is a source field.
 
 4. If present, the zero-based starting [=column=] of the line in the original source.  This
     field contains a [=Base64 VLQ=] relative to the previous occurrence of this field, unless it
-    is the first occurrence of this field, in which case the whole value is represented.  Must
+    is the first occurrence of this field, in which case the whole value is represented. Shall
     be present if there is a source field.
 
 5. If present, the zero-based index into the [=json/names=] list associated with this segment.  This
@@ -679,7 +662,7 @@ in the calling algorithm.
 ### [=decoded mapping|Mappings=] for generated JavaScript code ### {#mappings-javascript}
 
 Generated code positions that may have [=decoded mapping|mapping=] entries are defined in terms of *input elements*
-as per [=ECMAScript Lexical Grammar=]. [=decoded mapping|Mapping=] entries must point to either:
+as per [=ECMAScript Lexical Grammar=]. [=decoded mapping|Mapping=] entries shall point to either:
 
 1. the first code point of the source text matched by
     [=IdentifierName=], [=PrivateIdentifier=], [=Punctuator=], [=DivPunctuator=], [=RightBracePunctuator=],
@@ -709,7 +692,7 @@ from immediately invoked function expressions.
 The following enumeration lists productions of the ECMAScript [=Syntactic Grammar=]
 and the respective token or non-terminal (on the right-hand side of the production)
 for which source map generators should emit a [=named mapping=].
-The [=decoded mapping|mapping=] entry created for such tokens must follow [[#mappings-javascript]].
+The [=decoded mapping|mapping=] entry created for such tokens shall follow [[#mappings-javascript]].
 
 The enumeration should be understood as the "minimum". In general,
 source map generators are free to emit any additional [=named mappings=].
@@ -753,7 +736,7 @@ encoded as 0 (`A`).
 
 1. Source map generators may emit named [=decoded mapping|mappings=] for [=IdentifierReference=] in [=Expression=].
 
-Resolving Sources {#resolving-sources}
+Resolving sources {#resolving-sources}
 --------------------------------------
 
 If the sources are not absolute URLs after prepending the [=json/sourceRoot=], the sources are
@@ -794,11 +777,11 @@ corresponding to the given URL.
 Extensions {#extensions}
 ------------------------
 
-Source map consumers must ignore any additional unrecognized properties, rather than causing the
+Source map consumers shall ignore any additional unrecognized properties, rather than causing the
 source map to be rejected, so that additional features can be added to this format without
 breaking existing users.
 
-Index Map {#index-map}
+Index map {#index-map}
 ======================
 
 To support concatenating generated code and other common post-processing,
@@ -850,10 +833,10 @@ Section objects have the following fields:
 * <dfn dfn-for="index-map"><code>map</code></dfn> is an embedded complete source map object.
     An embedded map does not inherit any values from the containing index map.
 
-The sections must be sorted by starting position and the represented sections
-must not overlap.
+The sections shall be sorted by starting position and the represented sections
+shall not overlap.
 
-Retrieving Source Maps {#linking-and-fetching}
+Retrieving source maps {#linking-and-fetching}
 ========================================================
 
 Linking generated code to source maps {#linking-generated-code}
@@ -866,7 +849,7 @@ There are two possible ways to link source maps to the output.  The first requir
 support in order to add an HTTP header and the second requires an annotation in the source.
 
 Source maps are linked through URLs as defined in [[URL]]; in particular,
-characters outside the set permitted to appear in URIs must be percent-encoded
+characters outside the set permitted to appear in URIs shall be percent-encoded
 and it may be a data URI.  Using a data URI along with [=json/sourcesContent=] allows
 for a completely self-contained source map.
 
@@ -921,7 +904,7 @@ code <dfn>unambiguously links to a source map</dfn> if the result of all the ext
 is the same.
 
 If a tool consumes one or more source files that [=unambiguously links to a source map=] and it
-produces an output file that links to a source map, it must do so [=unambiguously links to a
+produces an output file that links to a source map, it shall do so [=unambiguously links to a
 source map|unambiguously=].
 
 <div class="example">
@@ -1062,7 +1045,7 @@ To <dfn>match a Source Map URL in a comment</dfn> |comment| (a [=string=]), run 
 Note: The prefix for this annotation was initially `//@` however this conflicts with Internet
 Explorer's Conditional Compilation and was changed to `//#`.
 
-Source map generators must only emit `//#` while source map consumers must accept both `//@` and `//#`.
+Source map generators shall only emit `//#` while source map consumers shall accept both `//@` and `//#`.
 
 #### Extraction methods for CSS sources #### {#extraction-css}
 
@@ -1088,7 +1071,7 @@ Since WebAssembly is not a textual format and it does not support comments, it s
 The URL is encoded using [[WasmNamesBinaryFormat]], and it's placed as the content of the [=custom section=]. It is invalid for
 tools that generate WebAssembly code to generate two or more [=custom section|custom sections=] with the "sourceMappingURL" name.
 
-Fetching Source Maps {#fetching-source-maps}
+Fetching source maps {#fetching-source-maps}
 --------------------------------------------
 
 To fetch a source map given a [=/URL=] |url|, run the following steps:
@@ -1127,7 +1110,7 @@ Conventions {#conventions}
 The following conventions should be followed when working with source maps or
 when generating them.
 
-Source Map Naming {#source-map-naming}
+Source map naming {#source-map-naming}
 --------------------------------------
 
 Commonly, a source map will have the same name as the generated file but with a `.map`
@@ -1145,12 +1128,12 @@ eval'd code, it has the following form:
 
 It is described in [[EvalSourceURL]].
 
-Language Neutral Stack Mapping Notes {#language-neutral-mapping}
+Language neutral stack mapping notes {#language-neutral-mapping}
 ================================================================
 
 Stack tracing mapping without knowledge of the source language is not covered by this document.
 
-Multi-level Mapping Notes {#multi-level-mapping}
+Multi-level mapping notes {#multi-level-mapping}
 ================================================
 
 It is getting more common to have tools generate sources from some DSL (templates) or compile
@@ -1167,7 +1150,33 @@ However, It is unclear what a "source map reference" looks like in anything othe
 More specifically, what a source map reference looks like in a language that doesn't support
 JavaScript-style single-line comments.
 
-License {#license}
-==================
+<!-- Note: This boilerplate is manually inserted here to match the order of the
+           PDF version -->
+<div data-fill-with="index"></div>
+<div data-fill-with="issues-index"></div>
+
+<h2 class="no-num" id="bibliography">Bibliography</h2>
+
+<dl>
+ </dd><dt id="biblio-encoding" data-no-self-link="">\[ENCODING]
+ </dt><dd>Anne van Kesteren. <a href="https://encoding.spec.whatwg.org/"><cite>Encoding Standard</cite></a>. Living Standard. URL: <a href="https://encoding.spec.whatwg.org/">https://encoding.spec.whatwg.org/</a>
+ </dd><dt id="biblio-fetch" data-no-self-link="">\[FETCH]
+ </dt><dd>Anne van Kesteren. <a href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
+ </dd><dt id="biblio-infra" data-no-self-link="">\[INFRA]
+ </dt><dd>Anne van Kesteren; Domenic Denicola. <a href="https://infra.spec.whatwg.org/"><cite>Infra Standard</cite></a>. Living Standard. URL: <a href="https://infra.spec.whatwg.org/">https://infra.spec.whatwg.org/</a>
+ </dd><dt id="biblio-url" data-no-self-link="">\[URL]
+ </dt><dd><a href="https://url.spec.whatwg.org/"><cite>URL Standard</cite></a>. Living Standard. URL: <a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>
+ </dd><dt id="biblio-webidl" data-no-self-link="">\[WEBIDL]
+ </dt><dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
+ </dd><dt id="biblio-evalsourceurl" data-no-self-link="">\[EvalSourceURL]
+ </dt><dd><a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/"><cite>Give your eval a name with //@ sourceURL</cite></a>. archive. URL: <a href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/">https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/</a>
+ </dd><dt id="biblio-v2format" data-no-self-link="">\[V2Format]
+ </dt><dd><a href="https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US"><cite>Source Map Revision 2 Proposal</cite></a>. URL: <a href="https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US">https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US</a>
+ </dd><dt id="biblio-vlq" data-no-self-link="">\[VLQ]
+ </dt><dd><a href="https://en.wikipedia.org/wiki/Variable-length_quantity"><cite>Variable-length quantity</cite></a>. reference article. URL: <a href="https://en.wikipedia.org/wiki/Variable-length_quantity">https://en.wikipedia.org/wiki/Variable-length_quantity</a>
+</dd></dl>
+</div>
+
+<h2 class="no-num" id="license">License</h2>
 
 This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
