@@ -1,49 +1,38 @@
 # Source Map Specification
 
-![CC BY-SA 3.0](https://licensebuttons.net/l/by-sa/3.0/88x31.png)
-
-This repository contains the different revisions of the source map specification.
-
-The first and second revision of the spec are provided for historical context.
-These revisions don't have widespread adoption in tools.
+This repository contains the latest draft of the ECMA-426 specification ("Source map format"), as
+well as older revisions of the format developed prior to moving to Ecma.
 
 ## What's here
 
-The most recent specification is the v3 revision.  It's converted into MarkDown
-format for this repository.
+* [Draft Source](source-map.bs)
+* [Rendered Draft](https://tc39.es/ecma426/)
+
+The current specification is an evolution of the original third revision. The
+first and second revision of the spec are provided for historical context, and
+don't have widespread adoption in tools.
 
 * [Revision 3](source-map-rev3.md)
-
-There is an ongoing initiative to harden the specification, clarify it and to
-convert it into a stronger standard.  The draft of this initiative can be found here:
-
-* [Draft Source](source-map.bs)
-* [Rendered Draft](https://tc39.es/source-map-spec/)
-* [RFC and Discussions](https://github.com/source-map/source-map-rfc/)
-
-Older revisions:
-
 * [Revision 2](source-map-rev2.md)
 * [Revision 1](source-map-rev1.md)
 
 ## Generating the draft specification
 
-1. Install pipx ([installation instructions](https://github.com/pypa/pipx?tab=readme-ov-file#install-pipx))
-2. Run `pipx run bikeshed` from this repository's root folder
-3. Open source-map.html in your browser
+1. Run `make build` from this repository's root folder
+2. Open source-map.html in your browser
 
 ## Current Proposals
 
 | Proposal                                                                                   | Author                  | Stage   |
 | ------------------------------------------------------------------------------------------ | ----------------------- | ------- |
-| [Scopes](https://github.com/tc39/source-map/blob/main/proposals/scopes.md)                 | Holger Benl, Simon Zünd | Stage 3 |
-| [Range Mappings](https://github.com/tc39/source-map/blob/main/proposals/range-mappings.md) | Tobias Koppers          | Stage 2 |
-| [Debug ID](https://github.com/tc39/source-map/blob/main/proposals/debug-id.md)             | Luca Forstner           | Stage 2 |
-| [Env](https://github.com/tc39/source-map/blob/main/proposals/env.md)                       | Nick Fitzgerald         | Stage 1 |
+| [Scopes](https://github.com/tc39/ecma426/blob/main/proposals/scopes.md)                 | Holger Benl, Simon Zünd | Stage 3 |
+| [Range Mappings](https://github.com/tc39/ecma426/blob/main/proposals/range-mappings.md) | Tobias Koppers          | Stage 2 |
+| [Debug ID](https://github.com/tc39/ecma426/blob/main/proposals/debug-id.md)             | Luca Forstner           | Stage 2 |
+| [Env](https://github.com/tc39/ecma426/blob/main/proposals/env.md)                       | Nick Fitzgerald         | Stage 1 |
 
 ## License
 
-The source map specifications are published under CC BY-SA 3.0.
+See [LICENSE.md](./LICENSE.md) for details.
 
 ## Original Locations
 
