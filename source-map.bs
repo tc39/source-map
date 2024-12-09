@@ -4,9 +4,9 @@ H1: Source map
 Shortname: source-map
 Level: none
 Status: STAGE0
-URL: https://tc39.es/source-map/
-Repository: https://github.com/tc39/source-map/
-Issue Tracking: GitHub Issues https://github.com/tc39/source-map/issues
+URL: https://tc39.es/ecma426/
+Repository: https://github.com/tc39/ecma426/
+Issue Tracking: GitHub Issues https://github.com/tc39/ecma426/issues
 Test Suite: https://github.com/tc39/source-map-tests
 Editor Term: Editor, Editors
 Editor: Asumu Takikawa, Igalia
@@ -157,12 +157,12 @@ The source map format has the following goals:
 * Support source-level debugging allowing bidirectional mapping
 * Support server-side stack trace deobfuscation
 
-The document at [https://tc39.es/source-map/](https://tc39.es/source-map/) is the most accurate and
+The document at [https://tc39.es/ecma426/](https://tc39.es/ecma426/) is the most accurate and
 up-to-date source map specification. It contains the content of the most recently published snapshot
 plus any modifications that will be included in the next snapshot.
 
 If you want to get involved you will find more information at the [specification
-repository](https://github.com/tc39/source-map).
+repository](https://github.com/tc39/ecma426).
 
 The original source map format (v1) was created by Joseph Schorr for use by
 Closure Inspector to enable source-level debugging of optimized JavaScript code
