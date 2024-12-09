@@ -2,7 +2,8 @@ name: CI
 on:
   pull_request: {}
   push:
-    branches: [main, '2024']
+    branches-ignore:
+      - 'gh-pages'
 jobs:
   main:
     name: Build, Validate and Deploy
@@ -14,4 +15,4 @@ jobs:
           GH_PAGES_BRANCH: gh-pages
           TOOLCHAIN: bikeshed
           SOURCE: source-map.bs
-          DESTINATION: ${{ github.ref == 'refs/heads/2024' && '2024/index.html' || 'index.html' }}
+          DESTINATION: ${{ github.ref_name == 'main' && 'index.html' || format('{0}/index.html', github.ref_name) }}
