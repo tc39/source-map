@@ -3,7 +3,7 @@ Title: Source map format specification
 H1: Source map
 Shortname: source-map
 Level: none
-Status: STAGE0
+Status: STAGE4
 URL: https://tc39.es/source-map/
 Repository: https://github.com/tc39/source-map/
 Issue Tracking: GitHub Issues https://github.com/tc39/source-map/issues
