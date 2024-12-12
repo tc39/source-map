@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <link rel="stylesheet" href="ecma-print-styles.css">
+  <title>Source Map Format Specification</title>
+</head>
+<body>
+<main id="spec-container">
+  <nav id="toc">
+    <h2>Contents</h2>
+    <ol class="toc">
+      <li><a href="#introduction" title="Introduction">Introduction</a></li>
+      <li><a href="#scope" title="Scope"><span class="secnum">1</span> Scope</a></li>
+      <li><a href="#conformance" title="Conformance"><span class="secnum">2</span> Conformance</a></li>
+      <li>
+        <a href="#references" title="References"><span class="secnum">3</span> References</a>
+        <ol class="toc">
+          <li><a href="#normative" title="Normative References"><span class="secnum"></span> Normative References</a></li>
+          <li><a href="#informative" title="Informative References"><span class="secnum"></span> Informative References</a></li>
+        </ol>
+      </li>
+      <li><a href="#terminology" title="Terms and definitions"><span class="secnum">4</span> Terms and definitions</a></li>
+      <li>
+        <a href="#source-map-format" title="Source Map Format"><span class="secnum">5</span> Source Map Format</a>
+        <ol class="toc">
+          <li>
+            <a href="#mappings-structure" title="Mappings Structure"><span class="secnum">5.1</span> Mappings Structure</a>
+            <ol class="toc">
+              <li>
+                <a href="#mappings-javascript" title="Mappings for generated JavaScript code"><span class="secnum">5.1.1</span> Mappings for generated JavaScript code</a>
+              </li>
+            </ol>
+          </li>
+          <li><a href="#resolving-sources" title="Resolving Sources"><span class="secnum">5.2</span> Resolving Sources</a></li>
+          <li><a href="#extensions" title="Extensions"><span class="secnum">5.3</span> Extensions</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#index-map" title="Index Map"><span class="secnum">6</span> Index Map</a>
+        <ol class="toc">
+          <li><a href="#section-object" title="Section"><span class="secnum">6.1</span> Section</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#linking-and-fetching" title="Retrieving Source Maps"><span class="secnum">7</span> Retrieving Source Maps</a>
+        <ol class="toc">
+          <li><a href="#linking-generated-code" title="Linking generated code to source maps"><span class="secnum">7.1</span>
+            Linking generated code to source maps</a>
+            <ol class="toc">
+              <li><a href="#linking-http-header" title="Linking through HTTP headers"><span class="secnum">7.1.1</span>
+                Linking through HTTP headers</a></li>
+              <li><a href="#linking-inline" title="Linking through inline annotations"><span class="secnum">7.1.2</span>
+                Linking through inline annotations</a>
+                <ol class="toc">
+                  <li><a href="#extraction-javascript" title="Extraction methods for JavaScript sources"><span class="secnum">7.1.2.1</span>
+                    Extraction methods for JavaScript sources</a></li>
+                  <li><a href="#extraction-css" title="Extraction methods for CSS sources"><span class="secnum">7.1.2.2</span>
+                    Extraction methods for CSS sources</a></li>
+                  <li><a href="#extraction-wasm" title="Extraction methods for WebAssembly binaries"><span class="secnum">7.1.2.3</span>
+                    Extraction methods for WebAssembly binaries</a></li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+          <li><a href="#fetching-source-maps" title="Fetching Source Maps"><span class="secnum">7.2</span>
+            Fetching Source Maps</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#conventions" title="Conventions"><span class="secnum">8</span> Conventions</a>
+        <ol class="toc">
+          <li><a href="#source-map-naming" title="Source Map Naming"><span class="secnum">8.1</span> Source Map Naming</a></li>
+          <li><a href="#linking-eval" title="Linking eval&apos;d code to named generated code"><span class="secnum">8.2</span>
+            Linking eval&apos;d code to named generated code</a></li>
+        </ol>
+      </li>
+      <li><a href="#language-neutral-mapping" title="Language Neutral Stack Mapping Notes"><span class="secnum">9</span>
+        Language Neutral Stack Mapping Notes</a></li>
+      <li><a href="#multi-level-mapping" title="Multi-level Mapping Notes"><span class="secnum">10</span>
+        Multi-level Mapping Notes</a></li>
+      <li><a href="#license" title="License"><span class="secnum">11</span> License</a></li>
+      <li>
+        <a href="#index" title="Index">Annex A <span class="info">(informative)</span> Index</a>
+        <ol class="toc">
+          <li><a href="#index-defined-here" title="Terms defined by this specification">Annex A.1 Terms defined by this specification</a></li>
+          <li><a href="#index-defined-elsewhere" title="Terms defined by reference">Annex A.2 Terms defined by reference</a></li>
+        </ol>
+      </li>
+      <li><a href="#issues-index" title="Issues Index">Annex B <span class="info">(informative)</span> Issues Index</a></li>
+    </ol>
+  </nav>
+
+<emu-intro id="introduction">
+  <h1>Introduction</h1>
+  <p>This Ecma Standard defines the Source Map Format, used for mapping transpiled source code back to the original sources.</p>
+  <p>The source map format has the following goals:</p>
+  <ul>
+    <li><p>Support source-level debugging allowing bidirectional mapping</p></li>
+    <li><p>Support server-side stack trace deobfuscation</p></li>
+  </ul>
+  <p>
+    The document at <a href="https://tc39.es/source-map/">https://tc39.es/source-map/</a> is the most accurate and up-to-date source map specification. It contains the content of the most recently published snapshot plus any modifications that will be included in the next snapshot.
+  </p>
+  <p>If you want to get involved you will find more information at the <a href="https://github.com/tc39/source-map">specification repository</a>.</p>
+  <p>
+    The original source map format (v1) was created by Joseph Schorr for use by Closure Inspector to enable source-level debugging of optimized JavaScript code (although the format itself is language agnostic). However, as the size of the projects using source maps expanded, the verbosity of the format started to become a problem. The v2 format
+    <a href="#biblio-v2format" title="Source Map Revision 2 Proposal">[V2Format]</a> was created by trading some simplicity and flexibility to reduce the overall size of the source map. Even with the changes made with the v2 version of the format, the source map file size was limiting its usefulness. The v3 format is based on suggestions made by Pavel Podivilov (Google).
+  </p>
+  <p>The source map format does not have version numbers anymore, and it is instead hard-coded to always be "3".</p>
+</emu-intro>
+
+<emu-clause class="copyright-notice" id="copyright-notice">
+  <p>ALTERNATIVE COPYRIGHT NOTICE AND COPYRIGHT LICENSE</p>
+  <p>&copy;2024 Ecma International</p>
+  <p>By obtaining and/or copying this work, you (the licensee) agree that you have read, understood, and will comply with the following terms and conditions.</p>
+  <p>Permission under Ecma&apos;s copyright to copy, modify, prepare derivative works of, and distribute this work, with or without modification, for any purpose and without fee or royalty is hereby granted, provided that you include the following on ALL copies of the work or portions thereof, including modifications:</p>
+  <ol class="small-roman">
+    <li>The full text of this ALTERNATIVE COPYRIGHT NOTICE AND COPYRIGHT LICENSE in a location viewable to users of the redistributed or derivative work.</li>
+    <li>Any pre-existing intellectual property disclaimers, notices, or terms and conditions. If none exist, the Ecma alternative copyright notice should be included.</li>
+    <li>Notice of any changes or modifications, through a copyright statement on the document such as &ldquo;This document includes material copied from or derived from [title and URI of the Ecma document]. Copyright &copy; Ecma International.&rdquo;</li>
+  </ol>
+  <p><strong>Disclaimers</strong></p>
+  <p>THIS WORK IS PROVIDED &ldquo;AS IS,&rdquo; AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF THE DOCUMENT WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.</p>
+  <p>COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE DOCUMENT.</p>
+  <p>The name and trademarks of copyright holders may NOT be used in advertising or publicity pertaining to the work without specific, written prior permission. Title to copyright in this work will at all times remain with copyright holders.</p>
+</emu-clause>
+
+<h1 class="title">Source Map Format Specification</h1>
+
+<emu-clause clause="1" id="scope">
+  <h1><span class="secnum">1</span> Scope</h1>
+
+  <p>This Standard defines the source map format, used by different types of developer tools to improve the debugging experience of code compiled to JavaScript, WebAssembly, and CSS.</p>
+</emu-clause>
+
+<emu-clause clause="2" id="conformance">
+  <h1><span class="secnum">2</span> Conformance</h1>
+
+  <p>A conforming source map document is a JSON document that conforms to the structure detailed in this specification.</p>
+  <p>A conforming source map generator should generate documents which are conforming source map documents, and can be decoded by the algorithms in this specification without reporting any errors (even those which are specified as optional).</p>
+  <p>A conforming source map consumer should implement the algorithms specified in this specification for retrieving (where applicable) and decoding source map documents. A conforming consumer is permitted to ignore errors or report them without terminating where the specification indicates that an algorithm may <a href="#optionally-report-an-error">optionally report an error</a>.</p>
+</emu-clause>
+
+<emu-clause clause="3" id="references">
+  <h1><span class="secnum">3</span> References</h1>
+  <emu-clause id="normative">
+    <h2>Normative References</h2>
+    
+      <dl>
+        <dt id="biblio-ecma-262">[ECMA-262]</dt>
+        <dd>
+          <a data-print-href href="https://tc39.es/ecma262/multipage/"><cite>ECMAScript&reg; Language Specification</cite></a>.
+        </dd>
+        <dt id="biblio-encoding">[ENCODING]</dt>
+        <dd>
+          Anne van Kesteren. <a data-print-href href="https://encoding.spec.whatwg.org/"><cite>Encoding Standard</cite></a>. Living Standard.
+        </dd>
+        <dt id="biblio-fetch">[FETCH]</dt>
+        <dd>
+          Anne van Kesteren. <a data-print-href href="https://fetch.spec.whatwg.org/"><cite>Fetch Standard</cite></a>. Living Standard.</dd>
+        <dt id="biblio-infra">[INFRA]</dt>
+        <dd>
+          Anne van Kesteren; Domenic Denicola. <a data-print-href href="https://infra.spec.whatwg.org/"><cite>Infra Standard</cite></a>. Living Standard.
+        </dd>
+        <dt id="biblio-url">[URL]</dt>
+        <dd>
+          <a data-print-href href="https://url.spec.whatwg.org/"><cite>URL Standard</cite></a>. Living Standard. 
+        </dd>
+        <dt id="biblio-webidl">[WEBIDL]</dt>
+        <dd>
+          Edgar Chen; Timothy Gu. <a data-print-href href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard.
+        </dd>
+      </dl>
+  </emu-clause>
+  <emu-clause id="informative">
+        <h2>Informative References</h2>
+      <dl>
+        <dt id="biblio-base64">[BASE64]</dt>
+        <dd>
+          <a data-print-href href="https://www.ietf.org/rfc/rfc4648.txt"><cite>The Base16, Base32, and Base64 Data Encodings</cite></a>. Standards Track.
+        </dd>
+        <dt id="biblio-evalsourceurl">[EvalSourceURL]</dt>
+        <dd>
+          <a data-print-href href="https://web.archive.org/web/20120814122523/http://blog.getfirebug.com/2009/08/11/give-your-eval-a-name-with-sourceurl/"><cite>Give your eval a name with //@ sourceURL</cite></a>. archive.
+        </dd>
+        <dt id="biblio-v2format">[V2Format]</dt>
+        <dd>
+          <a data-print-href href="https://docs.google.com/document/d/1xi12LrcqjqIHTtZzrzZKmQ3lbTv9mKrN076UB-j3UZQ/edit?hl=en_US"><cite>Source Map Revision 2 Proposal</cite></a>.
+        </dd>
+        <dt id="biblio-vlq">[VLQ]</dt>
+        <dd>
+          <a data-print-href href="https://en.wikipedia.org/wiki/Variable-length_quantity"><cite>Variable-length quantity</cite></a>. reference article.
+        </dd>
+        <dt id="biblio-wasmnamesbinaryformat">[WasmNamesBinaryFormat]</dt>
+        <dd>
+          <a data-print-href href="https://www.w3.org/TR/wasm-core-2/#names%E2%91%A2"><cite>WebAssembly Names binary format</cite></a>. Living Standard.
+        </dd>
+      </dl>
+  </emu-clause>
+</emu-clause>
+
+<emu-clause clause="4" id="terminology">
+  <h1><span class="secnum">4</span> Terms and definitions</h1>
+
+  <p>For the purposes of this document, the following terms and definitions apply.</p>
+
+  <dl>
+    <dt id="generated-code"><span class="secnum">4.1</span> <dfn>Generated Code</dfn></dt>
+    <dd><p>The code which is generated by the compiler or transpiler.</p></dd>
+    
+    <dt id="original-source"><span class="secnum">4.2</span> Original Source</dt>
+    <dd><p>The source code which has not been passed through the compiler.</p></dd>
+    
+    <dt id="base64-vlq"><span class="secnum">4.3</span> Base64 VLQ <a href="#biblio-vlq">[VLQ]</a></dt>
+    <dd>
+      <p>A <a href="#biblio-base64">[base64]</a> value, where the most significant bit (the 6th bit) is used as the continuation bit, and the "digits" are encoded into the string least significant first, and where the least significant bit of the first digit is used as the sign bit.</p>
+      <emu-note>
+        <div class="note-contents">
+          <p>The values that can be represented by the VLQ Base64 encoded are limited to 32-bit quantities until some use case for larger values is presented. This means that values exceeding 32-bits are invalid and implementations may reject them. The sign bit is counted towards the limit, but the continuation bits are not.</p>
+        </div>
+      </emu-note>
+      <emu-note example id="example-a554ae4a">
+        <figure>
+          The string <code class="highlight"><c- u="">"iB"</c-></code> represents a <a href="#base64-vlq">Base64 VLQ</a> with two digits. The first digit <code class="highlight"><c- u="">"i"</c-></code> encodes the bit pattern <code class="highlight"><c- mh="">0x100010</c-></code>, which has a continuation bit of <code class="highlight"><c- mf="">1</c-></code> (the VLQ continues), a sign bit of <code class="highlight"><c- mf="">0</c-></code> (non-negative), and the value bits <code class="highlight"><c- mh="">0x0001</c-></code>.
+          The second digit <code class="highlight">B</code> encodes the bit pattern <code class="highlight"><c- mh="">0x000001</c-></code>, which has a continuation bit of <code class="highlight"><c- mf="">0</c-></code>, no sign bit, and value bits <code class="highlight"><c- mh="">0x00001</c-></code>. The decoding of this VLQ string is the number 17.
+        </figure>
+      </emu-note>
+      <emu-note example class="example" id="example-34ad0ed3">
+        <figure class="note-contents">
+          The string <code class="highlight"><c- u="">"V"</c-></code> represents a <a href="#base64-vlq">Base64 VLQ</a> with one digit. The digit <code class="highlight"><c- u="">"V"</c-></code> encodes the bit pattern <code class="highlight"><c- mh="">0x010101</c-></code>, which has a continuation bit of <code class="highlight"><c- mf="">0</c-></code> (no continuation), a sign bit of <code class="highlight"><c- mf="">1</c-></code> (negative), and the value bits <code class="highlight"><c- mh="">0x1010</c-></code>. The decoding of this VLQ string is the number -10.
+        </figure>
+      </emu-note>       
+    </dd>
+
+    <dt id="source-mapping-url"><span class="secnum">4.4</span> Source Mapping URL</dt>
+    <dd>
+      <p>The URL referencing the location of a source map from the <a href="#generated-code">Generated code</a>.</p>
+    </dd>
+
+    <dt id="column"><span class="secnum">4.5</span> Column</dt>
+    <dd>
+      <p>The zero-based indexed offset within a line of the generated code. How this offset is measured can depend on the content type. For JavaScript and CSS based source maps, they are defined to be in UTF-16 code units analogous to JavaScript string indices. That means that "A" (<code class="highlight">LATIN CAPITAL LETTER A</code>) measures as 1 code unit, and "🔥" (<code class="highlight">FIRE</code>) measures as 2 code units. For WebAssembly, columns are defined as byte offsets from the beginning of the binary content (and there is only one group representing a line). Source maps for other content types may diverge from this.</p>
+    </dd>
+  </dl>
+</emu-clause>
+
+<emu-clause clause="5" id="source-map-format">
+  <h1><span class="secnum">5</span> Source Map Format</h1>
+
+    <emu-figure>
+      <figure>
+        <emu-caption><figcaption><p>A source map is a JSON document containing a top-level JSON object with the following structure:</p></figcaption></emu-caption>
+          <pre class="language-json highlight"><c- p>{</c->
+  <c- f>"version"</c-> <c- p>:</c-> <c- mi>3</c-><c- p>,</c->
+  <c- f>"file"</c-><c- p>:</c-> <c- u>"out.js"</c-><c- p>,</c->
+  <c- f>"sourceRoot"</c-><c- p>:</c-> <c- u>""</c-><c- p>,</c->
+  <c- f>"sources"</c-><c- p>:</c-> <c- p>[</c-><c- u>"foo.js"</c-><c- p>,</c-> <c- u>"bar.js"</c-><c- p>],</c->
+  <c- f>"sourcesContent"</c-><c- p>:</c-> <c- p>[</c-><c- kc>null</c-><c- p>,</c-> <c- kc>null</c-><c- p>],</c->
+  <c- f>"names"</c-><c- p>:</c-> <c- p>[</c-><c- u>"src"</c-><c- p>,</c-> <c- u>"maps"</c-><c- p>,</c-> <c- u>"are"</c-><c- p>,</c-> <c- u>"fun"</c-><c- p>],</c->
+  <c- f>"mappings"</c-><c- p>:</c-> <c- f>"A,AAAB;;ABCDE"</c->
+  <c- f>"ignoreList"</c-><c- p>:</c-> <c- p>[</c-><c- mi>0</c-><c- p>]</c->
+<c- p>}</c->
+</pre>
+      </figure>
+    </emu-figure>
+
+    <ul>
+      <li id="json-version">
+          <code class="highlight"><dfn>version</dfn></code> is the version field which must always be the number
+          <code class="highlight"><c- mf>3</c-></code> as an integer. The source map may be rejected if the field has any other value.
+      </li>
+      <li id="json-file">
+        <code class="highlight"><dfn>file</dfn></code> is an optional name of the generated code that this source map is associated with. It&apos;s not specified if this can be a URL, relative path name, or just a base name. Source map generators may choose the appropriate interpretation for their contexts of use.
+      </li>
+      <li id="json-sourceroot">
+        <code class="highlight"><dfn>sourceRoot</dfn></code> is an optional source root string, used for relocating source files on a server or removing repeated values in the
+          <a href="#json-sources">sources</a> entry. This value is prepended to the individual entries in the
+          <a href="#json-sources">sources</a> field.
+      </li>
+      <li id="json-sources">
+        <code class="highlight"><dfn>sources</dfn></code> is a list of original sources used by the <a href="#json-mappings">mappings</a> entry. Each entry is either a string that is a (potentially relative) URL or <code class="highlight"><c- kc>null</c-></code> if the source name is not known.
+      </li>
+      <li id="json-sourcescontent">
+        <code class="highlight"><dfn>sourcesContent</dfn></code> is an optional list of source content (i.e., the <a href="#original-source">Original Source</a>) strings, used when the source cannot be hosted. The contents are listed in the same order as the <a href="#json-sources">sources</a>. Entries may be <code class="highlight"><c- kc>null</c-></code> if some original sources should be retrieved by name.
+      </li>
+      <li id="json-names"><code class="highlight"><dfn>names</dfn></code> is an optional list of symbol names which may be used by the <a href="#json-mappings">mappings</a> entry.</li>
+      <li id="json-mappings"><code class="highlight"><dfn>mappings</dfn></code> is a string with the encoded mapping data (see <a href="#mappings-structure">&sect; 5.1 Mappings Structure</a>).</li>
+      <li id="json-ignorelist">
+        <code class="highlight"><dfn>ignoreList</dfn></code> is an optional list of indices of files that should be considered third party code, such as framework code or bundler-generated code. This allows developer tools to avoid code that developers likely don&apos;t want to see or step through, without requiring developers to configure this beforehand. It refers to the <a href="#json-sources">sources</a> array and lists the indices of all the known third-party sources in the source map. Some browsers may also use the deprecated <code class="highlight">x_google_ignoreList</code> field if <code class="highlight"><a href="#json-ignorelist">ignoreList</a></code> is not present.
+      </li>
+    </ul>
+    
+    <p>A <dfn id="decoded-source-map">decoded source map</dfn> is a struct with the following fields:</p>
+
+    <dl>
+      <dt><dfn id="decoded-source-map-file">file</dfn></dt>
+      <dd>A string or null.</dd>
+      <dt><dfn id="decoded-source-map-sources">sources</dfn></dt>
+      <dd>A list of <a href="#decoded-source">decoded sources</a>.</dd>
+      <dt><dfn id="decoded-source-map-mappings">mappings</dfn></dt>
+      <dd>A list of <a href="#decoded-mapping">decoded mappings</a>.</dd>
+    </dl>
+
+    <p>A <dfn id="decoded-source">decoded source</dfn> is a struct with the following fields:</p>
+
+    <dl>
+      <dt><dfn id="decoded-source-url">URL</dfn></dt>
+      <dd>A URL or null.</dd>
+      <dt><dfn id="decoded-source-content">content</dfn></dt>
+      <dd>A string or null.</dd>
+      <dt><dfn id="decoded-source-ignored">ignored</dfn></dt>
+      <dd>A boolean.</dd>
+    </dl>
+
+    <p>To <dfn id="decode-a-source-map-from-a-json-string">decode a source map from a JSON string</dfn> <var>str</var> given a URL <var>baseURL</var>, run the following steps:</p>
+
+    <emu-alg>
+      <ol>
+        <li>Let <var>jsonMap</var> be the result of parsing a JSON string to an Infra value <var>str</var>.</li>
+        <li>If <var>jsonMap</var> is not a map, report an error and abort these steps.</li>
+        <li><a href="#decode-a-source-map">Decode a source map</a> given <var>jsonMap</var> and <var>baseURL</var>, and return its result if any.</li>
+      </ol>
+    </emu-alg>
+
+    <p>To <dfn id="decode-a-source-map">decode a source map</dfn> given a string-keyed map <var>jsonMap</var> and a URL <var>baseURL</var>, run the following steps:</p>
+    
+    <emu-alg>
+      <ol>
+        <li>If <var>jsonMap</var>[<code class="highlight"><c- u>"version"</c-></code>] does not exist or <var>jsonMap</var>[<code class="highlight"><c- u>"version"</c-></code>] is not 3, <a href="#optionally-report-an-error">optionally report an error</a>.</li>
+        <li>If <var>jsonMap</var>[<code class="highlight"><c- u>"mappings"</c-></code>] does not exist or <var>jsonMap</var>[<code class="highlight"><c- u>"mappings"</c-></code>], is not a string, throw an error.</li>
+        <li>If <var>jsonMap</var>[<code class="highlight"><c- u>"sources"</c-></code>] does not exist or <var>jsonMap</var>[<code class="highlight"><c- u>"sources"</c-></code>], is not a list, throw an error.</li>
+        <li>Let <var>sourceMap</var> be a new <a href="#decoded-source-map">decoded source map</a>.</li>
+        <li>Set <var>sourceMap</var>&apos;s <a href="#decoded-source-map-file">file</a> to <a href="#optionally-get-a-string">optionally get a string</a> <code class="highlight"><c- u>"file"</c-></code> from <var>jsonMap</var>.</li>
+        <li>
+          Set <var>sourceMap</var>&apos;s <a href="#decoded-source-map-sources">sources</a> to the result of <a href="#decode-source-map-sources">decoding source map sources</a> given <var>baseURL</var> with:
+          <ul>
+            <li><a href="#decode-source-map-sources-sourceroot">sourceRoot</a> set to <a href="#optionally-get-a-string">optionally get a string</a> <code class="highlight"><c- u>"sourceRoot"</c-></code> from <var>jsonMap</var>;</li>
+            <li><a href="#decode-source-map-sources-sources">sources</a> set to <a href="#optionally-get-a-list-of-optional-strings">optionally get a list of optional strings</a> <code class="highlight"><c- u>"sources"</c-></code> from <var>jsonMap</var>;</li>
+            <li><a href="#decode-source-map-sources-sourcescontent">sourcesContent</a> set to <a href="#optionally-get-a-list-of-optional-strings">optionally get a list of optional strings</a> <code class="highlight"><c- u>"sourcesContent"</c-></code> from <var>jsonMap</var>;</li>
+            <li><a href="#decode-source-map-sources-ignoredsources">ignoredSources</a> set to <a href="#optionally-get-a-list-of-array-indexes">optionally get a list of array indexes</a> <code class="highlight"><c- u>"ignoreList"</c-></code> from <var>jsonMap</var>.</li>
+          </ul>
+        </li>
+        <li>
+          Set <var>sourceMap</var>&apos;s <a href="#decoded-source-map-mappings">mappings</a> to the result of <a href="#decode-source-map-mappings">decoding source map mappings</a> with:
+          <ul>
+            <li><a href="#decode-source-map-mappings-mappings">mappings</a> set to <var>jsonMap</var>[<code class="highlight"><c- u>"mappings"</c-></code>];</li>
+            <li><a href="#decode-source-map-mappings-names">names</a> set to <a href="#optionally-get-a-list-of-strings">optionally get a list of strings</a> <code class="highlight"><c- u>"names"</c-></code> from <var>jsonMap</var>;</li>
+            <li><a href="#decode-source-map-mappings-sources">sources</a> set to <var>sourceMap</var>&apos;s <a href="#decoded-source-map-sources">sources</a>.</li>
+          </ul>
+        </li>
+        <li>Return <var>sourceMap</var>.</li>
+      </ol>
+    </emu-alg>
+
+    <p>To <dfn id="optionally-get-a-string">optionally get a string</dfn> <var>key</var> from a string-keyed map <var>jsonMap</var>, run the following steps:</p>
+
+    <emu-alg>
+      <ol>
+        <li>If <var>jsonMap</var>[<var>key</var>] does not exist, return null.</li>
+        <li>If <var>jsonMap</var>[<var>key</var>] is not a string, <a href="#optionally-report-an-error">optionally report an error</a> and return null.</li>
+        <li>Return <var>jsonMap</var>[<var>key</var>].</li>
+      </ol>
+    </emu-alg>
+
+    <p>To <dfn id="optionally-get-a-list-of-strings">optionally get a list of strings</dfn> <var>key</var> from a string-keyed map <var>jsonMap</var>, run the following steps:</p>
+
+    <emu-alg>
+      <ol>
+        <li>If <var>jsonMap</var>[<var>key</var>] does not exist, return a new empty list.</li>
+        <li>If <var>jsonMap</var>[<var>key</var>] is not a list, <a href="#optionally-report-an-error">optionally report an error</a> and return a new empty list.</li>
+        <li>Let <var>list</var> be a new empty list.</li>
+        <li>For each <var>jsonItem</var> of <var>jsonMap</var>[<var>key</var>]:
+          <ol>
+            <li>If <var>jsonItem</var> is a string, append it to <var>list</var>.</li>
+            <li>Else, <a href="#optionally-report-an-error">optionally report an error</a> and append <code class="highlight"><c- u>""</c-></code> to <var>list</var>.</li>
+          </ol>
+        </li>
+        <li>Return <var>list</var>.</li>
+      </ol>
+    </emu-alg>
+
+    <p>To <dfn id="optionally-get-a-list-of-optional-strings">optionally get a list of optional strings</dfn> <var>key</var> from a string-keyed map <var>jsonMap</var>, run the following steps:</p>
+    
+    <emu-alg>
+      <ol>
+        <li>If <var>jsonMap</var>[<var>key</var>] does not exist, return a new empty list.</li>
+        <li>If <var>jsonMap</var>[<var>key</var>] is not a list, <a href="#optionally-report-an-error">optionally report an error</a> and return a new empty list.</li>
+        <li>Let <var>list</var> be a new empty list.</li>
+        <li>For each <var>jsonItem</var> of <var>jsonMap</var>[<var>key</var>]:
+          <ol>
+            <li>If <var>jsonItem</var> is a string, append it to <var>list</var>.</li>
+            <li>Else,
+              <ol>
+                <li>If <var>jsonItem</var> is not null, <a href="#optionally-report-an-error">optionally report an error</a>.</li>
+                <li>Append null to <var>list</var>.</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>Return <var>list</var>.</li>
+      </ol>
+    </emu-alg>
+
+    <p>To <dfn id="optionally-get-a-list-of-array-indexes">optionally get a list of array indexes</dfn> <var>key</var> from a string-keyed map <var>jsonMap</var>, run the following steps:</p>
+      
+    <emu-alg>
+      <ol>
+        <li>If <var>jsonMap</var>[<var>key</var>] does not exist, return a new empty list.</li>
+        <li>If <var>jsonMap</var>[<var>key</var>] is not a list, <a href="#optionally-report-an-error">optionally report an error</a> and return a new empty list.</li>
+        <li>Let <var>list</var> be a new empty list.</li>
+      <li>For each <var>jsonItem</var> of <var>jsonMap</var>[<var>key</var>]:
+        <ol>
+          <li>If <var>jsonItem</var> is a non-negative integer number, append it to <var>list</var>.</li>
+          <li>
+            Else,
+            <ol>
+              <li>If <var>jsonItem</var> is not null, <a href="#optionally-report-an-error">optionally report an error</a>.</li>
+              <li>Append null to <var>list</var>.</li>
+            </ol>
+          </li>
+        </ol>
+      </li>
+        <li>Return <var>list</var>.</li>
+      </ol>
+    </emu-alg>
+
+    <p>To <dfn id="optionally-report-an-error">optionally report an error</dfn>, implementations can choose to:</p>
+      
+    <emu-alg>
+      <ul>
+        <li>Do nothing.</li>
+        <li>Report an error to the user, and continue processing.</li>
+        <li>Throw an error to abort the running algorithm. (<a href="https://infra.spec.whatwg.org/#algorithm-control-flow"><cite>Infra</cite> &sect;3.6 Control flow</a>)</li>
+      </ul>
+    </emu-alg>
+
+  <emu-clause clause="5.1" id="mappings-structure">
+    <h2><span class="secnum">5.1</span> Mappings Structure</h2>
+
+    <p>The <a href="#json-mappings">mappings</a> data is broken down as follows:</p>
+
+    <emu-alg>
+      <ul>
+        <li>each group representing a line in the generated file is separated by a semicolon (<code class="highlight"><c- p>;</c-></code>)</li>
+        <li>each segment is separated by a comma (<code class="highlight"><c- p>,</c-></code>)</li>
+        <li>each segment is made up of 1, 4, or 5 variable length fields.</li>
+      </ul>
+    </emu-alg>
+
+    <p>The fields in each segment are:</p>
+
+    <emu-alg>
+      <ol>
+        <li>The zero-based starting <a  href="#column">column</a> of the line in the generated code that the segment represents. If this is the first field of the first segment, or the first segment following a new generated line (<code class="highlight"><c- p>;</c-></code>), then this field holds the whole <a href="#base64-vlq">Base64 VLQ</a>. Otherwise, this field contains a <a href="#base64-vlq">Base64 VLQ</a> that is relative to the previous occurrence of this field. <em>Note that this is different from the subsequent fields below because the previous value is reset after every generated line.</em></li>
+        <li>If present, the zero-based index into the <a href="#json-sources">sources</a> list. This field contains a <a href="#base64-vlq">Base64 VLQ</a> relative to the previous occurrence of this field, unless it is the first occurrence of this field, in which case the whole value is represented.</li>
+        <li>If present, the zero-based starting line in the original source. This field contains a <a href="#base64-vlq">Base64 VLQ</a> relative to the previous occurrence of this field, unless it is the first occurrence of this field, in which case the whole value is represented. Must be present if there is a source field.</li>
+        <li>If present, the zero-based starting <a href="#column">column</a> of the line in the original source. This field contains a <a href="#base64-vlq">Base64 VLQ</a> relative to the previous occurrence of this field, unless it is the first occurrence of this field, in which case the whole value is represented. Must be present if there is a source field.</li>
+        <li>If present, the zero-based index into the <a href="#json-names">names</a> list associated with this segment. This field contains a <a href="#base64-vlq">Base64 VLQ</a> relative to the previous occurrence of this field, unless it is the first occurrence of this field, in which case the whole value is represented.</li>
+      </ol>
+    </emu-alg>
+
+    <emu-note>
+      <div class="note-contents">
+        <p>The purpose of this encoding is to reduce the source map size. VLQ encoding reduced source maps by 50% relative to the <a href="#biblio-v2format" title="Source Map Revision 2 Proposal">[V2Format]</a> in tests performed using Google Calendar.</p>
+      </div>
+    </emu-note>
+
+    <emu-note>
+      <div class="note-contents">
+        <p>Segments with one field are intended to represent generated code that is unmapped because there is no corresponding original source code, such as code that is generated by a compiler. Segments with four fields represent mapped code where a corresponding name does not exist. Segments with five fields represent mapped code that also has a mapped name.</p>
+      </div>
+    </emu-note>
+    
+    <emu-note>
+      <div class="note-contents">
+        <p> Using file offsets was considered but rejected in favor of using line/column data to avoid becoming misaligned with the original due to platform-specific line endings.</p>
+      </div>
+    </emu-note>
+      
+    <p>A <dfn id="decoded-mapping">decoded mapping</dfn> is a struct with the following fields:</p>
+
+    <dl>
+      <dt><dfn id="decoded-mapping-generatedline">generatedLine</dfn>
+      <dd>A non-negative integer.
+      <dt><dfn id="decoded-mapping-generatedcolumn">generatedColumn</dfn>
+      <dd>A non-negative integer.
+      <dt><dfn id="decoded-mapping-originalsource">originalSource</dfn>
+      <dd>A <a href="#decoded-source">decoded source</a> or null.
+      <dt><dfn id="decoded-mapping-originalline">originalLine</dfn>
+      <dd>A non-negative integer or null.
+      <dt><dfn id="decoded-mapping-originalcolumn">originalColumn</dfn>
+      <dd>A non-negative integer or null.
+      <dt><dfn id="decoded-mapping-name">name</dfn>
+      <dd>A string or null.
+    </dl>
+
+    <p>To <dfn id="decode-source-map-mappings">decode source map mappings</dfn> given a string <dfn  id="decode-source-map-mappings-mappings"><var>mappings</var></dfn>, a list of strings <dfn id="decode-source-map-mappings-names"><var>names</var></dfn>, and a list of <a href="#decoded-source">decoded sources</a> <dfn  id="decode-source-map-mappings-sources"><var>sources</var></dfn>, run the following steps:</p>
+
+    <emu-alg>
+      <ol>
+        <li><a href="#validate-base64-vlq-groupings">Validate base64 VLQ groupings</a> with <var>mappings</var>.</li>
+        <li>Let <var>decodedMappings</var> be a new empty list.</li>
+        <li>Let <var>groups</var> be the result of strictly splitting <var>mappings</var> on <code class="highlight"><c- p>;</c-></code>.</li>
+        <li>Let <var>generatedLine</var> be 0.</li>
+        <li>Let <var>originalLine</var> be 0.</li>
+        <li>Let <var>originalColumn</var> be 0.</li>
+        <li>Let <var>sourceIndex</var> be 0.</li>
+        <li>Let <var>nameIndex</var> be 0.</li>
+        <li>While <var>generatedLine</var> is less than <var>groups</var>&apos;s size:
+          <ol>
+            <li>
+              If <var>groups</var>[<var>generatedLine</var>] is not the empty string, then:
+              <ol>
+                <li>Let <var>segments</var> be the result of strictly splitting <var>groups</var>[<var>generatedLine</var>] on <code class="highlight"><c- p>,</c-></code>.</li>
+                <li>Let <var>generatedColumn</var> be 0.</li>
+                <li>For each <var>segment</var> in <var>segments</var>:
+                  <ol>
+                    <li>Let <var>position</var> be a position variable for <var>segment</var>, initially pointing at <var>segment</var>&apos;s start.</li>
+                    <li><a href="#decode-a-base64-vlq">Decode a base64 VLQ</a> from <var>segment</var> given <var>position</var> and let <var>relativeGeneratedColumn</var> be the result.</li>
+                    <li>If <var>relativeGeneratedColumn</var> is null,<a href="#optionally-report-an-error">optionally report an error</a> and continue with the next iteration.</li>
+                    <li>Increase <var>generatedColumn</var> by <var>relativeGeneratedColumn</var>. If the result is negative, <a href="#optionally-report-an-error">optionally report an error</a> and continue with the next iteration.</li>
+                    <li>Let <var>decodedMapping</var> be a new <a href="#decoded-mapping">decoded mapping</a> whose <a href="#decoded-mapping-generatedline">generatedLine</a> is <var>generatedLine</var>, <a href="#decoded-mapping-generatedcolumn">generatedColumn</a> is <var>generatedColumn</var>, <a href="#decoded-mapping-originalsource">originalSource</a> is null, <a href="#decoded-mapping-originalline">originalLine</a> is null, <a href="#decoded-mapping-originalcolumn">originalColumn</a> is null, and <a href="#decoded-mapping-name">name</a> is null.</li>
+                    <li>Append <var>decodedMapping</var> to <var>decodedMappings</var>.</li>
+                    <li><a href="#decode-a-base64-vlq">Decode a base64 VLQ</a> from <var>segment</var> given <var>position</var> and let <var>relativeSourceIndex</var> be the result.</li>
+                    <li><a href="#decode-a-base64-vlq">Decode a base64 VLQ</a> from <var>segment</var> given <var>position</var> and let <var>relativeOriginalLine</var> be the result.</li>
+                    <li><a href="#decode-a-base64-vlq">Decode a base64 VLQ</a> from <var>segment</var> given <var>position</var> and let <var>relativeOriginalColumn</var> be the result.</li>
+                    <li>
+                      If <var>relativeOriginalColumn</var> is null, then:
+                      <ol>
+                        <li>
+                          If <var>relativeSourceIndex</var> is not null, <a href="#optionally-report-an-error">optionally report an error</a>.
+                        </li>
+                        <li>Continue with the next iteration.</li>
+                      </ol>
+                    </li>
+                    <li>Increase <var>sourceIndex</var> by <var>relativeSourceIndex</var>.</li>
+                    <li>Increase <var>originalLine</var> by <var>relativeOriginalLine</var>.</li>
+                    <li>Increase <var>originalColumn</var> by <var>relativeOriginalColumn</var>.</li>
+                    <li>If any of <var>sourceIndex</var>, <var>originalLine</var>, or <var>originalColumn</var> are less than 0, or if <var>sourceIndex</var> is greater than or equal to <var>sources</var>&apos;s size, <a href="#optionally-report-an-error">optionally report an error</a>.</li>
+                    <li>
+                      Else,
+                      <ol>
+                        <li>Set <var>decodedMapping</var>&apos;s <a href="#decoded-mapping-originalsource">originalSource</a> to <var>sources</var>[<var>sourceIndex</var>].</li>
+                        <li>Set <var>decodedMapping</var>&apos;s <a href="#decoded-mapping-originalline">originalLine</a> to <var>originalLine</var>.</li>
+                        <li>Set <var>decodedMapping</var>&apos;s <a href="#decoded-mapping-originalcolumn">originalColumn</a> to <var>originalColumn</var>.</li>
+                      </ol>
+                    </li>
+                    <li><a href="#decode-a-base64-vlq">Decode a base64 VLQ</a> from <var>segment</var> given <var>position</var> and let <var>relativeNameIndex</var> be the result.</li>
+                    <li>
+                      If <var>relativeNameIndex</var> is not null, then:
+                      <ol>
+                        <li>Increase <var>nameIndex</var> by <var>relativeNameIndex</var>.</li>
+                        <li>If <var>nameIndex</var> is negative or greater than <var>names</var>&apos;s size, <a href="#optionally-report-an-error">optionally report an error</a>.</li>
+                        <li>Else, set <var>decodedMapping</var>&apos;s <a href="#decoded-mapping-name">name</a> to <var>names</var>[<var>nameIndex</var>].</li>
+                      </ol>
+                    </li>
+                    <li>If <var>position</var> does not point to the end of <var>segment</var>, <a href="#optionally-report-an-error">optionally report an error</a>.</li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>Increase <var>generatedLine</var> by 1.</li>
+          </ol>
+        </li>
+        <li>Return <var>decodedMappings</var>.</li>
+      </ol>
+    </emu-alg>
+      
+    <p>To <dfn id="validate-base64-vlq-groupings">validate base64 VLQ groupings</dfn> from a string <var>groupings</var>, run the following steps:</p>
+
+    <emu-alg>
+      <ol>
+        <li>If <var>groupings</var> is not an ASCII string, throw an error.</li>
+        <li>
+          If <var>groupings</var> contains any code unit other than:
+          <ul>
+            <li>U+002C (,) or U+003B (;);</li>
+            <li>U+0030 (0) to U+0039 (9);</li>
+            <li>U+0041 (A) to U+005A (Z);</li>
+            <li>U+0061 (a) to U+007A (z);</li>
+            <li>U+002B (+), U+002F (/)</li>
+          </ul>
+          <emu-note>
+            <div class="note-contents">
+              <p>These are the valid <a href="#biblio-base64" title="The Base16, Base32, and Base64 Data Encodings">[base64]</a> characters (excluding the padding character <code class="highlight"><c- o>=</c-></code>), together with <code class="highlight"><c- p>,</c-></code> and <code class="highlight"><c- p>;</c-></code>.</p>
+            </div>
+          </emu-note>
+        </li>
+        <li>then throw an error.</li>
+      </ol>
+    </emu-alg>
+      
+    <p>To <dfn id="decode-a-base64-vlq">decode a base64 VLQ</dfn> from a string <var>segment</var> given a position variable <var>position</var>, run the following steps:</p>
+
+    <emu-alg>
+      <ol>
+        <li>If <var>position</var> points to the end of <var>segment</var>, return null.</li>
+        <li>
+        Let <var>first</var> be a byte whose the value is the number corresponding to <var>segment</var>&apos;s <var>position</var>th code unit, according to the <a href="#biblio-base64" title="The Base16, Base32, and Base64 Data Encodings">[base64]</a> encoding.
+        <emu-note>
+          <div class="note-contents"><p>The two most significant bits of <var>first</var> are 0.</p></div>
+        </emu-note>
+      </li>
+        <li>Let <var>sign</var> be 1 if <var>first</var> &amp; 0x01 is 0x00, and -1 otherwise.</li>
+        <li>Let <var>value</var> be (<var>first</var> >> 1) &amp; 0x0F, as a number.</li>
+        <li>Let <var>nextShift</var> be 16.</li>
+        <li>Let <var>currentByte</var> be <var>first</var>.</li>
+        <li>While <var>currentByte</var> &amp; 0x20 is 0x20:
+          <ol>
+            <li>Advance <var>position</var> by 1.</li>
+            <li>If <var>position</var> points to the end of <var>segment</var>, throw an error.</li>
+            <li>Set <var>currentByte</var> to the byte whose the value is the number corresponding to <var>segment</var>&apos;s <var>position</var>th code unit, according to the <a href="#biblio-base64" title="The Base16, Base32, and Base64 Data Encodings">[base64]</a> encoding.</li>
+            <li>Let <var>chunk</var> be <var>currentByte</var> &amp; 0x1F, as a number.</li>
+            <li>Add <var>chunk</var> * <var>nextShift</var> to <var>value</var>.</li>
+            <li>If <var>value</var> is greater than or equal to 2<sup>31</sup>, throw an error.</li>
+            <li>Multiply <var>nextShift</var> by 32.</li>
+          </ol>
+        </li>
+        <li>Advance <var>position</var> by 1.</li>
+        <li>
+        If <var>value</var> is 0 and <var>sign</var> is -1, return -2147483648.
+        <emu-note><div class="note-contents"><p>-2147483648 is the smallest 32-bit signed integer.</p></div></emu-note>
+      </li>
+        <li>Return <var>value</var> * <var>sign</var>.</li>
+      </ol>
+    </emu-alg>
+     
+    <emu-note>
+      <div class="note-contents">
+        <p>In addition to returning the decoded value, this algorithm updates the position variable in the calling algorithm.</p>
+      </div>
+    </emu-note>
+    
+    <emu-clause clause="5.1.1" id="mappings-javascript">
+      <h3><span class="secnum">5.1.1</span> <a href="#decoded-mapping">Mappings</a> for generated JavaScript code</h3>
+      
+    <p>Generated code positions that may have <a href="#decoded-mapping">mapping</a> entries are defined in terms of <em>input elements</em> as per <a href="https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar">ECMAScript Lexical Grammar</a>. <a href="#decoded-mapping">Mapping</a> entries must point to either:</p>
+      
+      <emu-alg>
+      <ol>
+        <li>the first code point of the source text matched by <a href="https://tc39.es/ecma262/#prod-IdentifierName">IdentifierName</a>, <a href="https://tc39.es/ecma262/#prod-PrivateIdentifier">PrivateIdentifier</a>, <a href="https://tc39.es/ecma262/#prod-Punctuator">Punctuator</a>, <a href="https://tc39.es/ecma262/#prod-DivPunctuator">DivPunctuator</a>, <a href="https://tc39.es/ecma262/#prod-RightBracePunctuator">RightBracePunctuator</a>, <a href="https://tc39.es/ecma262/#prod-NumericLiteral">NumericLiteral</a> and <a href="https://tc39.es/ecma262/#prod-RegularExpressionLiteral">RegularExpressionLiteral</a>.</li>
+        <li>any code point of the source text matched by <a href="https://tc39.es/ecma262/#prod-Comment">Comment</a>, <a href="https://tc39.es/ecma262/#prod-HashbangComment">HashbangComment</a>, <a href="https://tc39.es/ecma262/#prod-StringLiteral">StringLiteral</a>, <a href="https://tc39.es/ecma262/#prod-Template">Template</a>, <a href="https://tc39.es/ecma262/#prod-TemplateSubstitutionTail">TemplateSubstitutionTail</a>, <a href="https://tc39.es/ecma262/#prod-WhiteSpace">WhiteSpace</a> and <a href="https://tc39.es/ecma262/#prod-LineTerminator">LineTerminator</a>.</li>
+      </ol>
+      </emu-alg>
+    </emu-clause>
+  </emu-clause>
+  
+  <emu-clause clause="5.2" id="resolving-sources">
+    <h2><span class="secnum">5.2</span> Resolving Sources</h2>
+    <p>
+      If the sources are not absolute URLs after prepending the <a href="#json-sourceroot">sourceRoot</a>, the sources are resolved relative to the SourceMap (like resolving the script <code class="highlight">src</code> attribute in an HTML document).</p>
+    <p>To <dfn id="decode-source-map-sources">decode source map sources</dfn> given a URL <var>baseURL</var>,
+      a string or null <dfn id="decode-source-map-sources-sourceroot"><var>sourceRoot</var></dfn>,
+      a list of either strings or nulls <dfn id="decode-source-map-sources-sources"><var>sources</var></dfn>,
+      a list of either strings or nulls <dfn id="decode-source-map-sources-sourcescontent"><var>sourcesContent</var></dfn>,
+      and a list of numbers <dfn id="decode-source-map-sources-ignoredsources"><var>ignoredSources</var></dfn>,
+      run the following steps:</p>
+    
+    <emu-alg>
+      <ol>
+        <li>Let <var>decodedSources</var> be a new empty list.</li>
+        <li>Let <var>sourceURLPrefix</var> be "".</li>
+        <li>
+        If <var>sourceRoot</var> is not null, then:
+          <ol>
+            <li>
+              If <var>sourceRoot</var> contains the code point U+002F (/), then:
+              <ol>
+                <li>Let <var>index</var> be the index of the last occurrence of U+002F (/) in <var>sourceRoot</var>.</li>
+                <li>Set <var>sourceURLPrefix</var> to the substring of <var>sourceRoot</var> from 0 to <var>index</var> + 1.</li>
+              </ol>
+            </li>
+            <li>Else, set <var>sourceURLPrefix</var> to the concatenation of <var>sourceRoot</var> and "/".</li>
+          </ol>
+      </li>
+        <li>
+          For each <var>source</var> of <var>sources</var> with index <var>index</var>:
+          <ol>
+            <li>Let <var>decodedSource</var> be a new <a href="#decoded-source">decoded source</a> whose <a href="#decoded-source-url">URL</a> is null, <a href="#decoded-source-content">content</a> is null, and <a href="#decoded-source-ignored">ignored</a> is false.</li>
+            <li>
+            If <var>source</var> is not null:
+              <ol>
+                <li>Set <var>source</var> to the concatenation of <var>sourceURLPrefix</var> and <var>source</var>.</li>
+                <li>Let <var>sourceURL</var> be the result of URL parsing <var>source</var> with <var>baseURL</var>.</li>
+                <li>If <var>sourceURL</var> is failure, <a href="#optionally-report-an-error">optionally report an error</a>.</li>
+                <li>Else, set <var>decodedSource</var>&apos;s <a href="#decoded-source-url">URL</a> to <var>sourceURL</var>.</li>
+              </ol>
+          </li>
+            <li>If <var>index</var> is in <var>ignoredSources</var>, set <var>decodedSource</var>&apos;s <a href="#decoded-source-ignored">ignored</a> to true.</li>
+            <li>If <var>sourcesContent</var>&apos;s size is greater than or equal to <var>index</var>, set <var>decodedSource</var>&apos;s <a href="#decoded-source-content">content</a> to <var>sourcesContent</var>[<var>index</var>].</li>
+            <li>Append <var>decodedSource</var> to <var>decodedSources</var>.</li>
+          </ol>
+        </li>
+        <li>Return <var>decodedSources</var>.</li>
+      </ol>
+    </emu-alg>
+      
+    <emu-note>
+      <div class="note-contents">
+        <p>Implementations that support showing source contents but do not support showing multiple sources with the same URL and different content will arbitrarily choose one of the various contents corresponding to the given URL.</p>
+      </div>
+    </emu-note>
+
+  </emu-clause>
+  
+  <emu-clause clause="5.3" id="extensions">
+    <h2><span class="secnum">5.3</span> Extensions</h2>
+    <p>Source map consumers must ignore any additional unrecognized properties, rather than causing the source map to be rejected, so that additional features can be added to this format without breaking existing users.</p>
+  </emu-clause>
+</emu-clause>
+
+<emu-clause clause="6" id="index-map">
+  <h1><span class="secnum">6</span> Index Map</h1>
+
+  <p>To support concatenating generated code and other common post-processing, an alternate representation of a map is supported:</p>
+
+  <pre class="language-json highlight"><c- p>{</c->
+  <c- f>"version"</c-> <c- p>:</c-> <c- mi>3</c-><c- p>,</c->
+  <c- f>"file"</c-><c- p>:</c-> <c- u>"app.js"</c-><c- p>,</c->
+  <c- f>"sections"</c-><c- p>:</c-> <c- p>[</c->
+    <c- p>{</c->
+      <c- f>"offset"</c-><c- p>:</c-> <c- p>{</c-><c- f>"line"</c-><c- p>:</c-> <c- mi>0</c-><c- p>,</c-> <c- f>"column"</c-><c- p>:</c-> <c- mi>0</c-><c- p>},</c->
+      <c- f>"map"</c-><c- p>:</c-> <c- p>{</c->
+        <c- f>"version"</c-> <c- p>:</c-> <c- mi>3</c-><c- p>,</c->
+        <c- f>"file"</c-><c- p>:</c-> <c- u>"section.js"</c-><c- p>,</c->
+        <c- f>"sources"</c-><c- p>:</c-> <c- p>[</c-><c- u>"foo.js"</c-><c- p>,</c-> <c- u>"bar.js"</c-><c- p>],</c->
+        <c- f>"names"</c-><c- p>:</c-> <c- p>[</c-><c- u>"src"</c-><c- p>,</c-> <c- u>"maps"</c-><c- p>,</c-> <c- u>"are"</c-><c- p>,</c-> <c- u>"fun"</c-><c- p>],</c->
+        <c- f>"mappings"</c-><c- p>:</c-> <c- u>"AAAA,E;;ABCDE"</c->
+      <c- p>}</c->
+    <c- p>},</c->
+    <c- p>{</c->
+      <c- f>"offset"</c-><c- p>:</c-> <c- p>{</c-><c- f>"line"</c-><c- p>:</c-> <c- mi>100</c-><c- p>,</c-> <c- f>"column"</c-><c- p>:</c-> <c- mi>10</c-><c- p>},</c->
+      <c- f>"map"</c-><c- p>:</c-> <c- p>{</c->
+        <c- f>"version"</c-> <c- p>:</c-> <c- mi>3</c-><c- p>,</c->
+        <c- f>"file"</c-><c- p>:</c-> <c- u>"another_section.js"</c-><c- p>,</c->
+        <c- f>"sources"</c-><c- p>:</c-> <c- p>[</c-><c- u>"more.js"</c-><c- p>],</c->
+        <c- f>"names"</c-><c- p>:</c-> <c- p>[</c-><c- u>"more"</c-><c- p>,</c-> <c- u>"is"</c-><c- p>,</c-> <c- u>"better"</c-><c- p>],</c->
+        <c- f>"mappings"</c-><c- p>:</c-> <c- u>"AAAA,E;AACA,C;ABCDE"</c->
+      <c- p>}</c->
+    <c- p>}</c->
+  <c- p>]</c->
+<c- p>}</c->
+</pre>
+
+  <p>The index map follows the form of the standard map. Like the regular source map, the file format is JSON with a top-level object. It shares the <a href="#json-version">version</a> and <a href="#json-file">file</a> field from the regular source map, but gains a new <a href="#index-map-sections">sections</a> field.</p>
+  <p><dfn id="index-map-sections"><code class="highlight">sections</code></dfn> is an array of <a href="#index-map-sections">Section</a> objects.</p>
+  
+  <emu-clause clause="6.1" id="section-object">
+    <h2><span class="secno">6.1</span> Section</h2>
+
+    <p>Section objects have the following fields:</p>
+
+    <emu-alg>
+      <ul>
+        <li><dfn id="index-map-offset"><code class="highlight">offset</code></dfn> is an object with two fields, <code class="highlight">line</code> and <code class="highlight">column</code>, that represent the offset into generated code that the referenced source map represents.</li>
+        <li><dfn id="index-map-map"><code class="highlight">map</code></dfn> is an embedded complete source map object. An embedded map does not inherit any values from the containing index map.</li>
+      </ul>
+    </emu-alg>
+
+    <p>The sections must be sorted by starting position and the represented sections must not overlap.</p>
+
+  </emu-clause>
+</emu-clause>
+
+<emu-clause clause="7" id="linking-and-fetching">
+  <h1><span class="secnum">7</span> Retrieving Source Maps</h1>
+  
+  <emu-clause clause="7.1" id="linking-generated-code">
+    <h2 id="linking-generated-code"><span class="secno">7.1</span> Linking generated code to source maps</h2>
+
+    <p>While the source map format is intended to be language and platform agnostic, it is useful to define how to reference to them for the expected use-case of web server-hosted JavaScript.</p>
+    <p>There are two possible ways to link source maps to the output. The first requires server support in order to add an HTTP header and the second requires an annotation in the source.</p>
+    <p>Source maps are linked through URLs as defined in <a href="#biblio-url">[URL]</a>; in particular, characters outside the set permitted to appear in URIs must be percent-encoded and it may be a data URI. Using a data URI along with <a href="#json-sourcescontent">sourcesContent</a> allows for a completely self-contained source map.</p>
+    <p>The HTTP <code class="highlight">sourcemap</code> header has precedence over a source annotation, and if both are present, the header URL should be used to resolve the source map file.</p>
+    <p>Regardless of the method used to retrieve the <a href="#source-mapping-url">Source Mapping URL</a> the same process is used to resolve it, which is as follows:</p>
+    <p>When the <a href="#source-mapping-url">Source Mapping URL</a> is not absolute, then it is relative to the generated code&apos;s <dfn id="source-origin">source origin</dfn>. The <a href="#source-origin">source origin</a> is determined by one of the following cases:</p>
+
+    <emu-alg>
+      <ul>
+        <li>
+          If the generated source is not associated with a script element that has a <code class="highlight">src</code> attribute and there exists a <code class="highlight"><c- c1>//# sourceURL</c-></code> comment in the generated code, that comment should be used to determine the <a href="#source-origin">source origin</a>.
+          <emu-note>
+            <div class="note-contents">
+              <p>Previously, this was <code class="highlight"><c- c1>//@ sourceURL</c-></code>, as with
+                <code class="highlight"><c- c1>//@ sourceMappingURL</c-></code>, it is reasonable to accept both but
+                <code class="highlight"><c- c1>//#</c-></code> is preferred.
+              </p>
+            </div>
+          </emu-note>
+        </li>
+        <li>If the generated code is associated with a script element and the script element has a <code class="highlight">src</code> attribute, the <code class="highlight">src</code> attribute of the script element will be the <a href="#source-origin">source origin</a>.</li>
+        <li>If the generated code is associated with a script element and the script element does not have a <code class="highlight">src</code> attribute, then the <a href="#source-origin">source origin</a> will be the page&apos;s origin.</li>
+        <li>If the generated code is being evaluated as a string with the <code class="highlight">eval<c- p>()</c-></code> function or via <code class="highlight"><c- ow>new</c-> Function<c- p>()</c-></code>, then the <a href="#source-origin">source origin</a> will be the page&apos;s origin.</li>
+      </ul>
+    </emu-alg>
+    
+    <emu-clause clause="7.1.1" id="linking-http-header">
+    <h3><span class="secnum">7.1.1</span> Linking through HTTP headers</h3>
+
+    <p>If a file is served through HTTP(S) with a <code class="highlight">sourcemap</code> header, the value of the header is the URL of the linked source map.</p>
+    <pre class="highlight">sourcemap<c- o>:</c-> <c- o>&lt;</c->url<c- o>></c-></pre>
+      
+      <emu-note>
+        <div class="note-contents">
+          <p>Previous revisions of this document recommended a header name of <code class="highlight">x<c- o>-</c->sourcemap</code>. This is now deprecated;
+            <code class="highlight">sourcemap</code> is now expected.
+          </p>
+        </div>
+      </emu-note>
+    </emu-clause>
+
+    <emu-clause clause="7.1.2" id="linking-inline">
+      <h3><span class="secnum">7.1.2</span> Linking through inline annotations</h3>
+
+      <p>The generated code should include a comment, or the equivalent construct depending on its language or format, named <code class="highlight">sourceMappingURL</code> and that contains the URL of the source map. This specification defines how the comment should look like for JavaScript, CSS, and WebAssembly. Other languages should follow a similar convention.</p>
+      <p>For a given language there can be multiple ways of detecting the <code class="highlight">sourceMappingURL</code> comment, to allow for different implementations to choose what is less complex for them. The generated code <dfn id="unambiguously-links-to-a-source-map">unambiguously links to a source map</dfn> if the result of all the extraction methods is the same.</p>
+      <p>If a tool consumes one or more source files that <a href="#unambiguously-links-to-a-source-map">unambiguously links to a source map</a> and it produces an output file that links to a source map, it must do so <a href="#unambiguously-links-to-a-source-map">unambiguously</a>.</p>
+      
+      <emu-note example id="example-5b7659a8">
+        <figure>
+        The following JavaScript code links to a source map, but it does not do so <a href="#unambiguously-links-to-a-source-map">unambiguously</a>:
+        <pre class="language-js highlight"><c- a>let</c-> a <c- o>=</c-> <c- sb>`</c->
+  <c- sb>//# sourceMappingURL=foo.js.map</c->
+  <c- sb>//`</c-><c- p>;</c->
+    </pre>
+        <p>Extracting a Source Map URL from it <a href="#extract-a-source-map-url-from-javascript-through-parsing">through parsing</a> gives null, while <a href="#extract-a-source-map-url-from-javascript-without-parsing">without parsing</a> gives <code class="highlight">foo<c- p>.</c->js<c- p>.</c->map</code>.</p>
+        </figure>
+      </emu-note>
+
+      <emu-note issue="">
+        <div class="note-contents">
+          <p>Having multiple ways to extract a source map URL, that can lead to different results, can have negative security and privacy implications. Implementations that need to detect which source maps are potentially going to be loaded are strongly encouraged to always apply both algorithms, rather than just assuming that they will give the same result.</p>
+          <p>A fix to this problem is being worked on, and is expected to be included in a future version of the standard. It will likely involve early returning from the below algorithms whenever there is a comment (or comment-like) that contains the characters U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the sequence U+002A U+002F (*/).</p>
+        </div>
+      </emu-note>
+      
+      <emu-clause clause="7.1.2.1" id="extraction-javascript">
+        <h4><span class="secnum">7.1.2.1</span> Extraction methods for JavaScript sources</h4>
+
+        <p>To <dfn id="extract-a-source-map-url-from-javascript-through-parsing">extract a Source Map URL from JavaScript through parsing</dfn> a string <var>source</var>, run the following steps:</p>
+
+        <emu-alg>
+          <ol>
+            <li>Let <var>tokens</var> be the list of <a href="https://tc39.es/ecma262/#sec-lexical-and-regexp-grammars">tokens</a> obtained by parsing <var>source</var> according to <a href="#biblio-ecma-262">[ECMA-262]</a>.</li>
+            <li>
+              For each <var>token</var> in <var>tokens</var>, in reverse order:
+              <ol>
+                <li>If <var>token</var> is not a <a href="https://tc39.es/ecma262/#prod-SingleLineComment">single-line comment</a> or a <a href="https://tc39.es/ecma262/#prod-MultiLineComment">multi-line comment</a>, return null.</li>
+                <li>Let <var>comment</var> be the content of <var>token</var>.</li>
+                <li>If <a href="#match-a-source-map-url-in-a-comment">matching a Source Map URL in</a> <var>comment</var> returns a string, return it.</li>
+              </ol>
+            </li>
+            <li>Return null.</li>
+          </ol>
+        </emu-alg>
+
+        <p>To <dfn id="extract-a-source-map-url-from-javascript-without-parsing">extract a Source Map URL from JavaScript without parsing</dfn> a string <var>source</var>, run the following steps:</p>
+
+        <emu-alg>
+          <ol>
+            <li>Let <var>lines</var> be the result of strictly splitting <var>source</var> on <a href="https://tc39.es/ecma262/#table-line-terminator-code-points">ECMAScript line terminator code points</a>.</li>
+            <li>Let <var>lastURL</var> be null.</li>
+            <li>
+              For each <var>line</var> in <var>lines</var>:
+              <ol>
+                <li>Let <var>position</var> be a position variable for <var>line</var>, initially pointing at the start of <var>line</var>.</li>
+                <li>
+                  While <var>position</var> doesn&apos;t point past the end of <var>line</var>:
+                  <ol>
+                    <li>
+                      Collect a sequence of code points that are <a href="https://tc39.es/ecma262/#sec-white-space">ECMAScript white space code points</a> from <var>line</var> given <var>position</var>.
+                      <emu-note>
+                        <div class="note-contents"><p>The collected code points are not used, but <var>position</var> is still updated.</p></div>
+                      </emu-note>
+                    </li>
+                    <li>If <var>position</var> points past the end of <var>line</var>, break.</li>
+                    <li>Let <var>first</var> be the code point of <var>line</var> at <var>position</var>.</li>
+                    <li>Increment <var>position</var> by 1.</li>
+                    <li>
+                      If <var>first</var> is U+002F (/) and <var>position</var> does not point past the end of <var>line</var>, then:
+                      <ol>
+                        <li>Let <var>second</var> be the code point of <var>line</var> at <var>position</var>.</li>
+                        <li>Increment <var>position</var> by 1.</li>
+                        <li>
+                          If <var>second</var> is U+002F (/), then:
+                          <ol>
+                            <li>Let <var>comment</var> be the code point substring from <var>position</var> to the end of <var>line</var>.</li>
+                            <li>If <a href="#match-a-source-map-url-in-a-comment">matching a Source Map URL in</a> <var>comment</var> returns a string, set <var>lastURL</var> to it.</li>
+                            <li>Break.</li>
+                          </ol>
+                        </li>
+                        <li>
+                          Else if <var>second</var> is U+002A (*), then:
+                          <ol>
+                            <li>Let <var>comment</var> be the empty string.</li>
+                            <li>
+                              While <var>position</var> + 1 doesn&apos;t point past the end of <var>line</var>:
+                              <ol>
+                                <li>Let <var>c1</var> be the code point of <var>line</var> at <var>position</var>.</li>
+                                <li>Increment <var>position</var> by 1.</li>
+                                <li>Let <var>c2</var> be the code point of <var>line</var> at <var>position</var>.</li>
+                                <li>
+                                  If <var>c1</var> is U+002A (*) and <var>c2</var> is U+002F (/), then:
+                                  <ol>
+                                    <li>If <a href="#match-a-source-map-url-in-a-comment">matching a Source Map URL in</a> <var>comment</var> returns a string, set <var>lastURL</var> to it.</li>
+                                    <li>Increment <var>position</var> by 1.</li>
+                                  </ol>
+                                </li>
+                                <li>Append <var>c1</var> to <var>comment</var>.</li>
+                              </ol>
+                            </li>
+                          </ol>
+                        </li>
+                        <li>Else, set <var>lastURL</var> to null.</li>
+                      </ol>
+                    </li>
+                    <li> Else, set <var>lastURL</var> to null.</li>
+                  </ol>
+                  <emu-note>
+                    <div class="note-contents"><p>We reset
+                      <var>lastURL</var> to null whenever we find a non-comment code character.</p></div>
+                  </emu-note>
+                </li>
+              </ol>
+            </li>
+            <li>Return <var>lastURL</var>.</li>
+          </ol>
+        </emu-alg>
+
+        <emu-note>
+          <div class="note-contents">
+            <p>The algorithm above has been designed so that the source lines can be iterated in reverse order, returning early after scanning through a line that contains a <code class="highlight">sourceMappingURL</code> comment.</p>
+          </div>
+        </emu-note>
+          
+        <emu-note>
+          <div class="note-contents">
+            <p>The algorithm above is equivalent to the following JavaScript implementation:</p>
+            <pre class="language-js highlight"><c- a>const</c-> JS_NEWLINE <c- o>=</c-> <c- sr>/^/m</c-><c- p>;</c->
+        
+<c- c1>// This RegExp will always match one of the following:</c->
+<c- c1>// - single-line comments</c->
+<c- c1>// - "single-line" multi-line comments</c->
+<c- c1>// - unclosed multi-line comments</c->
+<c- c1>// - just trailing whitespaces</c->
+<c- c1>// - a code character</c->
+<c- c1>// The loop below differentiates between all these cases.</c->
+<c- a>const</c-> JS_COMMENT <c- o>=</c->
+<c- sr>/\s*(?:\/\/(?&lt;single>.*)|\/\*(?&lt;multi>.*?)\*\/|\/\*.*|$|(?&lt;code>[^\/]+))/uym</c-><c- p>;</c->
+
+<c- a>const</c-> PATTERN <c- o>=</c-> <c- sr>/^[@#]\s*sourceMappingURL=(\S*?)\s*$/</c-><c- p>;</c->
+
+<c- a>let</c-> lastURL <c- o>=</c-> <c- kc>null</c-><c- p>;</c->
+<c- k>for</c-> <c- p>(</c-><c- a>const</c-> line <c- k>of</c-> source<c- p>.</c->split<c- p>(</c->JS_NEWLINE<c- p>))</c-> <c- p>{</c->
+  JS_COMMENT<c- p>.</c->lastIndex <c- o>=</c-> <c- mf>0</c-><c- p>;</c->
+  <c- k>while</c-> <c- p>(</c->JS_COMMENT<c- p>.</c->lastIndex <c- o>&lt;</c-> line<c- p>.</c->length<c- p>)</c-> <c- p>{</c->
+    <c- a>let</c-> commentMatch <c- o>=</c-> JS_COMMENT<c- p>.</c->exec<c- p>(</c->line<c- p>).</c->groups<c- p>;</c->
+    <c- a>let</c-> comment <c- o>=</c-> commentMatch<c- p>.</c->single <c- o>??</c-> commentMatch<c- p>.</c->multi<c- p>;</c->
+    <c- k>if</c-> <c- p>(</c->comment <c- o>!=</c-> <c- kc>null</c-><c- p>)</c-> <c- p>{</c->
+      <c- a>let</c-> match <c- o>=</c-> PATTERN<c- p>.</c->exec<c- p>(</c->comment<c- p>);</c->
+      <c- k>if</c-> <c- p>(</c->match <c- o>!==</c-> <c- kc>null</c-><c- p>)</c-> lastURL <c- o>=</c-> match<c- p>[</c-><c- mf>1</c-><c- p>];</c->
+    <c- p>}</c-> <c- k>else</c-> <c- k>if</c-> <c- p>(</c->commentMatch<c- p>.</c->code <c- o>!=</c-> <c- kc>null</c-><c- p>)</c-> <c- p>{</c->
+      lastURL <c- o>=</c-> <c- kc>null</c-><c- p>;</c->
+    <c- p>}</c-> <c- k>else</c-> <c- p>{</c->
+      <c- c1>// We found either trailing whitespaces or an unclosed comment.</c->
+      <c- c1>// Assert: JS_COMMENT.lastIndex === line.length</c->
+    <c- p>}</c->
+  <c- p>}</c->
+<c- p>}</c->
+<c- k>return</c-> lastURL<c- p>;</c->
+</pre>
+          </div>
+        </emu-note>
+
+        <p>To <dfn id="match-a-source-map-url-in-a-comment">match a Source Map URL in a comment</dfn> <var>comment</var> (a string), run the following steps:</p>
+
+        <emu-alg>
+          <ol>
+            <li>Let <var>pattern</var> be the regular expression <code class="highlight"><c- sr>/^[@#]\s*sourceMappingURL=(\S*?)\s*$/</c-></code>.</li>
+            <li>Let <var>match</var> be ! <a href="https://tc39.es/ecma262/#sec-regexpbuiltinexec">RegExpBuiltInExec</a>(<var>pattern</var>, <var>comment</var>).</li>
+            <li>If <var>match</var> is not null, return <var>match</var>[1].</li>
+            <li>Return null.</li>
+          </ol>
+        </emu-alg>
+
+        <emu-note>
+          <div class="note-contents">
+            <p>The prefix for this annotation was initially <code class="highlight"><c- c1>//@</c-></code> however this conflicts with Internet Explorer&apos;s Conditional Compilation and was changed to <code class="highlight"><c- c1>//#</c-></code>.</p>
+          </div>
+        </emu-note>
+
+        <p>Source map generators must only emit <code class="highlight"><c- c1>//#</c-></code> while source map consumers must accept both <code class="highlight"><c- c1>//@</c-></code> and <code class="highlight"><c- c1>//#</c-></code>.</p>
+      </emu-clause>
+
+      <emu-clause clause="7.1.2.2" id="extraction-css">
+        <h4 id="extraction-css"><span class="secnum">7.1.2.2</span> Extraction methods for CSS sources</h4>
+
+        <p>Extracting source mapping URLs from CSS is similar to JavaScript, with the exception that CSS only supports <code class="highlight"><c- d>/* ... */</c-></code>-style comments.</p>
+      </emu-clause>
+
+      <emu-clause clause="7.1.2.3" id="extraction-wasm">
+        <h4><span class="secnum">7.1.2.3</span> Extraction methods for WebAssembly binaries</h4>
+
+        <p>To <dfn id="extract-a-source-map-url-from-a-webassembly-source">extract a Source Map URL from a WebAssembly source</dfn> given a byte sequence <var>bytes</var>, run the following steps:</p>
+
+        <emu-alg>
+          <ol>
+            <li>Let <var>module</var> be <a href="https://webassembly.github.io/spec/core/appendix/embedding.html#embed-module-decode">module_decode</a>(<var>bytes</var>).</li>
+            <li>If <var>module</var> is error, return null.</li>
+            <li>
+              For each <a href="https://webassembly.github.io/spec/core/binary/modules.html#binary-customsec">custom section</a> <var>customSection</var> of <var>module</var>,
+              <ol>
+                <li>Let <var>name</var> be the <code class="highlight">name</code> of <var>customSection</var>, decoded as UTF-8.</li>
+                <li>
+                  If <var>name</var> is "sourceMappingURL", then:
+                  <ol>
+                    <li>Let <var>value</var> be the <code class="highlight">bytes</code> of <var>customSection</var>, decoded as UTF-8.</li>
+                    <li>If <var>value</var> is failure, return null.</li>
+                    <li>Return <var>value</var>.</li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>Return null.</li>
+          </ol>
+        </emu-alg>
+          
+        <p>
+          Since WebAssembly is not a textual format and it does not support comments, it supports a single unambiguous extraction method. The URL is encoded using
+          <a href="#biblio-wasmnamesbinaryformat">[WasmNamesBinaryFormat]</a>, and it&apos;s placed as the content of the
+          <a href="https://webassembly.github.io/spec/core/binary/modules.html#binary-customsec">custom section</a>. It is invalid for tools that generate WebAssembly code to generate two or more
+          <a href="https://webassembly.github.io/spec/core/binary/modules.html#binary-customsec">custom sections</a> with the "sourceMappingURL" name.
+        </p>
+      </emu-clause>
+    </emu-clause>
+  </emu-clause>
+
+  <emu-clause clause="7.2" id="fetching-source-maps">
+    <h2><span class="secnum">7.2</span> Fetching Source Maps</h2>
+
+    <p>To fetch a source map given a URL <var>url</var>, run the following steps:</p>
+
+    <emu-alg>
+      <ol>
+        <li>Let <var>promise</var> be a new promise.</li>
+        <li>Let <var>request</var> be a new request whose URL is <var>url</var>.</li>
+        <li>
+          Fetch <var>request</var> with processResponseConsumeBody set to the following steps given response <var>response</var> and null, failure, or a byte sequence <var>bodyBytes</var>:
+          <ol>
+            <li>If <var>bodyBytes</var> is null or failure, reject <var>promise</var> with a <code class="idl"><a data-link-type="idl">TypeError</a></code> and abort these steps.</li>
+            <li>
+              If <var>url</var>&apos;s scheme is an HTTP(S) scheme and <var>bodyBytes</var> starts with `<code class="highlight"><c- p>)]}</c->'</code>`, then:
+              <ol>
+                <li>
+                  While <var>bodyBytes</var>&apos;s length is not 0 and <var>bodyBytes</var>&apos;s 0th byte is not an HTTP newline byte:
+                  <ol><li>remove the 0th byte from <var>bodyBytes</var>.</li></ol>
+                  <emu-note>
+                    <div class="note-contents">
+                      <p>For historic reasons, when delivering source maps over HTTP(S), servers may prepend a line starting with the string <code class="highlight"><c- p>)]}</c->'</code> to the source map.</p>
+                      <pre class="highlight"><c- p>)]}</c->'garbage here
+<c- p>{</c-><c- u>"version"</c-><c- o>:</c-> <c- mf>3</c-><c- p>,</c-> <c- p>...}</c-></pre>
+                      is interpreted as
+                      <pre class="highlight"><c- p>{</c-><c- u>"version"</c-><c- o>:</c-> <c- mf>3</c-><c- p>,</c-> <c- p>...}</c-></pre>
+                    </div>
+                  </emu-note>
+                </li>
+              </ol>
+            </li>
+            <li>Let <var>sourceMap</var> be the result of parsing JSON bytes to a JavaScript value given
+              <var>bodyBytes</var>.
+            </li>
+            <li>If the previous step threw an error, reject <var>promise</var> with that error.</li>
+            <li>Otherwise, resolve <var>promise</var> with <var>sourceMap</var>.</li>
+          </ol>
+        </li>
+        <li>Return <var>promise</var>.</li>
+      </ol>
+    </emu-alg>
+  </emu-clause>
+</emu-clause>
+
+<emu-clause clause="8" id="conventions">
+  <h1><span class="secnum">8</span> Conventions</h1>
+
+  <p>The following conventions should be followed when working with source maps or when generating them.</p>
+
+  <emu-clause clause="8.1" id="source-map-naming">
+  <h2><span class="secnum">8.1</span> Source Map Naming</h2>
+
+    <p>Commonly, a source map will have the same name as the generated file but with a <code class="highlight"><c- p>.</c->map</code> extension. For example, for <code class="highlight">page<c- p>.</c->js</code> a source map named <code class="highlight">page<c- p>.</c->js<c- p>.</c->map</code> would be generated.</p>
+  </emu-clause>
+
+  <emu-clause clause="8.2" id="linking-eval">
+    <h2><span class="secnum">8.2</span> Linking eval&apos;d code to named generated code</h2>
+
+    <p>There is an existing convention that should be supported for the use of source maps with eval&apos;d code, it has the following form:</p>
+
+    <pre class="highlight"><c- c1>//# sourceURL=foo.js</c-></pre>
+
+    <p>It is described in <a href="#biblio-evalsourceurl">[EvalSourceURL]</a>.</p>
+  </emu-clause>
+</emu-clause>
+
+  <emu-clause clause="9" id="language-neutral-mapping">
+    <h1><span class="secnum">9</span> Language Neutral Stack Mapping Notes</h1>
+
+    <p>Stack tracing mapping without knowledge of the source language is not covered by this document.</p>
+  </emu-clause>
+
+  <emu-clause clause="10" id="multi-level-mapping">
+    <h1><span class="secnum">10</span> Multi-level Mapping Notes</h1>
+
+    <p>It is getting more common to have tools generate sources from some DSL (templates) or compile TypeScript -> JavaScript -> minified JavaScript, resulting in multiple translations before the final source map is created. This problem can be handled in one of two ways. The easy but lossy way is to ignore the intermediate steps in the process for the purposes of debugging, the source location information from the translation is either ignored (the intermediate translation is considered the &rdquo;Original Source&ldquo;) or the source location information is carried through (the intermediate translation hidden). The more complete way is to support multiple levels of mapping: if the Original Source also has a source map reference, the user is given the choice of using that as well.</p>
+    <p>However, It is unclear what a "source map reference" looks like in anything other than JavaScript. More specifically, what a source map reference looks like in a language that doesn&apos;t support JavaScript-style single-line comments.</p>
+  </emu-clause>
+
+  <emu-clause clause="11" id="license">
+    <h1><span class="secnum">11</span> License</h1>
+
+    <p>This work is licensed under a
+      <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.
+    </p>
+  </emu-clause>
+
+  <emu-annex id="index">
+    <header>
+      <p>Annex A<br />
+        <em>(Informative)</em></p>
+      <h1>Index</h1>
+    </header>
+
+    <emu-annex id="index-defined-here">
+
+      <h2>Terms defined by this specification</h2>
+
+      <ul class="index">
+        <li><a href="#base64-vlq">Base64 VLQ</a><span>, in &sect;4</span></li>
+        <li><a href="#column">Column</a><span>, in &sect;4</span></li>
+        <li><a href="#decoded-source-content">content</a><span>, in &sect;5</span></li>
+        <li><a href="#decode-a-base64-vlq">decode a base64 VLQ</a><span>, in &sect;5.1</span></li>
+        <li><a href="#decode-a-source-map">decode a source map</a><span>, in &sect;5</span></li>
+        <li>
+          <a href="#decode-a-source-map-from-a-json-string">decode a source map from a JSON string</a><span>, in &sect;5</span>
+        </li>
+        <li><a href="#decoded-mapping">decoded mapping</a><span>, in &sect;5.1</span></li>
+        <li><a href="#decoded-source">decoded source</a><span>, in &sect;5</span></li>
+        <li><a href="#decoded-source-map">decoded source map</a><span>, in &sect;5</span></li>
+        <li><a href="#decode-source-map-mappings">decode source map mappings</a><span>, in &sect;5.1</span></li>
+        <li><a href="#decode-source-map-sources">decode source map sources</a><span>, in &sect;5.2</span></li>
+        <li>
+          <a href="#extract-a-source-map-url-from-a-webassembly-source">extract a Source Map URL from a WebAssembly source</a><span>, in &sect;7.1.2.3</span>
+        </li>
+        <li>
+          <a href="#extract-a-source-map-url-from-javascript-through-parsing">extract a Source Map URL from JavaScript through parsing</a><span>, in &sect;7.1.2.1</span>
+        </li>
+        <li>
+          <a href="#extract-a-source-map-url-from-javascript-without-parsing">extract a Source Map URL from JavaScript without parsing</a><span>, in &sect;7.1.2.1</span>
+        </li>
+        <li> file
+          <ul>
+            <li><a href="#decoded-source-map-file">dfn for decoded source map</a><span>, in &sect;5</span></li>
+            <li><a href="#json-file">dfn for json</a><span>, in &sect;5</span></li>
+          </ul>
+        </li>
+        <li><a href="#generated-code">Generated Code</a><span>, in &sect;4</span></li>
+        <li><a href="#decoded-mapping-generatedcolumn">generatedColumn</a><span>, in &sect;5.1</span></li>
+        <li><a href="#decoded-mapping-generatedline">generatedLine</a><span>, in &sect;5.1</span></li>
+        <li><a href="#decoded-source-ignored">ignored</a><span>, in &sect;5</span></li>
+        <li><a href="#decode-source-map-sources-ignoredsources">ignoredSources</a><span>, in &sect;5.2</span></li>
+        <li><a href="#json-ignorelist">ignoreList</a><span>, in &sect;5</span></li>
+        <li><a href="#index-map-map">map</a><span>, in &sect;6.1</span></li>
+        <li> mappings
+          <ul>
+            <li>
+              <a href="#decode-source-map-mappings-mappings">dfn for decode source map mappings</a><span>, in &sect;5.1</span>
+            </li>
+            <li><a href="#decoded-source-map-mappings">dfn for decoded source map</a><span>, in &sect;5</span></li>
+            <li><a href="#json-mappings">dfn for json</a><span>, in &sect;5</span></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#match-a-source-map-url-in-a-comment">match a Source Map URL in a comment</a><span>, in &sect;7.1.2.1</span>
+        </li>
+        <li><a href="#decoded-mapping-name">name</a><span>, in &sect;5.1</span></li>
+        <li> names
+          <ul>
+            <li>
+              <a href="#decode-source-map-mappings-names">dfn for decode source map mappings</a><span>, in &sect;5.1</span>
+            </li>
+            <li><a href="#json-names">dfn for json</a><span>, in &sect;5</span></li>
+          </ul>
+        </li>
+        <li><a href="#index-map-offset">offset</a><span>, in &sect;6.1</span></li>
+        <li>
+          <a href="#optionally-get-a-list-of-array-indexes">optionally get a list of array indexes</a><span>, in &sect;5</span>
+        </li>
+        <li>
+          <a href="#optionally-get-a-list-of-optional-strings">optionally get a list of optional strings</a><span>, in &sect;5</span>
+        </li>
+        <li><a href="#optionally-get-a-list-of-strings">optionally get a list of strings</a><span>, in &sect;5</span>
+        </li>
+        <li><a href="#optionally-get-a-string">optionally get a string</a><span>, in &sect;5</span></li>
+        <li><a href="#optionally-report-an-error">optionally report an error</a><span>, in &sect;5</span></li>
+        <li><a href="#decoded-mapping-originalcolumn">originalColumn</a><span>, in &sect;5.1</span></li>
+        <li><a href="#decoded-mapping-originalline">originalLine</a><span>, in &sect;5.1</span></li>
+        <li><a href="#original-source">Original Source</a><span>, in &sect;4</span></li>
+        <li><a href="#decoded-mapping-originalsource">originalSource</a><span>, in &sect;5.1</span></li>
+        <li><a href="#index-map-sections">sections</a><span>, in &sect;6</span></li>
+        <li><a href="#source-mapping-url">Source Mapping URL</a><span>, in &sect;4</span></li>
+        <li><a href="#source-origin">source origin</a><span>, in &sect;7.1</span></li>
+        <li> sourceRoot
+          <ul>
+            <li>
+              <a href="#decode-source-map-sources-sourceroot">dfn for decode source map sources</a><span>, in &sect;5.2</span>
+            </li>
+            <li><a href="#json-sourceroot">dfn for json</a><span>, in &sect;5</span></li>
+          </ul>
+        </li>
+        <li> sources
+          <ul>
+            <li>
+              <a href="#decode-source-map-mappings-sources">dfn for decode source map mappings</a><span>, in &sect;5.1</span>
+            </li>
+            <li>
+              <a href="#decode-source-map-sources-sources">dfn for decode source map sources</a><span>, in &sect;5.2</span>
+            </li>
+            <li><a href="#decoded-source-map-sources">dfn for decoded source map</a><span>, in &sect;5</span></li>
+            <li><a href="#json-sources">dfn for json</a><span>, in &sect;5</span></li>
+          </ul>
+        </li>
+        <li> sourcesContent
+          <ul>
+            <li>
+              <a href="#decode-source-map-sources-sourcescontent">dfn for decode source map sources</a><span>, in &sect;5.2</span>
+            </li>
+            <li><a href="#json-sourcescontent">dfn for json</a><span>, in &sect;5</span></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#unambiguously-links-to-a-source-map">unambiguously links to a source map</a><span>, in &sect;7.1.2</span>
+        </li>
+        <li><a href="#decoded-source-url">URL</a><span>, in &sect;5</span></li>
+        <li><a href="#validate-base64-vlq-groupings">validate base64 VLQ groupings</a><span>, in &sect;5.1</span></li>
+        <li><a href="#json-version">version</a><span>, in &sect;5</span></li>
+      </ul>
+    </emu-annex>
+
+    <emu-annex id="index-defined-elsewhere">
+      <h2>Terms defined by reference</h2>
+
+      <ul class="index">
+        <li>
+          [<a href="https://tc39.es/ecma262/multipage/">ECMA-262</a>] defines the following terms:
+          <ul>
+            <li>Comment</li>
+            <li>DivPunctuator</li>
+            <li>ECMAScript Lexical Grammar</li>
+            <li>HashbangComment</li>
+            <li>IdentifierName</li>
+            <li>line terminator code points</li>
+            <li>LineTerminator</li>
+            <li>multi-line comment</li>
+            <li>NumericLiteral</li>
+            <li>PrivateIdentifier</li>
+            <li>Punctuator</li>
+            <li>RegExpBuiltinExec</li>
+            <li>RegularExpressionLiteral</li>
+            <li>RightBracePunctuator</li>
+            <li>single-line comment</li>
+            <li>StringLiteral</li>
+            <li>Template</li>
+            <li>TemplateSubstitutionTail</li>
+            <li>tokens</li>
+            <li>white space code points</li>
+            <li>WhiteSpace</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://encoding.spec.whatwg.org/">ENCODING</a>] defines the following terms:
+          <ul>
+            <li>UTF-8 decode without BOM or fail</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://fetch.spec.whatwg.org/">FETCH</a>] defines the following terms:
+          <ul>
+            <li>fetch</li>
+            <li>HTTP newline byte</li>
+            <li>HTTP(S) scheme</li>
+            <li>processResponseConsumeBody</li>
+            <li>request</li>
+            <li>response</li>
+            <li>URL</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://infra.spec.whatwg.org/">INFRA</a>] defines the following terms:
+          <ul>
+            <li>append</li>
+            <li>ASCII string</li>
+            <li>boolean</li>
+            <li>break</li>
+            <li>byte</li>
+            <li>byte sequence</li>
+            <li>code point</li>
+            <li>code point substring</li>
+            <li>code unit</li>
+            <li>code unit substring</li>
+            <li>collect a sequence of code points</li>
+            <li>concatenate</li>
+            <li>exist</li>
+            <li>for each</li>
+            <li>length</li>
+            <li>list</li>
+            <li>map</li>
+            <li>parse a JSON string to an Infra value</li>
+            <li>parse JSON bytes to a JavaScript value</li>
+            <li>position variable</li>
+            <li>size</li>
+            <li>starts with</li>
+            <li>strictly split</li>
+            <li>string</li>
+            <li>struct</li>
+            <li>value</li>
+            <li>while</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://url.spec.whatwg.org/">URL</a>] defines the following terms:
+          <ul>
+            <li>scheme</li>
+            <li>URL</li>
+            <li>URL parser</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://www.w3.org/TR/wasm-core-2/">WASM</a>] defines the following terms:
+          <ul>
+            <li>custom section</li>
+            <li>module_decode</li>
+          </ul>
+        </li>
+        <li>
+          [<a href="https://webidl.spec.whatwg.org/">WEBIDL</a>] defines the following terms:
+          <ul>
+            <li>TypeError</li>
+            <li>a new promise</li>
+            <li>reject</li>
+            <li>resolve</li>
+          </ul>
+        </li>
+      </ul>
+    </emu-annex>
+  </emu-annex>
+
+  <emu-annex id="issues-index">
+    <header>
+      <p>Annex B<br />
+        <em>(Informative)</em>
+      </p>
+      <h1>Issues Index</h1>
+    </header>
+
+    <emu-note issue="">
+      <div class="note-contents">
+        <p>Having multiple ways to extract a source map URL, that can lead to different results, can have negative security and privacy implications. Implementations that need to detect which source maps are potentially going to be loaded are strongly encouraged to always apply both algorithms, rather than just assuming that they will give the same result.</p>
+        <p>A fix to this problem is being worked on, and is expected to be included in a future version of the standard. It will likely involve early returning from the below algorithms whenever there is a comment (or comment-like) that contains the characters U+0060 (&#x60;), U+0022 ("), or U+0027 ('), or the sequence U+002A U+002F (*/).</p>
+      </div>
+    </emu-note>
+  </emu-annex>
+</main>
+</body>
+</html>
